@@ -8,7 +8,15 @@
 #'
 datacleanr <- function(dataset){
 
+    df_name <- deparse(substitute(dataset))
 
+    # Panel texts:
+
+    text_grouping_side_panel <- shiny::tagList(shiny::h3("Overview"),
+                                shiny::br(),
+                                shiny::p("Some text for testing the use of
+                                external text and wrapping"),
+                                shiny::br())
 
 
 
@@ -19,18 +27,27 @@ datacleanr <- function(dataset){
 
                      id = "nav",
                      # TAB GROUPING ------------
-                     shiny::tabPanel("Grouping",
+                     shiny::tabPanel("Overview & Set-up",
                               value = "grouping",
                               icon = shiny::icon("layer-group"),
 
                               # panel set-up
 
                               shiny::sidebarLayout(
-                                  sidebarPanel = shiny::sidebarPanel("Test",
-                                                              module_ui_group_select(df = dataset,
-                                                                                     id = "group"),
-                                                              width = 3),
-                                  mainPanel = shiny::mainPanel()
+
+                                  sidebarPanel = shiny::sidebarPanel(
+
+                                      text_grouping_side_panel,
+                                      module_ui_group_select(df = dataset,
+                                                             id = "group"),
+                                      width = 3
+                                      ),
+
+                                  mainPanel = shiny::mainPanel(
+
+                                      module_ui_summary(id = "ungroupedSummary")
+
+                                  )
                               )
 
 
@@ -64,6 +81,24 @@ datacleanr <- function(dataset){
 
 
     server <- function(input, output, session){
+
+
+        gvar <- shiny::callModule(module_server_group_select,
+                                  id = "group")
+
+
+        # if(!is.null(gvar)) print(gvar()$group_var)
+
+        shiny::observe({print(gvar())})
+
+
+        reactive({print(gvar())})
+
+
+        shiny::callModule(module_server_summary,
+                          "ungroupedSummary",
+                          df = dataset,
+                          df_label = df_name)
 
 
 
@@ -133,7 +168,7 @@ datacleanr <- function(dataset){
     shiny::runGadget(ui,
               server,
               # viewer = browserViewer()
-              viewer = dialogViewer(dialogName = "Data Cleaning - A. Hurley",
+              viewer = shiny::dialogViewer(dialogName = "Data Cleaning - A. Hurley",
                                     width = 1000,
                                     height = 800)
     )

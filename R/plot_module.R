@@ -5,7 +5,7 @@
 #' @return UI plotoutput
 #'
 scatter_plot_ui_module <- function(id){
-    ns <- NS(id)
+    ns <- shiny::NS(id)
     plotOutput(ns("plot1"), height = "100%", brush = ns("brush"))
 
 

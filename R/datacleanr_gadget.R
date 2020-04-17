@@ -5,22 +5,11 @@
 #' @return idxs of selected data
 #' @export
 #'
-#' @import miniUI
-#'  shiny
-#'  ggplot2
 #'
-datacleanr <- function(data){
+datacleanr <- function(dataset){
 
 
-    # Call this function with an input (such as `textInput("text", NULL, "Search")`) if you
-    # want to add an input to the navbar
-    navbarPageWithInputs <- function(..., inputs) {
-        navbar <- navbarPage(...)
-        form <- tags$form(class = "navbar-form", inputs)
-        navbar[[3]][[1]]$children[[1]] <- htmltools::tagAppendChild(
-            navbar[[3]][[1]]$children[[1]], form)
-        navbar
-    }
+
 
 
     # define layout
@@ -30,21 +19,34 @@ datacleanr <- function(data){
 
                      id = "nav",
                      # TAB GROUPING ------------
-                     tabPanel("Grouping",
+                     shiny::tabPanel("Grouping",
                               value = "grouping",
-                              icon = icon("layer-group")),
+                              icon = shiny::icon("layer-group"),
+
+                              # panel set-up
+
+                              shiny::sidebarLayout(
+                                  sidebarPanel = shiny::sidebarPanel("Test",
+                                                              module_ui_group_select(df = dataset,
+                                                                                     id = "group"),
+                                                              width = 3),
+                                  mainPanel = shiny::mainPanel()
+                              )
+
+
+                              ),
                      # TAB FILTERING -----------
-                     tabPanel("Filtering",
+                     shiny::tabPanel("Filtering",
                               value = "filtering",
-                              icon = icon("sliders-h")),
+                              icon = shiny::icon("sliders-h")),
                      # TAB VIS -----------------
-                     tabPanel("Visualization",
+                     shiny::tabPanel("Visualization",
                               value = "visu",
-                              icon = icon("chart-area")),
+                              icon = shiny::icon("chart-area")),
                      # EXTRACT VIS -------------
-                     tabPanel("Extraction",
+                     shiny::tabPanel("Extraction",
                               value = "extract",
-                              icon = icon("file-export")),
+                              icon = shiny::icon("file-export")),
 
 
                      inputs = list(miniUI::miniTitleBarButton("done",
@@ -63,7 +65,7 @@ datacleanr <- function(data){
 
     server <- function(input, output, session){
 
-    }
+
 
 
     # ui <- miniPage(
@@ -108,28 +110,32 @@ datacleanr <- function(data){
     #
     #         # callModule(handle_selections, "brush")
     #
-    #         observeEvent(input$done, {
-    #             stopApp(vals$keep)
-    #         })
-    #         observeEvent(input$cancel, {
-    #             stopApp(NULL)
-    #         })
+
+
+
+    # END ---------------------------
+            observeEvent(input$done, {
+                stopApp("Done")
+            })
+            observeEvent(input$cancel, {
+                stopApp(NULL)
+            })
     #
     #     }
     # }
 
 
 
+    }
 
 
 
-
-    runGadget(ui,
+    shiny::runGadget(ui,
               server,
-              viewer = browserViewer()
-              # viewer = dialogViewer(dialogName = "Data Cleaning - A. Hurley",
-              #                       width = 1000,
-              #                       height = 800)
+              # viewer = browserViewer()
+              viewer = dialogViewer(dialogName = "Data Cleaning - A. Hurley",
+                                    width = 1000,
+                                    height = 800)
     )
     # shinyApp(ui, server)
 }

@@ -4,7 +4,7 @@
 \alias{datacleanr}
 \title{Data cleanr}
 \usage{
-datacleanr(data)
+datacleanr(dataset)
 }
 \arguments{
 \item{data_set}{dataframe}

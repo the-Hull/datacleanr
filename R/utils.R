@@ -1,0 +1,42 @@
+#' Identify columns carrying non-numeric values
+#'
+#' @param x data.frame
+#'
+#' @return logical, is column in x non-numeric?
+#'
+get_factor_cols_idx <- function(x){
+
+
+    if(ncol(x) < 1){
+        stop("Error: Elements of your input vector do not have the same length!")
+
+    }
+
+
+
+    return(!unname(unlist(lapply(x, is.numeric))))
+}
+
+
+
+#' Navbar with Input
+#'
+#' Call this function with an input (such as `textInput("text", NULL, "Search")`) if you
+#' want to add an input to the navbar
+#'
+#'
+#' @param ... Regular Navbar elements, like tabPanel
+#' @param inputs
+#'
+#' @return Navbar function that allows adding inputs
+#'
+#' @author Dean Attali
+#' @source \url{https://github.com/daattali/advanced-shiny/tree/master/navbar-add-text}
+#'
+navbarPageWithInputs <- function(..., inputs) {
+    navbar <- shiny::navbarPage(...)
+    form <- shiny::tags$form(class = "navbar-form", inputs)
+    navbar[[3]][[1]]$children[[1]] <- htmltools::tagAppendChild(
+        navbar[[3]][[1]]$children[[1]], form)
+    navbar
+}

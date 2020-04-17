@@ -20,4 +20,5 @@ BugReports: https://github.com/the-Hull/datacleanr/issues
 Imports: 
     shiny,
     miniUI,
-    htmltools
+    htmltools,
+    summarytools

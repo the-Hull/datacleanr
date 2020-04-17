@@ -4,12 +4,14 @@
 \alias{module_server_summary}
 \title{Server Module: data summary}
 \usage{
-module_server_summary(input, output, session, df)
+module_server_summary(input, output, session, df, df_label)
 }
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
 \item{df}{input data frame, pass into function with \code{df = reactive({data})}}
+
+\item{df_label}{character, name of initial data set}
 }
 \description{
 Server Module: data summary

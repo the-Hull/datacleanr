@@ -40,3 +40,37 @@ navbarPageWithInputs <- function(..., inputs) {
         navbar[[3]][[1]]$children[[1]], form)
     navbar
 }
+
+
+
+
+
+
+
+
+
+
+
+#' Applies grouping to data set conditionally
+#'
+#' @param df data frame
+#' @param group supply reactive output from group selector
+#'
+#' @return returns df either grouped or not
+#'
+apply_data_set_up <- function(df, group){
+
+    if(is.null(group)){
+
+        return(df)
+
+    } else {
+
+        group <- rlang::syms(group)
+
+        dplyr::group_by(df, !!! group)
+
+    }
+
+
+}

@@ -35,7 +35,7 @@ module_server_summary <- function(input,
 
 
 #
-
+        # shiny::req(need(df(), message = "Click on Start!"))
 
         dfs <- summarytools::dfSummary(df)
         attr(dfs, "data_info")$Data.frame <- df_label

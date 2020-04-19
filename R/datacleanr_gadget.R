@@ -25,55 +25,71 @@ datacleanr <- function(dataset){
     ui <-
         navbarPageWithInputs("datacleanr",
 
-                     id = "nav",
-                     # TAB GROUPING ------------
-                     shiny::tabPanel("Overview & Set-up",
-                              value = "grouping",
-                              icon = shiny::icon("layer-group"),
-
-                              # panel set-up
-
-                              shiny::sidebarLayout(
-
-                                  sidebarPanel = shiny::sidebarPanel(
-
-                                      text_grouping_side_panel,
-                                      module_ui_group_select(df = dataset,
-                                                             id = "group"),
-                                      width = 3
-                                      ),
-
-                                  mainPanel = shiny::mainPanel(
-
-                                      module_ui_summary(id = "ungroupedSummary")
-
-                                  )
-                              )
 
 
-                              ),
-                     # TAB FILTERING -----------
-                     shiny::tabPanel("Filtering",
-                              value = "filtering",
-                              icon = shiny::icon("sliders-h")),
-                     # TAB VIS -----------------
-                     shiny::tabPanel("Visualization",
-                              value = "visu",
-                              icon = shiny::icon("chart-area")),
-                     # EXTRACT VIS -------------
-                     shiny::tabPanel("Extraction",
-                              value = "extract",
-                              icon = shiny::icon("file-export")),
+
+                             id = "nav",
 
 
-                     inputs = list(miniUI::miniTitleBarButton("done",
-                                                      "Done",
-                                                      primary = TRUE),
+                             # TAB GROUPING ------------
+                             shiny::tabPanel("Overview & Set-up",
+                                             value = "grouping",
+                                             icon = shiny::icon("layer-group"),
 
-                                   miniUI::miniTitleBarCancelButton(inputId = "cancel",
-                                                            label = "Cancel",
-                                                            primary = FALSE))
+                                             # panel set-up
 
+                                             shiny::sidebarLayout(
+
+                                                 sidebarPanel = shiny::sidebarPanel(
+
+                                                     text_grouping_side_panel,
+                                                     module_ui_group_select(df = dataset,
+                                                                            id = "group"),
+                                                     shiny::br(),
+
+                                                     shiny::actionButton("gobutton",
+                                                                         "Start",
+                                                                         icon = shiny::icon("rocket")),
+
+                                                     width = 3
+                                                 ),
+
+                                                 mainPanel = shiny::mainPanel(
+
+                                                     module_ui_summary(id = "ungroupedSummary")
+
+                                                 )
+                                             )
+
+
+                             ),
+                             # TAB FILTERING -----------
+                             shiny::tabPanel("Filtering",
+                                             value = "filtering",
+                                             icon = shiny::icon("sliders-h")),
+                             # TAB VIS -----------------
+                             shiny::tabPanel("Visualization",
+                                             value = "visu",
+                                             icon = shiny::icon("chart-area")),
+                             # EXTRACT VIS -------------
+                             shiny::tabPanel("Extraction",
+                                             value = "extract",
+                                             icon = shiny::icon("file-export")),
+
+
+                             inputs = list(miniUI::miniTitleBarButton("done",
+                                                                      "Done",
+                                                                      primary = TRUE),
+
+                                           miniUI::miniTitleBarCancelButton(inputId = "cancel",
+                                                                            label = "Cancel",
+                                                                            primary = FALSE)),
+
+
+
+
+                             tags$style(type = "text/css", "body {padding-top: 70px;}"),
+                             position = "fixed-top"
 
 
         )
@@ -83,22 +99,45 @@ datacleanr <- function(dataset){
     server <- function(input, output, session){
 
 
+        # get grouping
         gvar <- shiny::callModule(module_server_group_select,
                                   id = "group")
+
+
+
+        datareactive <- shiny::reactiveVal()
+
+        # handle initialization
+        datareactive <- shiny::eventReactive(input$gobutton, {
+
+            df <- apply_data_set_up(df = dataset, gvar())
+
+            return(df)
+        })
+
+        # datanonreactive <- datareactive()
 
 
         # if(!is.null(gvar)) print(gvar()$group_var)
 
         shiny::observe({print(gvar())})
+        shiny::observe({print(datareactive())})
 
 
-        reactive({print(gvar())})
+
+        shiny::observe({
+
+            shiny::req(datareactive())
+
+            # datanonreactive <- datareactive()
+
+            shiny::callModule(module_server_summary,
+                              "ungroupedSummary",
+                              df = datareactive(),
+                              df_label = df_name)
 
 
-        shiny::callModule(module_server_summary,
-                          "ungroupedSummary",
-                          df = dataset,
-                          df_label = df_name)
+        })
 
 
 

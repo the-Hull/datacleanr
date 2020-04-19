@@ -21,4 +21,6 @@ Imports:
     shiny,
     miniUI,
     htmltools,
-    summarytools
+    summarytools,
+    dplyr,
+    rlang

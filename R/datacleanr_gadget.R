@@ -45,7 +45,11 @@ datacleanr <- function(dataset){
                                                      text_grouping_side_panel,
                                                      module_ui_group_select(df = dataset,
                                                                             id = "group"),
+
+                                                     module_ui_checkbox("groupcheck"),
+
                                                      shiny::br(),
+
 
                                                      shiny::actionButton("gobutton",
                                                                          "Start",
@@ -56,7 +60,7 @@ datacleanr <- function(dataset){
 
                                                  mainPanel = shiny::mainPanel(
 
-                                                     module_ui_summary(id = "ungroupedSummary")
+                                                     module_ui_summary(id = "summary")
 
                                                  )
                                              )
@@ -115,29 +119,57 @@ datacleanr <- function(dataset){
             return(df)
         })
 
-        # datanonreactive <- datareactive()
 
 
-        # if(!is.null(gvar)) print(gvar()$group_var)
 
         shiny::observe({print(gvar())})
         shiny::observe({print(datareactive())})
 
 
-
         shiny::observe({
-
-            shiny::req(datareactive())
+        #
+        #     shiny::validate(shiny::need(gvar(), "No Selection yet."))
 
             # datanonreactive <- datareactive()
 
+            shiny::callModule(module = module_server_checkbox,
+                              id = "groupcheck",
+                              text = "This is what's up",
+                              conditional_reactive = gvar())
+
+
+        })
+
+
+
+
+        # Summary -------------------
+
+        # Add grouping selectors
+        shiny::observe({
+
+            # shiny::req(datareactive())
+            # datanonreactive <- datareactive()
+
             shiny::callModule(module_server_summary,
-                              "ungroupedSummary",
+                              "summary",
                               df = datareactive(),
                               df_label = df_name)
 
 
         })
+
+
+        # Add checkbox for grouping
+#
+#         groupcheck <-
+#
+#             render_ui_checkbox("groupingcheckbox",
+#                                "Apply grouping to summary?",
+#                                conditional_reactive = reactive({gvar}))
+#
+#         output$groupcheck <- groupcheck()
+
 
 
 

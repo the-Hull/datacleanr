@@ -183,29 +183,29 @@ datacleanr <- function(dataset){
         # shiny::observe({print(datareactive())})
 
 
-
-
-        data_summary <- shiny::eventReactive(input$gobutton,
-
-                                             {
-
-
-                                                 # df exists, but not check box
-                                                 if(!is.null(datareactive()) &
-                                                    !input$`grouptick-checkbox`){
-
-                                                     return(ungroup(datareactive()))
-
-                                                 } else if(!is.null(datareactive()) &
-                                                           input$`grouptick-checkbox`){
-
-                                                     return(datareactive())
-
-                                                 }
-
-
-
-                                             })
+#
+#
+#         data_summary <- shiny::eventReactive(input$gobutton,
+#
+#                                              {
+#
+#
+#                                                  # df exists, but not check box
+#                                                  if(!is.null(datareactive()) &
+#                                                     !input$`grouptick-checkbox`){
+#
+#                                                      return(ungroup(datareactive()))
+#
+#                                                  } else if(!is.null(datareactive()) &
+#                                                            input$`grouptick-checkbox`){
+#
+#                                                      return(datareactive())
+#
+#                                                  }
+#
+#
+#
+#                                              })
 
 
 
@@ -214,7 +214,8 @@ datacleanr <- function(dataset){
         # Summary -------------------
 
         # Add grouping selectors
-        shiny::observe({
+        # shiny::observe({
+        shiny::observeEvent(input$gobutton, {
 
             # shiny::req(datareactive())
             # datanonreactive <- datareactive()
@@ -237,7 +238,18 @@ datacleanr <- function(dataset){
                               "summary",
 
 
-                              df = data_summary(),
+                              # df = data_summary(),
+                              df =  {if(!is.null(datareactive()) &
+                                     !input$`grouptick-checkbox`){
+
+                                      ungroup(datareactive())
+
+                                  } else if(!is.null(datareactive()) &
+                                            input$`grouptick-checkbox`){
+
+                                      datareactive()
+
+                                  }},
 
 
                               df_label = df_name)

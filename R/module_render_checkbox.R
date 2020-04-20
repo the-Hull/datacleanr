@@ -6,17 +6,24 @@
 #' UI Module: data summary
 #'
 #' @param id shiny standard
+#' @param cond_id character,
 #'
 #'
-module_ui_checkbox <- function(id){
-    ns <- shiny::NS(id)
+module_ui_checkbox <- function(id, cond_id) {
+    ns <- NS(id)
 
 
-    shiny::tagList(
-        # shiny::uiOutput(ns("summary"))
-        shiny::uiOutput(ns("checkbox"))
+
+    if(!is.character(cond_id)){
+        stop("supply string matching an input/output namespace.")
+    }
+
+    space <- "output."
+
+    tagList(
+        conditionalPanel(condition = paste0(space, cond_id, " !== null"),
+                         htmlOutput(ns("checkbox")))
     )
-
 }
 
 
@@ -31,36 +38,18 @@ module_ui_checkbox <- function(id){
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param text Character, appears next to checkbox (or coerced)
-#' @param conditional_reactive Reactive, either NULL or not
-#'
-module_server_checkbox <- function(input,
-                               output,
-                               session,
-                               text,
-                               conditional_reactive){
+module_server_checkbox <- function(input, output, session, text) {
 
+    output$checkbox <- renderUI({
 
-    if(!is.character(text)){
-        stop("Please supply a text (as.character) for UI element")
-    }
+        ns <- session$ns
 
+        checkboxInput(ns("checkbox"),
+                      label = text,
+                      value = FALSE,
+                      width = NULL)
 
-    if(!is.null(conditional_reactive)){
-
-        checkbox_ui_element <- renderUI({
-
-            checkboxInput("grouptick", label = text, value = FALSE, width = NULL)
-
-                })
-
-        output$checkbox <- checkbox_ui_element
-
-
-    } else {
-
-        output$checkbox <- NULL
-
-    }
+    })
 
 
 }

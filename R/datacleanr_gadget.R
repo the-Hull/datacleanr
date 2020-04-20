@@ -46,7 +46,9 @@ datacleanr <- function(dataset){
                                                      module_ui_group_select(df = dataset,
                                                                             id = "group"),
 
-                                                     module_ui_checkbox("groupcheck"),
+                                                     module_ui_checkbox(id = "grouptick",
+                                                                        cond_id = "gvar"),
+
 
                                                      shiny::br(),
 
@@ -55,10 +57,21 @@ datacleanr <- function(dataset){
                                                                          "Start",
                                                                          icon = shiny::icon("rocket")),
 
+                                                     shiny::textOutput("checkworked"),
+
+
+
+
+
                                                      width = 3
                                                  ),
 
                                                  mainPanel = shiny::mainPanel(
+
+
+                                                     # Diagnostics################
+                                                     textOutput('show_inputs'),###
+                                                     #############################
 
                                                      module_ui_summary(id = "summary")
 
@@ -103,15 +116,57 @@ datacleanr <- function(dataset){
     server <- function(input, output, session){
 
 
+        # DIAGNOSTICS ----------------------
+
+        AllInputs <- reactive({
+            x <- unlist(reactiveValuesToList(input))
+            paste(names(x),
+                x)
+
+
+        })
+
+        output$show_inputs <- renderText({
+            AllInputs()
+        })
+
+        # ---------------------------
+
+
         # get grouping
         gvar <- shiny::callModule(module_server_group_select,
                                   id = "group")
+        output$gvar <- reactive({gvar()})
+
+
+        # check-box for grouping
+        shiny::callModule(module = module_server_checkbox,
+                          "grouptick",
+                          text = "Use grouping for summary")
+
+        outputOptions(output, "gvar", suspendWhenHidden = FALSE)
 
 
 
-        datareactive <- shiny::reactiveVal()
+
+
+        output$checkworked <- shiny::renderPrint({
+
+            if(shiny::req(input$`grouptick-checkbox`)){
+
+                paste(input$`grouptick-checkbox`, "was set!")
+
+            names(input)
+            } else {
+
+                "Nothing yet."
+            }
+
+        })
 
         # handle initialization
+        datareactive <- shiny::reactiveVal()
+
         datareactive <- shiny::eventReactive(input$gobutton, {
 
             df <- apply_data_set_up(df = dataset, gvar())
@@ -122,23 +177,36 @@ datacleanr <- function(dataset){
 
 
 
+        # shiny::observe({print(input$group)})
         shiny::observe({print(gvar())})
-        shiny::observe({print(datareactive())})
+        shiny::observe({print(input$`grouptick-checkbox`)})
+        # shiny::observe({print(datareactive())})
 
 
-        shiny::observe({
-        #
-        #     shiny::validate(shiny::need(gvar(), "No Selection yet."))
-
-            # datanonreactive <- datareactive()
-
-            shiny::callModule(module = module_server_checkbox,
-                              id = "groupcheck",
-                              text = "This is what's up",
-                              conditional_reactive = gvar())
 
 
-        })
+        data_summary <- shiny::eventReactive(input$gobutton,
+
+                                             {
+
+
+                                                 # df exists, but not check box
+                                                 if(!is.null(datareactive()) &
+                                                    !input$`grouptick-checkbox`){
+
+                                                     return(ungroup(datareactive()))
+
+                                                 } else if(!is.null(datareactive()) &
+                                                           input$`grouptick-checkbox`){
+
+                                                     return(datareactive())
+
+                                                 }
+
+
+
+                                             })
+
 
 
 
@@ -151,24 +219,31 @@ datacleanr <- function(dataset){
             # shiny::req(datareactive())
             # datanonreactive <- datareactive()
 
+
+
+            # account for grouptick in printing
+
+            # data_summary <- shiny::reactive({
+
+
+
+
+
+            # })
+
+
+
             shiny::callModule(module_server_summary,
                               "summary",
-                              df = datareactive(),
+
+
+                              df = data_summary(),
+
+
                               df_label = df_name)
 
 
         })
-
-
-        # Add checkbox for grouping
-#
-#         groupcheck <-
-#
-#             render_ui_checkbox("groupingcheckbox",
-#                                "Apply grouping to summary?",
-#                                conditional_reactive = reactive({gvar}))
-#
-#         output$groupcheck <- groupcheck()
 
 
 
@@ -226,9 +301,6 @@ datacleanr <- function(dataset){
             observeEvent(input$cancel, {
                 stopApp(NULL)
             })
-    #
-    #     }
-    # }
 
 
 
@@ -243,7 +315,6 @@ datacleanr <- function(dataset){
                                     width = 1000,
                                     height = 800)
     )
-    # shinyApp(ui, server)
 }
 
 

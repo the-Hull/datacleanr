@@ -14,9 +14,9 @@ datacleanr <- function(dataset){
 
     text_grouping_side_panel <- shiny::tagList(shiny::h3("Overview"),
                                 shiny::br(),
-                                shiny::p("Some text for testing the use of
-                                external text and wrapping"),
-                                shiny::br())
+                                shiny::p("Select grouping variables for subsequent cleaning."),
+                                shiny::br(),
+                                shiny::p("Choose if you want to view an overview with or without grouping."))
 
 
 
@@ -57,7 +57,53 @@ datacleanr <- function(dataset){
                                                                          "Start",
                                                                          icon = shiny::icon("rocket")),
 
-                                                     shiny::textOutput("checkworked"),
+                                                     # shiny::textOutput("checkworked"),
+
+
+
+
+
+                                                     width = 3
+                                                 ),
+
+                                                 mainPanel = shiny::mainPanel(
+
+
+                                                     # Diagnostics################
+                                                     # textOutput('show_inputs'),###
+                                                     #############################
+
+                                                     module_ui_summary(id = "summary")
+
+                                                 )
+                                             )
+
+
+                             ),
+                             # TAB FILTERING -----------
+                             shiny::tabPanel("Filtering",
+                                             value = "filtering",
+                                             icon = shiny::icon("sliders-h"),
+
+
+                                             shiny::sidebarLayout(
+
+                                                 sidebarPanel = shiny::sidebarPanel(
+
+                                                     text_grouping_side_panel,
+
+
+                                                     shiny::br(),
+
+
+                                                     shiny::actionButton("addbutton",
+                                                                         "Add Filter",
+                                                                         icon = shiny::icon("plus-circle")),
+                                                     shiny::actionButton("removebutton",
+                                                                         "Remove Filter",
+                                                                         icon = shiny::icon("trash")),
+
+                                                     # shiny::textOutput("checkworked"),
 
 
 
@@ -73,17 +119,16 @@ datacleanr <- function(dataset){
                                                      textOutput('show_inputs'),###
                                                      #############################
 
-                                                     module_ui_summary(id = "summary")
+                                                    shiny::h2("Filter me!"),
+                                                    tags$div(id = 'placeholder')
+
 
                                                  )
                                              )
 
 
-                             ),
-                             # TAB FILTERING -----------
-                             shiny::tabPanel("Filtering",
-                                             value = "filtering",
-                                             icon = shiny::icon("sliders-h")),
+
+                                             ),
                              # TAB VIS -----------------
                              shiny::tabPanel("Visualization",
                                              value = "visu",
@@ -239,12 +284,12 @@ datacleanr <- function(dataset){
 
 
                               # df = data_summary(),
-                              df =  {if(!is.null(datareactive()) &
+                              df =  {if(!is.null(datareactive()) &&
                                      !input$`grouptick-checkbox`){
 
-                                      ungroup(datareactive())
+                                      dplyr::ungroup(datareactive())
 
-                                  } else if(!is.null(datareactive()) &
+                                  } else if(!is.null(datareactive()) &&
                                             input$`grouptick-checkbox`){
 
                                       datareactive()
@@ -258,8 +303,86 @@ datacleanr <- function(dataset){
         })
 
 
+        #
+        # active_filters <- shiny::reactive({
+        #
+        #
+        #     all_filters_lgl <- grepl("filter[0-9]+-strfilter", AllInputs())
+        #     all_filters <- AllInputs()[all_filters_lgl]
+        #
+        #
+        #
+        #     filter_numbers <- gsub(pattern = "[^0-9]",
+        #                           replacement = "",
+        #                           x = all_filters)
+        #
+        #     max_filter <- which.max(filter_numbers)
+        #
+        #     last_filter <- all_filters[max_filter]
+        #
+        #     print(all_filters)
+        #
+        #     return(list(last_filter = last_filter,
+        #                 filter_number = filter_numbers[max_filter]))
+        #
+        #
+        # }
+        #
+        #
+        # )
+        #
+
+        observeEvent(input$addbutton, {
+
+            #
+            # all_filters_lgl <- grepl("filter[0-9]+-strfilter", AllInputs())
+            # all_filters <- AllInputs()[all_filters_lgl]
+            # last_filter <- all_filters[length(all_filters)]
+            #
+            # print(AllInputs())
+
+            if(input$addbutton < 2){
 
 
+                btn <- input$addbutton
+            } else {
+            active_filters <- check_active_filters(allinputs = AllInputs())
+                btn <-  active_filters$filter_number + 1
+            print(active_filters)
+            }
+
+
+
+            shiny::callModule(module_server_box_str_filter,
+                              "textselect",
+                              selector = "#placeholder",
+                              # selector = "p",
+                              actionbtn = btn)
+        })
+
+
+
+        observeEvent(input$removebutton, {
+
+            print(input$`filter1-strfilter`)
+
+            active_filters <- check_active_filters(allinputs = AllInputs())
+
+
+            # last_filter_div <- sub(pattern = "-strfilter ",
+            #                    replacement = "",
+            #                    x =  active_filters$last_filter)
+            #
+            #
+
+            btn <- input$addbutton
+            removeUI(
+                # selector = paste0('#filter', btn,"-strfilter")
+                selector = paste0("#div-filter",active_filters$filter_number)
+                # selector = paste0("div:has(> #div-filter", btn,")")
+                # selector = paste0("div-filter", btn,"-strfilter)")
+            )
+        })
 
     # ui <- miniPage(
     #     gadgetTitleBar(paste("Select points")),

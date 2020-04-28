@@ -38,7 +38,25 @@ module_server_summary <- function(input,
         # shiny::req(need(df(), message = "Click on Start!"))
 
         dfs <- summarytools::dfSummary(df)
-        attr(dfs, "data_info")$Data.frame <- df_label
+
+
+        if(all(class(dfs) == "stby")){
+
+            invisible(lapply(seq_along(dfs), function(x) {
+
+                attr(dfs[[x]], "data_info")$Data.frame <<- df_label
+
+            }))
+
+
+        } else if(class(dfs) == "summarytools"){
+
+            attr(dfs, "data_info")$Data.frame <- df_label
+
+
+
+
+        }
 
 
         html_summary <- shiny::renderUI(summarytools::view(

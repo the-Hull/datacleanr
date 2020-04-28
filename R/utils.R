@@ -74,3 +74,38 @@ apply_data_set_up <- function(df, group){
 
 
 }
+
+
+
+
+
+#' Identify filter inputs by id and label
+#'
+#' @param allinputs list of all currently active inputs
+#'
+#' @return list with id of last filter (character), and number of last filter (numeric)
+#'
+check_active_filters <- function(allinputs){
+
+
+
+    # get filters from all inputs
+    all_filters_lgl <- grepl("filter[0-9]+-strfilter", allinputs)
+    all_filters <- allinputs[all_filters_lgl]
+
+
+    # extract filter numbers
+    filter_numbers <- gsub(pattern = "[^0-9]",
+                           replacement = "",
+                           x = all_filters)
+
+    # get latest filter
+    max_filter <- which.max(filter_numbers)
+    last_filter <- all_filters[max_filter]
+
+
+    return(list(last_filter = last_filter,
+                filter_number = as.numeric(filter_numbers[max_filter])))
+
+}
+

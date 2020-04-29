@@ -222,37 +222,8 @@ datacleanr <- function(dataset){
 
 
 
-        # shiny::observe({print(input$group)})
         shiny::observe({print(gvar())})
         shiny::observe({print(input$`grouptick-checkbox`)})
-        # shiny::observe({print(datareactive())})
-
-
-#
-#
-#         data_summary <- shiny::eventReactive(input$gobutton,
-#
-#                                              {
-#
-#
-#                                                  # df exists, but not check box
-#                                                  if(!is.null(datareactive()) &
-#                                                     !input$`grouptick-checkbox`){
-#
-#                                                      return(ungroup(datareactive()))
-#
-#                                                  } else if(!is.null(datareactive()) &
-#                                                            input$`grouptick-checkbox`){
-#
-#                                                      return(datareactive())
-#
-#                                                  }
-#
-#
-#
-#                                              })
-
-
 
 
 
@@ -332,7 +303,13 @@ datacleanr <- function(dataset){
         # )
         #
 
+        filter_control <- reactiveValues(value = 1)
+
+
+
         observeEvent(input$addbutton, {
+
+            # filter_control$value <- filter_control$value + 1
 
             #
             # all_filters_lgl <- grepl("filter[0-9]+-strfilter", AllInputs())
@@ -341,15 +318,15 @@ datacleanr <- function(dataset){
             #
             # print(AllInputs())
 
-            if(input$addbutton < 2){
-
-
-                btn <- input$addbutton
-            } else {
-            active_filters <- check_active_filters(allinputs = AllInputs())
-                btn <-  active_filters$filter_number + 1
-            print(active_filters)
-            }
+            # if(input$addbutton < 2){
+            #
+            #
+            #     btn <- input$addbutton
+            # } else {
+            # active_filters <- check_active_filters(allinputs = AllInputs())
+            #     btn <-  active_filters$filter_number + 1
+            # print(active_filters)
+            # }
 
 
 
@@ -357,7 +334,9 @@ datacleanr <- function(dataset){
                               "textselect",
                               selector = "#placeholder",
                               # selector = "p",
-                              actionbtn = btn)
+                              actionbtn = filter_control$value)
+
+            filter_control$value <- filter_control$value + 1
         })
 
 
@@ -375,13 +354,21 @@ datacleanr <- function(dataset){
             #
             #
 
-            btn <- input$addbutton
+            btn <- filter_control$value
             removeUI(
                 # selector = paste0('#filter', btn,"-strfilter")
-                selector = paste0("#div-filter",active_filters$filter_number)
+                selector = paste0("#div-filter",filter_control$value - 1)
                 # selector = paste0("div:has(> #div-filter", btn,")")
                 # selector = paste0("div-filter", btn,"-strfilter)")
             )
+
+
+            filter_control$value <- filter_control$value - 1
+
+            if(filter_control$value < 1){
+                filter_control$value <- 1
+            }
+
         })
 
     # ui <- miniPage(

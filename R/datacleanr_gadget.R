@@ -309,24 +309,7 @@ datacleanr <- function(dataset){
 
         observeEvent(input$addbutton, {
 
-            # filter_control$value <- filter_control$value + 1
 
-            #
-            # all_filters_lgl <- grepl("filter[0-9]+-strfilter", AllInputs())
-            # all_filters <- AllInputs()[all_filters_lgl]
-            # last_filter <- all_filters[length(all_filters)]
-            #
-            # print(AllInputs())
-
-            # if(input$addbutton < 2){
-            #
-            #
-            #     btn <- input$addbutton
-            # } else {
-            # active_filters <- check_active_filters(allinputs = AllInputs())
-            #     btn <-  active_filters$filter_number + 1
-            # print(active_filters)
-            # }
 
 
 
@@ -348,18 +331,10 @@ datacleanr <- function(dataset){
             active_filters <- check_active_filters(allinputs = AllInputs())
 
 
-            # last_filter_div <- sub(pattern = "-strfilter ",
-            #                    replacement = "",
-            #                    x =  active_filters$last_filter)
-            #
-            #
 
             btn <- filter_control$value
             removeUI(
-                # selector = paste0('#filter', btn,"-strfilter")
                 selector = paste0("#div-filter",filter_control$value - 1)
-                # selector = paste0("div:has(> #div-filter", btn,")")
-                # selector = paste0("div-filter", btn,"-strfilter)")
             )
 
 

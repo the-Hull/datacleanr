@@ -10,7 +10,7 @@
 #'
 #'
 module_ui_checkbox <- function(id, cond_id) {
-    ns <- NS(id)
+    ns <- shiny::NS(id)
 
 
 
@@ -20,9 +20,9 @@ module_ui_checkbox <- function(id, cond_id) {
 
     space <- "output."
 
-    tagList(
-        conditionalPanel(condition = paste0(space, cond_id, " !== null"),
-                         htmlOutput(ns("checkbox")))
+    shiny::tagList(
+        shiny::conditionalPanel(condition = paste0(space, cond_id, " !== null"),
+                                shiny::htmlOutput(ns("checkbox")))
     )
 }
 
@@ -44,7 +44,7 @@ module_server_checkbox <- function(input, output, session, text) {
 
         ns <- session$ns
 
-        checkboxInput(ns("checkbox"),
+        shiny::checkboxInput(ns("checkbox"),
                       label = text,
                       value = FALSE,
                       width = NULL)

@@ -44,7 +44,7 @@ module_server_box_str_filter <- function(input,
     shiny::insertUI(
         selector = selector,
         where = "beforeEnd",
-        ui = tags$div(id = paste0("div-filter", actionbtn),
+        ui = shiny::tags$div(id = paste0("div-filter", actionbtn),
 
                       module_ui_box_str_filter(paste0("filter", actionbtn), actionbtn),
         )
@@ -54,7 +54,10 @@ module_server_box_str_filter <- function(input,
     )
 
 
-
+    # cond_string <- paste(list("Species == 'setosa'",
+    #                           "Petal.Length > 1.3"), collapse = " & ")
+    #
+    # dplyr::filter(iris, eval(str2expression(cond_string)))
 
 
 

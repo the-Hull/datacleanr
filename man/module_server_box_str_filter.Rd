@@ -4,13 +4,7 @@
 \alias{module_server_box_str_filter}
 \title{Server Module: box for str filter condition}
 \usage{
-module_server_box_str_filter(
-  input,
-  output,
-  session,
-  selector = "h2",
-  actionbtn
-)
+module_server_box_str_filter(input, output, session, selector, actionbtn)
 }
 \arguments{
 \item{input, output, session}{standard}

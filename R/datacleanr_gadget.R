@@ -116,11 +116,11 @@ datacleanr <- function(dataset){
 
 
                                                      # Diagnostics################
-                                                     textOutput('show_inputs'),###
+                                                     shiny::textOutput('show_inputs'),###
                                                      #############################
 
                                                     shiny::h2("Filter me!"),
-                                                    tags$div(id = 'placeholder')
+                                                    shiny::tags$div(id = 'placeholder')
 
 
                                                  )
@@ -150,7 +150,7 @@ datacleanr <- function(dataset){
 
 
 
-                             tags$style(type = "text/css", "body {padding-top: 70px;}"),
+                             shiny::tags$style(type = "text/css", "body {padding-top: 70px;}"),
                              position = "fixed-top"
 
 
@@ -163,15 +163,15 @@ datacleanr <- function(dataset){
 
         # DIAGNOSTICS ----------------------
 
-        AllInputs <- reactive({
-            x <- unlist(reactiveValuesToList(input))
+        AllInputs <- shiny::reactive({
+            x <- unlist(shiny::reactiveValuesToList(input))
             paste(names(x),
                 x)
 
 
         })
 
-        output$show_inputs <- renderText({
+        output$show_inputs <- shiny::renderText({
             AllInputs()
         })
 
@@ -181,7 +181,7 @@ datacleanr <- function(dataset){
         # get grouping
         gvar <- shiny::callModule(module_server_group_select,
                                   id = "group")
-        output$gvar <- reactive({gvar()})
+        output$gvar <- shiny::reactive({gvar()})
 
 
         # check-box for grouping
@@ -189,7 +189,7 @@ datacleanr <- function(dataset){
                           "grouptick",
                           text = "Use grouping for summary")
 
-        outputOptions(output, "gvar", suspendWhenHidden = FALSE)
+        shiny::outputOptions(output, "gvar", suspendWhenHidden = FALSE)
 
 
 
@@ -275,43 +275,54 @@ datacleanr <- function(dataset){
 
 
         #
-        # active_filters <- shiny::reactive({
-        #
-        #
-        #     all_filters_lgl <- grepl("filter[0-9]+-strfilter", AllInputs())
-        #     all_filters <- AllInputs()[all_filters_lgl]
-        #
-        #
-        #
-        #     filter_numbers <- gsub(pattern = "[^0-9]",
-        #                           replacement = "",
-        #                           x = all_filters)
-        #
-        #     max_filter <- which.max(filter_numbers)
-        #
-        #     last_filter <- all_filters[max_filter]
-        #
-        #     print(all_filters)
-        #
-        #     return(list(last_filter = last_filter,
-        #                 filter_number = filter_numbers[max_filter]))
-        #
-        #
-        # }
-        #
-        #
-        # )
-        #
+         shiny::observeEvent(input$addbutton, {
 
-        filter_control <- reactiveValues(value = 1)
+            all_filters_lgl <- grepl("filter[0-9]+-strfilter", names(input))
+            all_filters <- names(input)[all_filters_lgl]
+
+             if(any(all_filters_lgl)){
 
 
 
-        observeEvent(input$addbutton, {
+            # all_filters <- sub("[ ]", replacement = "", all_filters)
+
+                 filter_vals <- sapply(all_filters, function(x) input[[x]], USE.NAMES = FALSE)
+
+                 keep <- sapply(filter_vals, nchar) > 0
+
+                 filter_vals <- filter_vals[keep]
+
+#
+#             filter_numbers <- gsub(pattern = "[^0-9]",
+#                                   replacement = "",
+#                                   x = all_filters)
+
+            # max_filter <- which.max(filter_numbers)
+            #
+            # last_filter <- all_filters[max_filter]
 
 
+            print(filter_vals)
+
+             }
+
+        })
+
+        #
+
+        # incrementor for button clicks
+        filter_control <- shiny::reactiveValues(value = 1)
 
 
+        # data frame to collect filter statements
+        filter_statements <- reactiveValues()
+
+        filter_statements$df <- data.frame(
+            "statement" = character(0),
+            stringsAsFactors = FALSE
+        )
+
+        shiny::observeEvent(input$addbutton, {
 
             shiny::callModule(module_server_box_str_filter,
                               "textselect",
@@ -319,18 +330,46 @@ datacleanr <- function(dataset){
                               # selector = "p",
                               actionbtn = filter_control$value)
 
+
+
+
+
+
+#
             filter_control$value <- filter_control$value + 1
+
         })
+
+
+
+
+
+
+
+
+        shiny::observeEvent(input[[shiny::NS(paste0("filter",
+                                                    filter_control$value-1),
+                                             "strfilter")]], {
+
+                                                 # print(input[[shiny::NS(paste0("filter",
+                                                 #                               filter_control$value-1),
+                                                 #                        "strfilter")]])
+
+                                                 # filter_statements$df[filter_control$value - 1,
+                                                 #                      "statements"] <- input[[shiny::NS(paste0("filter",
+                                                 #                                                               filter_control$value -1),
+                                                 #                                                        "strfilter ")]]
+                                             })
+
 
 
 
         observeEvent(input$removebutton, {
 
-            print(input$`filter1-strfilter`)
+            # print(input$`filter1-strfilter`)
+            # print(input$`filter2-strfilter`)
 
-            active_filters <- check_active_filters(allinputs = AllInputs())
-
-
+            # active_filters <- check_active_filters(allinputs = AllInputs())
 
             btn <- filter_control$value
             removeUI(
@@ -346,48 +385,6 @@ datacleanr <- function(dataset){
 
         })
 
-    # ui <- miniPage(
-    #     gadgetTitleBar(paste("Select points")),
-    #     miniContentPanel(padding = 0,
-    #                      scatter_plot_ui_module("plot1"),
-    #                      # plotOutput("plot1", height = "100%", brush = "brush")
-    #     ),
-    #     miniButtonBlock(
-    #         actionButton("add", "", icon = icon("thumbs-up")),
-    #         actionButton("sub", "", icon = icon("thumbs-down")),
-    #         actionButton("none", "" , icon = icon("ban")),
-    #         actionButton("all", "", icon = icon("refresh"))
-    #     )
-    # )
-    #
-    # server <- function(input, output) {
-    #     # For storing selected points
-    #     vals <- reactiveValues(keep = rep(TRUE, nrow(data)))
-    #
-    #     {selected <- callModule(scatter_plot_svr_module, "plot1", data = data, vals = vals, x = x, y = y)
-    #
-    #         # output$plot1 <- renderPlot({
-    #         #     # Plot the kept and excluded points as two separate data sets
-    #         #     keep    <- data[ vals$keep, , drop = FALSE]
-    #         #     exclude <- data[!vals$keep, , drop = FALSE]
-    #         #
-    #         #     ggplot(keep, aes_(x, y)) +
-    #         #         geom_point(data = exclude, color = "grey80") +
-    #         #         geom_point()
-    #         # })
-    #         #
-    #         # # Update selected points
-    #         # selected <- reactive({
-    #         #     brushedPoints(data, input$brush, allRows = TRUE)$selected_
-    #         # })
-    #         observeEvent(input$add,  vals$keep <- vals$keep | selected())
-    #         observeEvent(input$sub,  vals$keep <- vals$keep & !selected())
-    #         observeEvent(input$all,  vals$keep <- rep(TRUE, nrow(data)))
-    #         observeEvent(input$none, vals$keep <- rep(FALSE, nrow(data)))
-    #
-    #
-    #         # callModule(handle_selections, "brush")
-    #
 
 
 

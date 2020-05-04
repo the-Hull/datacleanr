@@ -63,3 +63,39 @@ module_server_box_str_filter <- function(input,
 
 }
 
+
+
+# alternative -------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------#
+# MODULE UI ----
+module_ui_filter_str <- function(id) {
+    ns <- NS(id)
+
+    tags$div(
+        id=paste0("filt", id),
+        fluidRow(
+
+                uiOutput(ns('filter'))
+
+        )
+    )
+}
+
+#------------------------------------------------------------------------------#
+# MODULE SERVER ----
+
+module_server_filter_str <- function(input, output, session){
+    ns = session$ns
+
+    output$filter <- renderUI({
+        shiny::textInput(
+            inputId = ns("filter"),
+            label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
+            value = NULL,
+            width = "100%",
+            placeholder = NULL
+        )
+    })
+}

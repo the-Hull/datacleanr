@@ -109,3 +109,34 @@ check_active_filters <- function(allinputs){
 
 }
 
+#' check if filtering statement is successfull
+#'
+#' @param df dataframe to be filtered
+#' @param statements character, vector with individual statements for filtering
+#'
+#' @return logical vector of fails and successes
+#'
+check_filter <- function(df, statements){
+
+
+    is.error <- function(x) inherits(x, "try-error")
+
+    checks <- lapply(statements, function(x)
+
+        try({dplyr::filter(df,
+                           eval(str2expression(x)))}))
+
+
+    succeeded <- !vapply(checks, is.error, logical(1))
+
+    # cond_string <- paste(list("Species == 'setosa'",
+    #                           "Petal.Length > 1.3"), collapse = " & ")
+    #
+    # dplyr::filter(iris, eval(str2expression(cond_string)))
+
+    return(list(condition_success = succeeded))
+
+
+
+
+}

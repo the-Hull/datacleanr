@@ -105,6 +105,9 @@ datacleanr <- function(dataset){
                                                                          icon = shiny::icon("trash")),
 
 
+                                                     module_ui_failed_filters("failedfilter"),
+
+
 
 
 
@@ -364,6 +367,11 @@ datacleanr <- function(dataset){
             print(add.filter$df)
         })
 
+
+        shiny::callModule(module_server_failed_filters,
+                          id = "failedfilter",
+                          datareactive(),
+                          add.filter$df$filter)
 
 
 

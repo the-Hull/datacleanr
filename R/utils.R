@@ -79,35 +79,100 @@ apply_data_set_up <- function(df, group){
 
 
 
+#' check if a filter statement is valid
+#'
+#' @param df data frame / tibble to be filtered
+#' @param statement character string,
+#'
+#' @return logical, did filter statement work?
+#'
+check_individual_statement <- function(df, statement){
+
+    is.error <- function(x) inherits(x, "try-error")
+
+    condition_worked <- tryCatch({
+
+        # check_valid_expression
+        expr <- str2expression(statement)
+
+        # filter_try <- try({dplyr::filter(df,
+        filter_try <- try({base::subset(df,
+                                        eval(expr))},
+                          silent = TRUE)
+
+        if(is.error(filter_try)){
+            stop("failed due to invalid expression")
+        } else {
+            return(TRUE)
+        }},
+
+        error = function(cond){
+            message("Original error:")
+            message(cond)
+            message("\n----\n")
+            return(FALSE)
+        })
+    return(condition_worked)
+}
+
+
+#' Filter a data frame with series of statements
+#'
+#' @param df data frame / tibble to be filtered
+#' @param statement character vector of individual conditional statements; need not evaluate successfully individually
+#'
+#' @return list, logical vector of success and failures, and
+#'
+checked_filter <- function(df, statements){
+
+    checks <- sapply(statements,
+                     function(x)
+                         check_individual_statement(df = df, statement = x),
+                     USE.NAMES = FALSE)
+
+    cond_string_full <- paste(statements[checks], collapse = " & ")
+    #
+    filtered_df <- base::subset(df, eval(str2expression(cond_string_full)))
+
+    return(list(succeeded = checks,
+                filtered_df = filtered_df))
+
+
+}
+
+
+
+
+
 #' Identify filter inputs by id and label
 #'
 #' @param allinputs list of all currently active inputs
 #'
 #' @return list with id of last filter (character), and number of last filter (numeric)
 #'
-check_active_filters <- function(allinputs){
-
-
-
-    # get filters from all inputs
-    all_filters_lgl <- grepl("filter[0-9]+-strfilter", allinputs)
-    all_filters <- allinputs[all_filters_lgl]
-
-
-    # extract filter numbers
-    filter_numbers <- gsub(pattern = "[^0-9]",
-                           replacement = "",
-                           x = all_filters)
-
-    # get latest filter
-    max_filter <- which.max(filter_numbers)
-    last_filter <- all_filters[max_filter]
-
-
-    return(list(last_filter = last_filter,
-                filter_number = as.numeric(filter_numbers[max_filter])))
-
-}
+# check_active_filters <- function(allinputs){
+#
+#
+#
+#     # get filters from all inputs
+#     all_filters_lgl <- grepl("filter[0-9]+-strfilter", allinputs)
+#     all_filters <- allinputs[all_filters_lgl]
+#
+#
+#     # extract filter numbers
+#     filter_numbers <- gsub(pattern = "[^0-9]",
+#                            replacement = "",
+#                            x = all_filters)
+#
+#     # get latest filter
+#     max_filter <- which.max(filter_numbers)
+#     last_filter <- all_filters[max_filter]
+#
+#
+#     return(list(last_filter = last_filter,
+#                 filter_number = as.numeric(filter_numbers[max_filter])))
+#
+# }
 
 #' check if filtering statement is successfull
 #'
@@ -116,27 +181,42 @@ check_active_filters <- function(allinputs){
 #'
 #' @return logical vector of fails and successes
 #'
-check_filter <- function(df, statements){
-
-
-    is.error <- function(x) inherits(x, "try-error")
-
-    checks <- lapply(statements, function(x)
-
-        try({dplyr::filter(df,
-                           eval(str2expression(x)))}))
-
-
-    succeeded <- !vapply(checks, is.error, logical(1))
-
-    # cond_string <- paste(list("Species == 'setosa'",
-    #                           "Petal.Length > 1.3"), collapse = " & ")
-    #
-    # dplyr::filter(iris, eval(str2expression(cond_string)))
-
-    return(list(condition_success = succeeded))
-
-
-
-
-}
+# check_filter <- function(df, statements){
+#
+#
+#     is.error <- function(x) inherits(x, "try-error")
+#
+#
+#     # checks on validity of filter expressions
+#
+#     checks_expression <- sapply(x, function(x)
+#         try({str2expression}))
+#     succeeded_expression <- !vapply(checks, is.error, logical(1))
+#
+#     if(any(!succeeded_expression)){
+#         return(succeeded_expression)
+#     }
+#
+#
+#
+#
+#     # checks on filtering (see if variable is available)
+#     checks <- lapply(statements, function(x)
+#
+#         try({dplyr::filter(df,
+#                            eval(str2expression(x)))}))
+#
+#
+#     succeeded <- !vapply(checks, is.error, logical(1))
+#
+#     cond_string_full <- paste(statements[succeeded], collapse = " & ")
+#     #
+#     filtered_df <- dplyr::filter(df, eval(str2expression(cond_string_full)))
+#
+#     return(list(condition_success = succeeded,
+#                 filtered_df = filtered_df))
+#
+#
+#
+#
+# }

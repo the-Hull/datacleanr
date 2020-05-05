@@ -11,17 +11,24 @@ test_that("filter works with correct statement", {
 test_that("filter identifies incorrect statement", {
 
 
-    out <- sapply(c("Species == 'setosa'", # should be true
-                    "Species == 'wrong'", # should be true
-                    "Spec == 'setosa'"),
-                  function(x){
-                      try({checked_filter(iris,x)})
-                  },
-                  USE.NAMES = FALSE)
+    # out <- sapply(c("Species == 'setosa'", # should be true
+    #                 "Species == 'wrong'", # should be true
+    #                 "Spec == 'setosa'"),
+    #               function(x){
+    #                   try({checked_filter(iris,x)})
+    #               },
+    #               USE.NAMES = FALSE)
+    #
+    # checks <- !vapply(out, is.error, logical(1))
+    #
 
-    checks <- !vapply(out, is.error, logical(1))
+    checks <- checked_filter(iris,
+                   c("Species == 'setosa'", # should be true
+                     "Species == 'wrong'", # should be true
+                     "Spec == 'setosa'"))$succeeded
 
-  expect_identical(checks,
+
+  expect_equivalent(checks,
                    c(TRUE, TRUE, FALSE))
 })
 

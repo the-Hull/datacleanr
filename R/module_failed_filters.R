@@ -39,7 +39,7 @@ module_server_failed_filters <- function(input, output, session, df, statements)
 
 
             print(statements)
-            states <- try({checked_filter(df,statements)})$succeeded
+            states <- try({checked_filter(df,statements)})
 
 
             if(!is.null(states)){

@@ -281,7 +281,7 @@ datacleanr <- function(dataset){
         # filter ------------------
 
         # CREATE EMPTY DATAFRAME
-        add.filter <- reactiveValues()
+        add.filter <- shiny::reactiveValues()
 
         add.filter$df <- data.frame(
             "filter" = character(0),
@@ -371,16 +371,18 @@ datacleanr <- function(dataset){
 
 
 
-        shiny::observeEvent(add.filter, {
+        shiny::observe({
 
             # print(str(datareactive()))
+
+            statements <- add.filter$df$filter
 
             shiny::callModule(module = module_server_failed_filters,
                               id = "check",
                               df = datareactive(),
                               # statements = "Species == 'setosa'")
                               # df = datareactive(),
-                              statements = add.filter$df$filter)
+                              statements = statements)
         })
 
 

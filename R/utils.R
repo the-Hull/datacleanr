@@ -100,20 +100,23 @@ check_individual_statement <- function(df, statement){
         expr <- str2expression(statement)
 
         # filter_try <- try({dplyr::filter(df,
-        filter_try <- try({base::subset(df,
-                                        eval(expr))},
-                          silent = TRUE)
+        # filter_try <- try({base::subset(df,
+        #                                 eval(expr))},
+        #                   silent = TRUE)
+        filter_try <- base::subset(df,
+                                        eval(expr))
 
-        if(is.error(filter_try)){
-            stop("failed due to invalid expression")
-        } else {
+        # if(is.error(filter_try)){
+            # stop("failed due to invalid expression")
+        # } else {
             return(TRUE)
-        }},
+        # }
+        },
 
         error = function(cond){
-            message("Original error:")
-            message(cond)
-            message("\n----\n")
+            # message("Original error:")
+            # message(cond)
+            # message("\n----\n")
             return(FALSE)
         })
     return(condition_worked)
@@ -129,12 +132,20 @@ check_individual_statement <- function(df, statement){
 #'
 checked_filter <- function(df, statements){
 
+    is.error <- function(x) inherits(x, "try-error")
 
 
+    # checks <- lapply(statements,
+    #                  function(x)
+    #                      try({check_individual_statement(df = df, statement = x)}))
     checks <- sapply(statements,
                      function(x)
-                         check_individual_statement(df = df, statement = x),
-                     USE.NAMES = FALSE)
+                        check_individual_statement(df = df, statement = x))
+
+
+
+    # checks <- !vapply(checks, is.error, logical(1))
+
 
 
     if(any(checks)){
@@ -147,7 +158,7 @@ checked_filter <- function(df, statements){
                 filtered_df = filtered_df))
     } else {
 
-        return(NULL)
+        return(list(succeeded = checks))
     }
 
 

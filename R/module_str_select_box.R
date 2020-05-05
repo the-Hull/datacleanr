@@ -93,7 +93,7 @@ module_server_filter_str <- function(input, output, session){
         shiny::textInput(
             inputId = ns("filter"),
             label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
-            value = "",
+            value = NULL,
             width = "100%",
             placeholder = NULL
         )

@@ -105,9 +105,10 @@ datacleanr <- function(dataset){
                                                                          icon = shiny::icon("trash")),
 
                                                      shiny::br(),
+                                                     shiny::br(),
 
 
-                                                     module_ui_failed_filters("check"),
+                                                     module_ui_df_filter("check"),
 
 
 
@@ -379,7 +380,7 @@ datacleanr <- function(dataset){
 
             statements <- add.filter$df$filter
 
-            shiny::callModule(module = module_server_failed_filters,
+            shiny::callModule(module = module_server_df_filter,
                               id = "check",
                               df = datareactive(),
                               # statements = "Species == 'setosa'")

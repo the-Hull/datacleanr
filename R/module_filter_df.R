@@ -2,11 +2,11 @@
 # UI ----------------------------------------------------------------------
 
 
-module_ui_failed_filters <- function(id){
+module_ui_df_filter <- function(id){
 
     ns <- shiny::NS(id)
 
-    shiny::uiOutput(outputId = ns("failedfilter"))
+    shiny::uiOutput(outputId = ns("filterdf"))
 
 
 
@@ -27,20 +27,16 @@ module_ui_failed_filters <- function(id){
 #'
 #' @return
 #'
-module_server_failed_filters <- function(input, output, session, df, statements){
+module_server_df_filter <- function(input, output, session, df, statements){
 
     ns  <-  session$ns
 
+    print(statements)
+    out <- try({checked_filter(df,statements)})
+    states <- out$succeeded
 
 
-
-    output$failedfilter <- shiny::renderUI({
-
-
-
-            print(statements)
-            states <- try({checked_filter(df,statements)})$succeeded
-
+    output$filterdf <- shiny::renderUI({
 
             if(!is.null(states)){
 
@@ -56,9 +52,16 @@ module_server_failed_filters <- function(input, output, session, df, statements)
                 return(print(NULL))
             }
 
-
-
     })
+
+
+    if(any(states)){
+        return(out$filtered_df)
+    } else {
+        return(df)
+    }
+
+
 
 
 

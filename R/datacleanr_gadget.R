@@ -105,7 +105,7 @@ datacleanr <- function(dataset){
                                                                          icon = shiny::icon("trash")),
 
 
-                                                     module_ui_failed_filters("failedfilter"),
+                                                     module_ui_failed_filters("check"),
 
 
 
@@ -178,6 +178,8 @@ datacleanr <- function(dataset){
         output$show_inputs <- shiny::renderText({
             AllInputs()
         })
+
+
 
         # grouping ---------------------------
 
@@ -299,7 +301,6 @@ datacleanr <- function(dataset){
 
         btn <- shiny::reactiveValues(value = 1)
 
-        #--------------------------
         # ADD VARIABLES
 
         shiny::observeEvent(input$addbutton, {
@@ -328,20 +329,22 @@ datacleanr <- function(dataset){
            shiny::observeEvent(input[[shiny::NS(btn.tmp, "filter")]], {
                add.filter$df[btn.tmp, 1] <- input[[NS(btn.tmp, "filter")]]
                # print(add.filter$df)
+
+
+
             })
 
         })
 
-        #--------------------------
         # REMOVE VARIABLES
 
         shiny::observeEvent(input$removebutton, {
 
             # REMOVE LAST LINE FROM DATAFRAME
-            print(btn$value)
-            print(add.filter$df)
+            # print(btn$value)
+            # print(add.filter$df)
             add.filter$df <- add.filter$df[-btn$value, , drop = FALSE]
-            print(str(add.filter$df))
+            # print(str(add.filter$df))
 
             # REMOVE LAST LINE MODULE UI
             shiny::removeUI(
@@ -359,7 +362,6 @@ datacleanr <- function(dataset){
 
         })
 
-        #--------------------------
 
         # OUTPUT DATAFRAME
 
@@ -368,11 +370,18 @@ datacleanr <- function(dataset){
         })
 
 
-        shiny::callModule(module_server_failed_filters,
-                          id = "failedfilter",
-                          datareactive(),
-                          add.filter$df$filter)
 
+        shiny::observeEvent(add.filter, {
+
+            # print(str(datareactive()))
+
+            shiny::callModule(module = module_server_failed_filters,
+                              id = "check",
+                              df = datareactive(),
+                              # statements = "Species == 'setosa'")
+                              # df = datareactive(),
+                              statements = add.filter$df$filter)
+        })
 
 
 

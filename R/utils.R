@@ -92,6 +92,10 @@ check_individual_statement <- function(df, statement){
 
     condition_worked <- tryCatch({
 
+        # if(nchar(statement<3)){
+        #     stop("Provide statement")
+        # }
+
         # check_valid_expression
         expr <- str2expression(statement)
 
@@ -125,10 +129,15 @@ check_individual_statement <- function(df, statement){
 #'
 checked_filter <- function(df, statements){
 
+
+
     checks <- sapply(statements,
                      function(x)
                          check_individual_statement(df = df, statement = x),
                      USE.NAMES = FALSE)
+
+
+    if(any(checks)){
 
     cond_string_full <- paste(statements[checks], collapse = " & ")
     #
@@ -136,6 +145,11 @@ checked_filter <- function(df, statements){
 
     return(list(succeeded = checks,
                 filtered_df = filtered_df))
+    } else {
+
+        return(NULL)
+    }
+
 
 
 }

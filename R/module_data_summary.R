@@ -11,10 +11,8 @@ module_ui_summary <- function(id){
     ns <- shiny::NS(id)
 
 
-    shiny::tagList(
         # shiny::uiOutput(ns("summary"))
         shiny::htmlOutput(ns("summary"))
-    )
 
 }
 

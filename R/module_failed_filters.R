@@ -6,7 +6,7 @@ module_ui_failed_filters <- function(id){
 
     ns <- shiny::NS(id)
 
-    shiny::verbatimTextOutput(outputId = ns("failedfilter"))
+    shiny::uiOutput(outputId = ns("failedfilter"))
 
 
 
@@ -34,23 +34,26 @@ module_server_failed_filters <- function(input, output, session, df, statements)
 
 
 
-    output$failedfilter <- shiny::renderPrint({
+    output$failedfilter <- shiny::renderUI({
 
 
 
             print(statements)
-            states <- try({checked_filter(df,statements)})
+            states <- try({checked_filter(df,statements)})$succeeded
 
 
             if(!is.null(states)){
 
-                # return(shiny::tagList(shiny::tags$p("Filters "),
-                #                shiny::tags$b(which(states == FALSE)),
-                #                shiny::tags$p(" are invalid.")))
+                return(shiny::tagList(shiny::tags$p("Filter(s) ",
+                                                    # str(states),
+                                                    shiny::tags$b(
+                                                        paste(which(states == FALSE),
+                                                              collapse = ", ")),
+                                                   " won't be applied, due to invalid statement(s).")))
 
-                return(print(states))
+                # return(print(states))
             } else {
-                return(print("ABC"))
+                return(print(NULL))
             }
 
 

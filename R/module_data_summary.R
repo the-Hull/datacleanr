@@ -47,7 +47,7 @@ module_server_summary <- function(input,
             }))
 
 
-        } else if(class(dfs) == "summarytools"){
+        } else if(class(dfs)[1] == "summarytools"){
 
             attr(dfs, "data_info")$Data.frame <- df_label
 

@@ -104,6 +104,8 @@ datacleanr <- function(dataset){
                                                                          "Remove",
                                                                          icon = shiny::icon("trash")),
 
+                                                     shiny::br(),
+
 
                                                      module_ui_failed_filters("check"),
 
@@ -525,7 +527,7 @@ datacleanr <- function(dataset){
               server,
               # viewer = browserViewer()
               viewer = shiny::dialogViewer(dialogName = "Data Cleaning - A. Hurley",
-                                    width = 1000,
+                                    width = 1200,
                                     height = 800)
     )
 }

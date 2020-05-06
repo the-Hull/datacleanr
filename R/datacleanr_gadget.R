@@ -10,17 +10,33 @@ datacleanr <- function(dataset){
 
     df_name <- deparse(substitute(dataset))
 
-    # Panel texts:
+    # Panel texts ----------------------------
 
     text_grouping_side_panel <- shiny::tagList(shiny::h3("Overview"),
-                                shiny::br(),
-                                shiny::p("Select grouping variables for subsequent cleaning."),
-                                shiny::br(),
-                                shiny::p("Choose if you want to view an overview with or without grouping."))
+                                               shiny::br(),
+                                               shiny::p("Select grouping variables for subsequent cleaning."),
+                                               shiny::br(),
+                                               shiny::p("Choose if you want to view an overview with or without grouping."))
+
+    text_filtering_side_panel <- shiny::tagList(
+        # shiny::h3("Overview"),
+        shiny::p(
+            shiny::tags$b("Add/Remove"),
+            "text boxes and add unquoted filter statements."),
+        shiny::p("Use", shiny::tags$b("single quotes"), "for values of character/factor variables."),
+        shiny::p("Click", shiny::tags$b("'Apply Filter'"), "when you're ready."),
+        shiny::br(),
+        shiny::p("For example, valid statements for filtering",
+                 shiny::tags$b("iris"),
+                 "are:"),
+        shiny::p("Species == 'setosa'"),
+        shiny::p("Species %in% c('setosa','versicolor')"))
 
 
 
-    # define layout
+
+
+    # define layout --------------------------
 
     ui <-
         navbarPageWithInputs("datacleanr",
@@ -71,7 +87,6 @@ datacleanr <- function(dataset){
 
                                                      # Diagnostics################
                                                      # textOutput('show_inputs'),###
-                                                     #############################
 
                                                      module_ui_summary(id = "summary")
 
@@ -90,7 +105,7 @@ datacleanr <- function(dataset){
 
                                                  sidebarPanel = shiny::sidebarPanel(
 
-                                                     text_grouping_side_panel,
+                                                     text_filtering_side_panel,
 
 
                                                      shiny::br(),
@@ -124,10 +139,10 @@ datacleanr <- function(dataset){
                                                      shiny::textOutput('show_inputs'),###
                                                      verbatimTextOutput("outDF"),
 
-                                                    shiny::h2("Filter me!"),
-                                                    # MODULE UI FOR VARIABLE 1
-                                                    module_ui_filter_str(1),
-                                                    shiny::tags$div(id = 'placeholder')
+                                                     shiny::h2("Filter me!"),
+                                                     # MODULE UI FOR VARIABLE 1
+                                                     module_ui_filter_str(1),
+                                                     shiny::tags$div(id = 'placeholder')
 
 
                                                  )
@@ -135,7 +150,7 @@ datacleanr <- function(dataset){
 
 
 
-                                             ),
+                             ),
                              # TAB VIS -----------------
                              shiny::tabPanel("Visualization",
                                              value = "visu",
@@ -173,7 +188,7 @@ datacleanr <- function(dataset){
         AllInputs <- shiny::reactive({
             x <- unlist(shiny::reactiveValuesToList(input))
             paste(names(x),
-                x)
+                  x)
 
 
         })
@@ -210,7 +225,7 @@ datacleanr <- function(dataset){
 
                 paste(input$`grouptick-checkbox`, "was set!")
 
-            names(input)
+                names(input)
             } else {
 
                 "Nothing yet."
@@ -265,16 +280,16 @@ datacleanr <- function(dataset){
 
                               # df = data_summary(),
                               df =  {if(!is.null(datareactive()) &&
-                                     !input$`grouptick-checkbox`){
+                                        !input$`grouptick-checkbox`){
 
-                                      dplyr::ungroup(datareactive())
+                                  dplyr::ungroup(datareactive())
 
-                                  } else if(!is.null(datareactive()) &&
-                                            input$`grouptick-checkbox`){
+                              } else if(!is.null(datareactive()) &&
+                                        input$`grouptick-checkbox`){
 
-                                      datareactive()
+                                  datareactive()
 
-                                  }},
+                              }},
 
 
                               df_label = df_name)
@@ -283,240 +298,252 @@ datacleanr <- function(dataset){
         })
         # filter ------------------
 
-        # CREATE EMPTY DATAFRAME
-        add.filter <- shiny::reactiveValues()
+            # CREATE EMPTY DATAFRAME
+            add.filter <- shiny::reactiveValues()
 
-        add.filter$df <- data.frame(
-            "filter" = character(0),
-            stringsAsFactors = FALSE
-
-
-        )
-
-        shiny::callModule(module_server_filter_str, 1)
-
-        ## SAVE INPUTS FROM 1 INTO DATAFRAME
-        shiny::observeEvent(input[[NS(1, "filter")]], {
-            add.filter$df[1, 1] <- input[[NS(1, "filter")]]
-        })
+            add.filter$df <- data.frame(
+                "filter" = character(0),
+                stringsAsFactors = FALSE
 
 
-
-        btn <- shiny::reactiveValues(value = 1)
-
-        # ADD VARIABLES
-
-        shiny::observeEvent(input$addbutton, {
-
-            # EACH TIME THE USER CLICKS, ADD 1 TO BUTTON VALUE
-            btn$value <- btn$value + 1
-
-            ## WHEN WE USE btn$value DIRECTLY WE LOSE REACTIVITY
-            ## PASSING IT TO btn.temp AND USING btn.tmp WORKS (SOMEHOW)
-            btn.tmp <- btn$value
-
-            # CALL MODULE NUMBER params$btn
-            shiny::callModule(module_server_filter_str, btn.tmp)
-
-            # INSERT MODULE UI
-            shiny::insertUI(
-                selector = '#placeholder',
-                where = "beforeEnd",
-                ui = module_ui_filter_str(btn.tmp)
             )
-
-            ## SAVE INPUTS FROM NUMBER params$btn INTO DATAFRAME
-
-            # print(btn.tmp)
-            # print(add.filter$df)
-           shiny::observeEvent(input[[shiny::NS(btn.tmp, "filter")]], {
-               add.filter$df[btn.tmp, 1] <- input[[NS(btn.tmp, "filter")]]
-               # print(add.filter$df)
-
-
-
-            })
-
-        })
-
-        # REMOVE VARIABLES
-
-        shiny::observeEvent(input$removebutton, {
-
-            # REMOVE LAST LINE FROM DATAFRAME
-            # print(btn$value)
-            # print(add.filter$df)
-            add.filter$df <- add.filter$df[-btn$value, , drop = FALSE]
-            # print(str(add.filter$df))
-
-            # REMOVE LAST LINE MODULE UI
-            shiny::removeUI(
-                ## pass in appropriate div id
-                selector = paste0('#filt', btn$value)
-            )
-
-            # SUBTRACT 1 FROM BUTTON VALUE
-
-            if(btn$value > 1){
-                btn$value <- btn$value - 1
-            } else {
-                btn$value <- 0
-                            }
-
-        })
-
-
-        # OUTPUT DATAFRAME
-
-        output$outDF <- shiny::renderPrint({
-            print(add.filter$df)
-        })
-
-
 
         shiny::observe({
 
-            # print(str(datareactive()))
 
-            statements <- add.filter$df$filter
 
-            shiny::callModule(module = module_server_df_filter,
+
+            req(input$gobutton)
+
+
+
+            shiny::callModule(module_server_filter_str, 1)
+
+            ## SAVE INPUTS FROM 1 INTO DATAFRAME
+            shiny::observeEvent(input[[NS(1, "filter")]], {
+                add.filter$df[1, 1] <- input[[NS(1, "filter")]]
+            })
+
+
+
+            btn <- shiny::reactiveValues(value = 1)
+
+            # ADD VARIABLES
+
+            shiny::observeEvent(input$addbutton, {
+
+                # EACH TIME THE USER CLICKS, ADD 1 TO BUTTON VALUE
+                btn$value <- btn$value + 1
+
+                ## WHEN WE USE btn$value DIRECTLY WE LOSE REACTIVITY
+                ## PASSING IT TO btn.temp AND USING btn.tmp WORKS (SOMEHOW)
+                btn.tmp <- btn$value
+
+                # CALL MODULE NUMBER params$btn
+                shiny::callModule(module_server_filter_str, btn.tmp)
+
+                # INSERT MODULE UI
+                shiny::insertUI(
+                    selector = '#placeholder',
+                    where = "beforeEnd",
+                    ui = module_ui_filter_str(btn.tmp)
+                )
+
+                ## SAVE INPUTS FROM NUMBER params$btn INTO DATAFRAME
+
+                # print(btn.tmp)
+                # print(add.filter$df)
+                shiny::observeEvent(input[[shiny::NS(btn.tmp, "filter")]], {
+                    add.filter$df[btn.tmp, 1] <- input[[NS(btn.tmp, "filter")]]
+                    # print(add.filter$df)
+
+
+
+                })
+
+            })
+
+            # REMOVE VARIABLES
+
+            shiny::observeEvent(input$removebutton, {
+
+                # REMOVE LAST LINE FROM DATAFRAME
+                # print(btn$value)
+                # print(add.filter$df)
+                add.filter$df <- add.filter$df[-btn$value, , drop = FALSE]
+                # print(str(add.filter$df))
+
+                # REMOVE LAST LINE MODULE UI
+                shiny::removeUI(
+                    ## pass in appropriate div id
+                    selector = paste0('#filt', btn$value)
+                )
+
+                # SUBTRACT 1 FROM BUTTON VALUE
+
+                if(btn$value > 1){
+                    btn$value <- btn$value - 1
+                } else {
+                    btn$value <- 0
+                }
+
+            })
+
+
+            # OUTPUT DATAFRAME
+
+            output$outDF <- shiny::renderPrint({
+                print(add.filter$df)
+            })
+
+        })
+
+        filtered_df <- shiny::reactiveVal()
+
+        shiny::observe({
+
+
+            req(input$gobutton)
+
+            # statements <- add.filter$df$filter
+
+            filtered_df <- shiny::callModule(module = module_server_df_filter,
                               id = "check",
                               df = datareactive(),
-                              # statements = "Species == 'setosa'")
-                              # df = datareactive(),
-                              statements = statements)
+                              statements = add.filter$df$filter)
+
+            print(filtered_df)
         })
 
 
 
 
-# old ------------ --------------------------------------------------------
+        # old ------------ --------------------------------------------------------
 
 
-#
-#
-#         #
-#          shiny::observeEvent(input$addbutton, {
-#
-#             all_filters_lgl <- grepl("filter[0-9]+-strfilter", names(input))
-#             all_filters <- names(input)[all_filters_lgl]
-#
-#              if(any(all_filters_lgl)){
-#
-#
-#
-#             # all_filters <- sub("[ ]", replacement = "", all_filters)
-#
-#                  filter_vals <- sapply(all_filters, function(x) input[[x]], USE.NAMES = FALSE)
-#
-#                  keep <- sapply(filter_vals, nchar) > 0
-#
-#                  filter_vals <- filter_vals[keep]
-#
-# #
-# #             filter_numbers <- gsub(pattern = "[^0-9]",
-# #                                   replacement = "",
-# #                                   x = all_filters)
-#
-#             # max_filter <- which.max(filter_numbers)
-#             #
-#             # last_filter <- all_filters[max_filter]
-#
-#
-#             print(filter_vals)
-#
-#              }
-#
-#         })
-#
-#         #
-#
-#         # incrementor for button clicks
-#         filter_control <- shiny::reactiveValues(value = 1)
-#
-#
-#         # data frame to collect filter statements
-#         filter_statements <- reactiveValues()
-#
-#         filter_statements$df <- data.frame(
-#             "statement" = character(0),
-#             stringsAsFactors = FALSE
-#         )
-#
-#         shiny::observeEvent(input$addbutton, {
-#
-#             shiny::callModule(module_server_box_str_filter,
-#                               "textselect",
-#                               selector = "#placeholder",
-#                               # selector = "p",
-#                               actionbtn = filter_control$value)
-#
-#
-#
-#
-#
-#
-# #
-#             filter_control$value <- filter_control$value + 1
-#
-#         })
-#
-#
-#
-#
-#
-#
-#
-#
-#         shiny::observeEvent(input[[shiny::NS(paste0("filter",
-#                                                     filter_control$value-1),
-#                                              "strfilter")]], {
-#
-#                                                  # print(input[[shiny::NS(paste0("filter",
-#                                                  #                               filter_control$value-1),
-#                                                  #                        "strfilter")]])
-#
-#                                                  # filter_statements$df[filter_control$value - 1,
-#                                                  #                      "statements"] <- input[[shiny::NS(paste0("filter",
-#                                                  #                                                               filter_control$value -1),
-#                                                  #                                                        "strfilter ")]]
-#                                              })
-#
-#
-#
-#
-#         observeEvent(input$removebutton, {
-#
-#             # print(input$`filter1-strfilter`)
-#             # print(input$`filter2-strfilter`)
-#
-#             # active_filters <- check_active_filters(allinputs = AllInputs())
-#
-#             btn <- filter_control$value
-#             removeUI(
-#                 selector = paste0("#div-filter",filter_control$value - 1)
-#             )
-#
-#
-#             filter_control$value <- filter_control$value - 1
-#
-#             if(filter_control$value < 1){
-#                 filter_control$value <- 1
-#             }
-#
-#         })
+        #
+        #
+        #         #
+        #          shiny::observeEvent(input$addbutton, {
+        #
+        #             all_filters_lgl <- grepl("filter[0-9]+-strfilter", names(input))
+        #             all_filters <- names(input)[all_filters_lgl]
+        #
+        #              if(any(all_filters_lgl)){
+        #
+        #
+        #
+        #             # all_filters <- sub("[ ]", replacement = "", all_filters)
+        #
+        #                  filter_vals <- sapply(all_filters, function(x) input[[x]], USE.NAMES = FALSE)
+        #
+        #                  keep <- sapply(filter_vals, nchar) > 0
+        #
+        #                  filter_vals <- filter_vals[keep]
+        #
+        # #
+        # #             filter_numbers <- gsub(pattern = "[^0-9]",
+        # #                                   replacement = "",
+        # #                                   x = all_filters)
+        #
+        #             # max_filter <- which.max(filter_numbers)
+        #             #
+        #             # last_filter <- all_filters[max_filter]
+        #
+        #
+        #             print(filter_vals)
+        #
+        #              }
+        #
+        #         })
+        #
+        #         #
+        #
+        #         # incrementor for button clicks
+        #         filter_control <- shiny::reactiveValues(value = 1)
+        #
+        #
+        #         # data frame to collect filter statements
+        #         filter_statements <- reactiveValues()
+        #
+        #         filter_statements$df <- data.frame(
+        #             "statement" = character(0),
+        #             stringsAsFactors = FALSE
+        #         )
+        #
+        #         shiny::observeEvent(input$addbutton, {
+        #
+        #             shiny::callModule(module_server_box_str_filter,
+        #                               "textselect",
+        #                               selector = "#placeholder",
+        #                               # selector = "p",
+        #                               actionbtn = filter_control$value)
+        #
+        #
+        #
+        #
+        #
+        #
+        # #
+        #             filter_control$value <- filter_control$value + 1
+        #
+        #         })
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        #         shiny::observeEvent(input[[shiny::NS(paste0("filter",
+        #                                                     filter_control$value-1),
+        #                                              "strfilter")]], {
+        #
+        #                                                  # print(input[[shiny::NS(paste0("filter",
+        #                                                  #                               filter_control$value-1),
+        #                                                  #                        "strfilter")]])
+        #
+        #                                                  # filter_statements$df[filter_control$value - 1,
+        #                                                  #                      "statements"] <- input[[shiny::NS(paste0("filter",
+        #                                                  #                                                               filter_control$value -1),
+        #                                                  #                                                        "strfilter ")]]
+        #                                              })
+        #
+        #
+        #
+        #
+        #         observeEvent(input$removebutton, {
+        #
+        #             # print(input$`filter1-strfilter`)
+        #             # print(input$`filter2-strfilter`)
+        #
+        #             # active_filters <- check_active_filters(allinputs = AllInputs())
+        #
+        #             btn <- filter_control$value
+        #             removeUI(
+        #                 selector = paste0("#div-filter",filter_control$value - 1)
+        #             )
+        #
+        #
+        #             filter_control$value <- filter_control$value - 1
+        #
+        #             if(filter_control$value < 1){
+        #                 filter_control$value <- 1
+        #             }
+        #
+        #         })
 
 
 
 
-    # END ---------------------------
-            observeEvent(input$done, {
-                stopApp("Done")
-            })
-            observeEvent(input$cancel, {
-                stopApp(NULL)
-            })
+        # END ---------------------------
+        observeEvent(input$done, {
+            stopApp("Done")
+        })
+        observeEvent(input$cancel, {
+            stopApp(NULL)
+        })
 
 
 
@@ -525,11 +552,11 @@ datacleanr <- function(dataset){
 
 
     shiny::runGadget(ui,
-              server,
-              # viewer = browserViewer()
-              viewer = shiny::dialogViewer(dialogName = "Data Cleaning - A. Hurley",
-                                    width = 1200,
-                                    height = 800)
+                     server,
+                     # viewer = browserViewer()
+                     viewer = shiny::dialogViewer(dialogName = "Data Cleaning - A. Hurley",
+                                                  width = 1200,
+                                                  height = 800)
     )
 }
 

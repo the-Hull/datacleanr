@@ -12,25 +12,27 @@ datacleanr <- function(dataset){
 
     # Panel texts ----------------------------
 
-    text_grouping_side_panel <- shiny::tagList(shiny::h3("Overview"),
+    text_grouping_side_panel <- shiny::tagList(shiny::h4(shiny::tags$strong("Overview")),
                                                shiny::br(),
                                                shiny::p("Select grouping variables for subsequent cleaning."),
                                                shiny::br(),
                                                shiny::p("Choose if you want to view an overview with or without grouping."))
 
     text_filtering_side_panel <- shiny::tagList(
-        # shiny::h3("Overview"),
-        shiny::p(
-            shiny::tags$b("Add/Remove"),
-            "text boxes and add unquoted filter statements."),
+        # shiny::p(
+        # shiny::tags$b("Add/Remove"),
+        # "text boxes and add unquoted filter statements."),
         shiny::p("Use", shiny::tags$b("single quotes"), "for values of character/factor variables."),
         shiny::p("Click", shiny::tags$b("'Apply Filter'"), "when you're ready."),
-        shiny::br(),
-        shiny::p("For example, valid statements for filtering",
-                 shiny::tags$b("iris"),
-                 "are:"),
-        shiny::p("Species == 'setosa'"),
-        shiny::p("Species %in% c('setosa','versicolor')"))
+        shiny::tags$p("For example, valid statements for filtering",
+                      shiny::tags$b("iris"),
+                      "are:"),
+        shiny::tags$ol(
+            shiny::tags$li(shiny::tags$small("Species == 'setosa'")),
+            shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')")))
+
+
+    )
 
 
 
@@ -103,15 +105,13 @@ datacleanr <- function(dataset){
 
                                              shiny::sidebarLayout(
 
+
                                                  sidebarPanel = shiny::sidebarPanel(
 
-                                                     text_filtering_side_panel,
+                                                     shiny::h4(shiny::tags$strong("Filter Statements")),
 
 
-                                                     shiny::br(),
 
-
-                                                     shiny::h4("Filter Statement"),
                                                      shiny::actionButton("addbutton",
                                                                          "Add",
                                                                          icon = shiny::icon("plus-circle")),
@@ -123,10 +123,15 @@ datacleanr <- function(dataset){
                                                      shiny::br(),
 
 
+                                                     text_filtering_side_panel,
+
+
+                                                     shiny::br(),
+
+
                                                      module_ui_df_filter("check"),
 
-
-
+                                                     module_ui_apply_reset("appfilt"),
 
 
 
@@ -154,7 +159,19 @@ datacleanr <- function(dataset){
                              # TAB VIS -----------------
                              shiny::tabPanel("Visualization",
                                              value = "visu",
-                                             icon = shiny::icon("chart-area")),
+                                             icon = shiny::icon("chart-area"),
+
+                                             shiny::sidebarLayout(
+                                                 sidebarPanel = shiny::sidebarPanel(width = 3),
+                                                 mainPanel = shiny::mainPanel(width = 9,
+                                                     module_ui_group_selector_table("dtgrouprow")
+                                                 )
+                                             )
+
+                                             )
+
+
+                             ,
                              # EXTRACT VIS -------------
                              shiny::tabPanel("Extraction",
                                              value = "extract",
@@ -298,15 +315,15 @@ datacleanr <- function(dataset){
         })
         # filter ------------------
 
-            # CREATE EMPTY DATAFRAME
-            add.filter <- shiny::reactiveValues()
+        # CREATE EMPTY DATAFRAME
+        add.filter <- shiny::reactiveValues()
 
-            add.filter$df <- data.frame(
-                "filter" = character(0),
-                stringsAsFactors = FALSE
+        add.filter$df <- data.frame(
+            "filter" = character(0),
+            stringsAsFactors = FALSE
 
 
-            )
+        )
 
         shiny::observe({
 
@@ -350,12 +367,8 @@ datacleanr <- function(dataset){
                 )
 
                 ## SAVE INPUTS FROM NUMBER params$btn INTO DATAFRAME
-
-                # print(btn.tmp)
-                # print(add.filter$df)
                 shiny::observeEvent(input[[shiny::NS(btn.tmp, "filter")]], {
                     add.filter$df[btn.tmp, 1] <- input[[NS(btn.tmp, "filter")]]
-                    # print(add.filter$df)
 
 
 
@@ -368,8 +381,6 @@ datacleanr <- function(dataset){
             shiny::observeEvent(input$removebutton, {
 
                 # REMOVE LAST LINE FROM DATAFRAME
-                # print(btn$value)
-                # print(add.filter$df)
                 add.filter$df <- add.filter$df[-btn$value, , drop = FALSE]
                 # print(str(add.filter$df))
 
@@ -398,7 +409,7 @@ datacleanr <- function(dataset){
 
         })
 
-        filtered_df <- shiny::reactiveVal()
+        filtered_data <- shiny::reactiveValues()
 
         shiny::observe({
 
@@ -407,13 +418,44 @@ datacleanr <- function(dataset){
 
             # statements <- add.filter$df$filter
 
-            filtered_df <- shiny::callModule(module = module_server_df_filter,
-                              id = "check",
-                              df = datareactive(),
-                              statements = add.filter$df$filter)
+            filtered_data$df <- shiny::callModule(module = module_server_df_filter,
+                                             id = "check",
+                                             df = datareactive(),
+                                             statements = add.filter$df$filter)
 
-            print(filtered_df)
+            # print(filtered_data$df)
         })
+
+
+        # plot_df <- shiny::reactiveVal()
+
+        plot_df <- shiny::callModule(module = module_server_apply_reset,
+                                     id = "appfilt",
+                                     df_filtered = filtered_data$df,
+                                     df_original = datareactive())
+
+
+        # group vis table
+
+        # shiny::observe({
+
+
+            # req(input$gobutton)
+
+            print(plot_df())
+
+            shiny::callModule(module_server_group_selector_table,
+                              id = "dtgrouprow",
+                              # df = if(req(plot_df)){
+                              #     plot_df
+                              # } else {
+                              #     datareactive()
+                              df = plot_df())
+
+
+        # })
+
+
 
 
 

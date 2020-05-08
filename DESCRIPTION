@@ -23,4 +23,5 @@ Imports:
     htmltools,
     summarytools,
     dplyr,
-    rlang
+    rlang,
+    DT

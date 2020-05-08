@@ -6,17 +6,11 @@
 #'
 get_factor_cols_idx <- function(x){
 
-
     if(ncol(x) < 1){
         stop("Error: Elements of your input vector do not have the same length!")
-
     }
-
-
-
     return(!unname(unlist(lapply(x, is.numeric))))
 }
-
 
 
 #' Navbar with Input
@@ -41,16 +35,6 @@ navbarPageWithInputs <- function(..., inputs) {
     navbar
 }
 
-
-
-
-
-
-
-
-
-
-
 #' Applies grouping to data set conditionally
 #'
 #' @param df data frame
@@ -61,18 +45,11 @@ navbarPageWithInputs <- function(..., inputs) {
 apply_data_set_up <- function(df, group){
 
     if(is.null(group)){
-
         return(df)
-
     } else {
-
         group <- rlang::syms(group)
-
         dplyr::group_by(df, !!! group)
-
     }
-
-
 }
 
 
@@ -92,36 +69,18 @@ check_individual_statement <- function(df, statement){
 
     condition_worked <- tryCatch({
 
-        # if(nchar(statement<3)){
-        #     stop("Provide statement")
-        # }
-
-        # check_valid_expression
         expr <- str2expression(statement)
 
-        # filter_try <- try({dplyr::filter(df,
-        # filter_try <- try({base::subset(df,
-        #                                 eval(expr))},
-        #                   silent = TRUE)
         filter_try <- base::subset(df,
-                                        eval(expr))
+                                   eval(expr))
+        return(TRUE)
+    },
 
-        # if(is.error(filter_try)){
-            # stop("failed due to invalid expression")
-        # } else {
-            return(TRUE)
-        # }
-        },
-
-        error = function(cond){
-            # message("Original error:")
-            # message(cond)
-            # message("\n----\n")
-            return(FALSE)
-        })
+    error = function(cond){
+        return(FALSE)
+    })
     return(condition_worked)
 }
-
 
 #' Filter a data frame with series of statements
 #'
@@ -134,40 +93,25 @@ checked_filter <- function(df, statements){
 
     is.error <- function(x) inherits(x, "try-error")
 
-
-    # checks <- lapply(statements,
-    #                  function(x)
-    #                      try({check_individual_statement(df = df, statement = x)}))
     checks <- sapply(statements,
                      function(x)
-                        check_individual_statement(df = df, statement = x))
-
-
-
-    # checks <- !vapply(checks, is.error, logical(1))
-
-
+                         check_individual_statement(df = df,
+                                                    statement = x))
 
     if(any(checks)){
 
-    cond_string_full <- paste(statements[checks], collapse = " & ")
-    #
-    filtered_df <- base::subset(df, eval(str2expression(cond_string_full)))
+        cond_string_full <- paste(statements[checks],
+                                  collapse = " & ")
+        filtered_df <- base::subset(df,
+                                    eval(str2expression(cond_string_full)))
 
-    return(list(succeeded = checks,
-                filtered_df = filtered_df))
+        return(list(succeeded = checks,
+                    filtered_df = filtered_df))
     } else {
 
         return(list(succeeded = checks))
     }
-
-
-
 }
-
-
-
-
 
 #' Identify filter inputs by id and label
 #'

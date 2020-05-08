@@ -2,7 +2,7 @@
 % Please edit documentation in R/module_filter_df.R
 \name{module_server_df_filter}
 \alias{module_server_df_filter}
-\title{Title}
+\title{Server Module: filter info text and filtered df output}
 \usage{
 module_server_df_filter(input, output, session, df, statements)
 }
@@ -14,8 +14,8 @@ module_server_df_filter(input, output, session, df, statements)
 \item{statements}{character, lengths >= 0, with (valid) statements for \code{\link{base::subset}}}
 }
 \value{
-df, either filtered or original, based on validitz of \code{statements}
+df, either filtered or original, based on validity of \code{statements}
 }
 \description{
-Title
+Server Module: filter info text and filtered df output
 }

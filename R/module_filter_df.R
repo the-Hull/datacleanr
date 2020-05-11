@@ -85,8 +85,13 @@ module_server_df_filter <- function(input, output, session, df, statements){
     })
 
     if(any(states)){
+        # print("this yeah.")
+        # print(out$filtered_df)
         return(out$filtered_df)
-    } else {
+    } else if(all(!states)){
+        # print("heeere")
+        # print(df)
+
         return(df)
     }
 }

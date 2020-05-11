@@ -142,7 +142,7 @@ datacleanr <- function(dataset){
 
 
                                                      shiny::textOutput('show_inputs'),###
-                                                     verbatimTextOutput("outDF"),
+                                                     shiny::verbatimTextOutput("outDF"),
 
                                                      shiny::h2("Filter me!"),
                                                      # MODULE UI FOR VARIABLE 1
@@ -409,12 +409,13 @@ datacleanr <- function(dataset){
 
         })
 
-        filtered_data <- shiny::reactiveValues()
+        filtered_data <- shiny::reactiveValues(df = NULL)
 
+        # filtered_data <- shiny::reactive({
         shiny::observe({
 
 
-            req(input$gobutton)
+            # shiny::req(input$gobutton)
 
             # statements <- add.filter$df$filter
 
@@ -423,37 +424,55 @@ datacleanr <- function(dataset){
                                              df = datareactive(),
                                              statements = add.filter$df$filter)
 
-            # print(filtered_data$df)
+            print(paste("filter output in app is:", nrow(filtered_data$df)))
+
+            print(str(add.filter$df$filter))
         })
 
 
-        # plot_df <- shiny::reactiveVal()
 
-        plot_df <- shiny::callModule(module = module_server_apply_reset,
+
+        plot_df <- shiny::reactiveValues(df = NULL)
+
+        # plot_df <- shiny::reactive({
+        # shiny::observe({
+        #
+        #     print(paste("testiiing", nrow(filtered_data$df)))
+
+        plot_df$df <- shiny::callModule(module = module_server_apply_reset,
                                      id = "appfilt",
-                                     df_filtered = filtered_data$df,
+                                     df_filtered = filtered_data,
                                      df_original = datareactive())
+
+        # })
 
 
         # group vis table
 
-        # shiny::observe({
+        shiny::observe({
+        # shiny::observeEvent(input$gobutton, {
 
 
-            # req(input$gobutton)
-
-            print(plot_df())
-
-            shiny::callModule(module_server_group_selector_table,
-                              id = "dtgrouprow",
-                              # df = if(req(plot_df)){
-                              #     plot_df
-                              # } else {
-                              #     datareactive()
-                              df = plot_df())
+            req(input$gobutton)
 
 
-        # })
+
+            # if(shiny::isTruthy(input$gobutton) | shiny::isTruthy(input$applyfilter)){
+
+
+                shiny::callModule(module_server_group_selector_table,
+                                  id = "dtgrouprow",
+                                  # df = if(req(plot_df)){
+                                  #     plot_df
+                                  # } else {
+                                  #     datareactive()
+                                  df = plot_df)
+
+            # }
+
+
+
+        })
 
 
 

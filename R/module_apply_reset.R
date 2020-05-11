@@ -25,22 +25,45 @@ module_ui_apply_reset <- function(id){
 #'
 module_server_apply_reset <- function(input, output, session, df_filtered, df_original){
 
-    output <- shiny::reactiveVal()
+    ns <- session$ns
 
-    shiny::observeEvent(input[["applyfilter"]], {
-        output <- df_filtered
-        print(nrow(output))
-        print("Applied")
-        print(output)
+
+    output <- shiny::reactiveValues(data = NULL)
+
+
+    shiny::observeEvent(input$applyfilter, {
+
+
+        output$data <- df_filtered$df
+       print(paste("applied filter!!! filter input was:", nrow(df_filtered$df),
+                   "filter output is:", nrow(output$data)))
+        # print("Applied")
         # print(dplyr::is.grouped_df(output))
-        print(dplyr::group_vars(output))
+        # print(dplyr::group_vars(output$data))
     })
 
-    shiny::observeEvent(input[["resetfilter"]], {
-        output <- df_original
-        print(nrow(output))
-        print("Reset")
-        print(dplyr::group_vars(output))
+    shiny::observeEvent(input$resetfilter, {
+
+
+        output$data <- df_original
+
+        print(paste("reset filter!!! origina input was:", nrow(df_original),
+                    "reset output is:", nrow(output$data)))
+
+        # print("Reset")
+        # print(dplyr::group_vars(output$data))
     })
+
+    # shiny::observeEvent(input[[ns("gobutton")]], {
+    #     output$data <- df_original
+    #     print(nrow(output$data))
+    #     print("No filtering")
+    #     print(output$data)
+    #     # print(dplyr::is.grouped_df(output))
+    #     print(dplyr::group_vars(output$data))
+    # })
+
+
+
     return(output)
 }

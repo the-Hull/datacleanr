@@ -10,7 +10,7 @@
 #' @param id Character string
 #'
 module_ui_group_selector_table <- function(id) {
-    ns <- NS(id)
+    ns <- shiny::NS(id)
 
 
             shiny::tagList(
@@ -33,7 +33,7 @@ module_server_group_selector_table <- function(input, output, session, df){
     ns = session$ns
 
 
-    output$grouptable <- DT::renderDT(iris,
+    output$grouptable <- DT::renderDT(df$df$data,
                                     selection = 'single')
     # output$grouptable <- DT::renderDT(df,
     #                                   options = list(selection = 'single'))
@@ -46,7 +46,6 @@ module_server_group_selector_table <- function(input, output, session, df){
     output$selected_row <- shiny::renderText({
 
     dt_selected_row <- input$grouptable_rows_selected
-        req(input$gobutton)
 
         # if(req(dt_selected_row)){
             paste0("Selected Row is: ", dt_selected_row)

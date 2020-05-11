@@ -57,13 +57,13 @@ module_server_box_str_filter <- function(input,
 #' @param id Character string
 #'
 module_ui_filter_str <- function(id) {
-    ns <- NS(id)
+    ns <- shiny::NS(id)
 
     shiny::tags$div(
         id=paste0("filt", id),
-        fluidRow(
+        shiny::fluidRow(
 
-                uiOutput(ns('filter'))
+                shiny::uiOutput(ns('filter'))
 
         )
     )
@@ -80,7 +80,7 @@ module_ui_filter_str <- function(id) {
 module_server_filter_str <- function(input, output, session){
     ns = session$ns
 
-    output$filter <- renderUI({
+    output$filter <- shiny::renderUI({
         shiny::textInput(
             inputId = ns("filter"),
             label = paste0("Filter ", strsplit(x = ns(""), split = "-")),

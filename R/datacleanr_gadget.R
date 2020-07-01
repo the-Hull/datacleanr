@@ -162,13 +162,14 @@ datacleanr <- function(dataset){
                                              icon = shiny::icon("chart-area"),
 
                                              shiny::sidebarLayout(
-                                                 sidebarPanel = shiny::sidebarPanel(width = 3),
+                                                 sidebarPanel = shiny::sidebarPanel(width = 3,
+                                                                                    module_ui_group_selector_table("dtgrouprow")),
                                                  mainPanel = shiny::mainPanel(width = 9,
-                                                     module_ui_group_selector_table("dtgrouprow")
-                                                 )
+
+                                                                              module_ui_plot_selectable("plot"))
                                              )
 
-                                             )
+                             )
 
 
                              ,
@@ -420,19 +421,24 @@ datacleanr <- function(dataset){
             # statements <- add.filter$df$filter
 
             filtered_data$df <- shiny::callModule(module = module_server_df_filter,
-                                             id = "check",
-                                             df = datareactive(),
-                                             statements = add.filter$df$filter)
+                                                  id = "check",
+                                                  df = datareactive(),
+                                                  statements = add.filter$df$filter)
 
             print(paste("filter output in app is:", nrow(filtered_data$df)))
 
             print(str(add.filter$df$filter))
+
+            print("testing")
+            print(str(datareactive()))
         })
 
 
 
 
         plot_df <- shiny::reactiveValues(df = NULL)
+        selected_row <- shiny::reactiveValues(group_row = NULL)
+
 
         # plot_df <- shiny::reactive({
         # shiny::observe({
@@ -440,35 +446,87 @@ datacleanr <- function(dataset){
         #     print(paste("testiiing", nrow(filtered_data$df)))
 
         plot_df$df <- shiny::callModule(module = module_server_apply_reset,
-                                     id = "appfilt",
-                                     df_filtered = filtered_data,
-                                     df_original = datareactive())
+                                        id = "appfilt",
+                                        df_filtered = filtered_data,
+                                        df_original = datareactive)
 
         # })
 
 
         # group vis table
 
-        shiny::observe({
-        # shiny::observeEvent(input$gobutton, {
+
+        # shiny::observe({
+        # shiny::reactive({
+            shiny::observeEvent({
+                input$gobutton
+                input$`appfilt-applyfilter`
+                input$`appfilt-applyreset`
+                1},
+                {
+
+                    if(is.null(plot_df$df$data)){
+
+                        plot_df$df$data <- datareactive()
+                    }
 
 
-            req(input$gobutton)
+
+
+
+                    if(!is.null(plot_df$df$data)){
+
+
+            # selected_row$group_row <- NULL
+
 
 
 
             # if(shiny::isTruthy(input$gobutton) | shiny::isTruthy(input$applyfilter)){
 
 
-                shiny::callModule(module_server_group_selector_table,
-                                  id = "dtgrouprow",
-                                  # df = if(req(plot_df)){
-                                  #     plot_df
-                                  # } else {
-                                  #     datareactive()
-                                  df = plot_df)
+            shiny::callModule(module_server_group_selector_table,
+                              id = "dtgrouprow",
+                              # df = if(req(plot_df)){
+                              #     plot_df
+                              # } else {
+                              #     datareactive()
+                              df = plot_df,
+                              df_label = df_name)
+            }
+        })
 
-            # }
+
+
+# CONTINUE HERE -----------------------------------------------------------
+
+
+
+        # shiny::observeEvent(input$`plot-scatterstart`, {
+        shiny::observe({
+
+        selected_row$group_row <- input$`dtgrouprow-grouptable_rows_selected`
+
+
+
+            if(!is.null(plot_df$df$data)){
+
+
+            shiny::callModule(module_server_plot_selectable,
+                              id = "plot",
+                              # df = if(req(plot_df)){
+                              #     plot_df
+                              # } else {
+                              #     datareactive()
+                              df = plot_df,
+                              group_row = selected_row)
+
+
+
+
+            }
+
+
 
 
 
@@ -614,10 +672,11 @@ datacleanr <- function(dataset){
 
     shiny::runGadget(ui,
                      server,
-                     # viewer = browserViewer()
-                     viewer = shiny::dialogViewer(dialogName = "Data Cleaning - A. Hurley",
-                                                  width = 1200,
-                                                  height = 800)
+                     viewer = shiny::browserViewer()
+                     # viewer = shiny::dialogViewer(dialogName = "Data Cleaning - A. Hurley",
+                     #                              width = 1200,
+                     #                              height = 800)
+
     )
 }
 

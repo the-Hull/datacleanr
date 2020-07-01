@@ -24,4 +24,5 @@ Imports:
     summarytools,
     dplyr,
     rlang,
-    DT
+    DT,
+    magrittr

@@ -28,6 +28,7 @@ module_server_apply_reset <- function(input, output, session, df_filtered, df_or
     ns <- session$ns
 
 
+
     output <- shiny::reactiveValues(data = NULL)
 
 
@@ -45,13 +46,15 @@ module_server_apply_reset <- function(input, output, session, df_filtered, df_or
     shiny::observeEvent(input$resetfilter, {
 
 
-        output$data <- df_original
+        print("before")
+        print(dplyr::group_vars(df_original()))
+        output$data <- df_original()
 
-        print(paste("reset filter!!! origina input was:", nrow(df_original),
+        print(paste("reset filter!!! origina input was:", nrow(df_original()),
                     "reset output is:", nrow(output$data)))
 
-        # print("Reset")
-        # print(dplyr::group_vars(output$data))
+        print("Reset")
+        print(dplyr::group_vars(output$data))
     })
 
     # shiny::observeEvent(input[[ns("gobutton")]], {

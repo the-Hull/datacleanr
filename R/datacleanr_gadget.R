@@ -73,7 +73,8 @@ datacleanr <- function(dataset){
 
                                                      shiny::actionButton("gobutton",
                                                                          "Start",
-                                                                         icon = shiny::icon("rocket")),
+                                                                         icon = shiny::icon("rocket"),
+                                                                         class = "btn-info"),
 
                                                      # shiny::textOutput("checkworked"),
 
@@ -165,7 +166,7 @@ datacleanr <- function(dataset){
                                                  sidebarPanel = shiny::sidebarPanel(width = 3,
                                                                                     module_ui_group_selector_table("dtgrouprow")),
                                                  mainPanel = shiny::mainPanel(width = 9,
-
+                                                                              module_ui_plot_selectorcontrols("selectors"),
                                                                               module_ui_plot_selectable("plot"))
                                              )
 
@@ -173,7 +174,7 @@ datacleanr <- function(dataset){
 
 
                              ,
-                             # EXTRACT VIS -------------
+                             # TAB EXTRACT -------------
                              shiny::tabPanel("Extraction",
                                              value = "extract",
                                              icon = shiny::icon("file-export")),
@@ -233,10 +234,6 @@ datacleanr <- function(dataset){
 
         shiny::outputOptions(output, "gvar", suspendWhenHidden = FALSE)
 
-
-
-
-
         output$checkworked <- shiny::renderPrint({
 
             if(shiny::req(input$`grouptick-checkbox`)){
@@ -253,16 +250,12 @@ datacleanr <- function(dataset){
 
         # handle initialization
         datareactive <- shiny::reactiveVal()
-
         datareactive <- shiny::eventReactive(input$gobutton, {
 
             df <- apply_data_set_up(df = dataset, gvar())
 
             return(df)
         })
-
-
-
 
         shiny::observe({print(gvar())})
         shiny::observe({print(input$`grouptick-checkbox`)})
@@ -271,32 +264,12 @@ datacleanr <- function(dataset){
 
         # summary -------------------
 
-        # Add grouping selectors
-        # shiny::observe({
+        # handle summary operations when go button is hit
         shiny::observeEvent(input$gobutton, {
-
-            # shiny::req(datareactive())
-            # datanonreactive <- datareactive()
-
-
-
-            # account for grouptick in printing
-
-            # data_summary <- shiny::reactive({
-
-
-
-
-
-            # })
-
 
 
             shiny::callModule(module_server_summary,
                               "summary",
-
-
-                              # df = data_summary(),
                               df =  {if(!is.null(datareactive()) &&
                                         !input$`grouptick-checkbox`){
 
@@ -306,10 +279,7 @@ datacleanr <- function(dataset){
                                         input$`grouptick-checkbox`){
 
                                   datareactive()
-
                               }},
-
-
                               df_label = df_name)
 
 
@@ -403,23 +373,16 @@ datacleanr <- function(dataset){
 
 
             # OUTPUT DATAFRAME
-
             output$outDF <- shiny::renderPrint({
                 print(add.filter$df)
             })
 
         })
 
+
         filtered_data <- shiny::reactiveValues(df = NULL)
-
-        # filtered_data <- shiny::reactive({
+        # apply filtering
         shiny::observe({
-
-
-            # shiny::req(input$gobutton)
-
-            # statements <- add.filter$df$filter
-
             filtered_data$df <- shiny::callModule(module = module_server_df_filter,
                                                   id = "check",
                                                   df = datareactive(),
@@ -427,115 +390,71 @@ datacleanr <- function(dataset){
 
             print(paste("filter output in app is:", nrow(filtered_data$df)))
 
-            print(str(add.filter$df$filter))
 
-            print("testing")
-            print(str(datareactive()))
         })
 
 
 
 
+        # set up variables for vis panel
         plot_df <- shiny::reactiveValues(df = NULL)
         selected_row <- shiny::reactiveValues(group_row = NULL)
+        selector_vals <- NULL
 
-
-        # plot_df <- shiny::reactive({
-        # shiny::observe({
-        #
-        #     print(paste("testiiing", nrow(filtered_data$df)))
 
         plot_df$df <- shiny::callModule(module = module_server_apply_reset,
                                         id = "appfilt",
                                         df_filtered = filtered_data,
                                         df_original = datareactive)
 
-        # })
+        # handle table + variable inputs
+        shiny::observeEvent({
+            input$gobutton
+            input$`appfilt-applyfilter`
+            input$`appfilt-applyreset`
+            1},
+            {
 
+                # provide data set in case filtering is skipped
+                if(is.null(plot_df$df$data)){
 
-        # group vis table
-
-
-        # shiny::observe({
-        # shiny::reactive({
-            shiny::observeEvent({
-                input$gobutton
-                input$`appfilt-applyfilter`
-                input$`appfilt-applyreset`
-                1},
-                {
-
-                    if(is.null(plot_df$df$data)){
-
-                        plot_df$df$data <- datareactive()
-                    }
+                    plot_df$df$data <- datareactive()
+                }
 
 
 
+                if(!is.null(plot_df$df$data)){
+
+                    shiny::callModule(module_server_group_selector_table,
+                                      id = "dtgrouprow",
+                                      df = plot_df,
+                                      df_label = df_name)
 
 
-                    if(!is.null(plot_df$df$data)){
-
-
-            # selected_row$group_row <- NULL
-
-
-
-
-            # if(shiny::isTruthy(input$gobutton) | shiny::isTruthy(input$applyfilter)){
-
-
-            shiny::callModule(module_server_group_selector_table,
-                              id = "dtgrouprow",
-                              # df = if(req(plot_df)){
-                              #     plot_df
-                              # } else {
-                              #     datareactive()
-                              df = plot_df,
-                              df_label = df_name)
-            }
-        })
+                    selector_vals <<- shiny::callModule(module_server_plot_selectorcontrols,
+                                                       "selectors",
+                                                       plot_df)
+                }
+            })
 
 
 
-# CONTINUE HERE -----------------------------------------------------------
-
-
-
-        # shiny::observeEvent(input$`plot-scatterstart`, {
+        # handle plotting
         shiny::observe({
 
-        selected_row$group_row <- input$`dtgrouprow-grouptable_rows_selected`
+
+            selected_row$group_row <- input$`dtgrouprow-grouptable_rows_selected`
 
 
+            if(!is.null(plot_df$df$data) ){
 
-            if(!is.null(plot_df$df$data)){
-
-
-            shiny::callModule(module_server_plot_selectable,
-                              id = "plot",
-                              # df = if(req(plot_df)){
-                              #     plot_df
-                              # } else {
-                              #     datareactive()
-                              df = plot_df,
-                              group_row = selected_row)
-
-
-
-
+                shiny::callModule(module_server_plot_selectable,
+                                  id = "plot",
+                                  df = plot_df,
+                                  group_row = selected_row,
+                                  selector_inputs = selector_vals)
             }
-
-
-
-
-
         })
-
-
-
-
-
 
         # old ------------ --------------------------------------------------------
 

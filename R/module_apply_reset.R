@@ -11,10 +11,12 @@ module_ui_apply_reset <- function(id){
 
     shiny::tagList( shiny::actionButton(inputId = ns("applyfilter"),
                                         label = "Apply",
-                                        icon = shiny::icon("check-double")),
+                                        icon = shiny::icon("check-double"),
+                                        class = "btn-info"),
                     shiny::actionButton(inputId = ns("resetfilter"),
                                         label = "Reset",
-                                        icon = shiny::icon("undo")))
+                                        icon = shiny::icon("undo"),
+                                        class = "btn-danger"))
 }
 # Server ------------------------------------------------------------------
 
@@ -36,35 +38,17 @@ module_server_apply_reset <- function(input, output, session, df_filtered, df_or
 
 
         output$data <- df_filtered$df
-       print(paste("applied filter!!! filter input was:", nrow(df_filtered$df),
-                   "filter output is:", nrow(output$data)))
-        # print("Applied")
-        # print(dplyr::is.grouped_df(output))
-        # print(dplyr::group_vars(output$data))
+        print(paste("applied filter!!! filter input was:", nrow(df_filtered$df),
+                    "filter output is:", nrow(output$data)))
     })
 
     shiny::observeEvent(input$resetfilter, {
 
 
-        print("before")
-        print(dplyr::group_vars(df_original()))
         output$data <- df_original()
 
-        print(paste("reset filter!!! origina input was:", nrow(df_original()),
-                    "reset output is:", nrow(output$data)))
-
-        print("Reset")
-        print(dplyr::group_vars(output$data))
     })
 
-    # shiny::observeEvent(input[[ns("gobutton")]], {
-    #     output$data <- df_original
-    #     print(nrow(output$data))
-    #     print("No filtering")
-    #     print(output$data)
-    #     # print(dplyr::is.grouped_df(output))
-    #     print(dplyr::group_vars(output$data))
-    # })
 
 
 

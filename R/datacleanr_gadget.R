@@ -163,9 +163,9 @@ datacleanr <- function(dataset){
                                              icon = shiny::icon("chart-area"),
 
                                              shiny::sidebarLayout(
-                                                 sidebarPanel = shiny::sidebarPanel(width = 3,
+                                                 sidebarPanel = shiny::sidebarPanel(width = 4,
                                                                                     module_ui_group_selector_table("dtgrouprow")),
-                                                 mainPanel = shiny::mainPanel(width = 9,
+                                                 mainPanel = shiny::mainPanel(width = 8,
                                                                               module_ui_plot_selectorcontrols("selectors"),
                                                                               module_ui_plot_selectable("plot"))
                                              )

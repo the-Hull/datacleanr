@@ -189,3 +189,25 @@ checked_filter <- function(df, statements){
 #
 #
 # }
+
+
+
+#' extend brewer palette
+#'
+#' @param n numeric, number of colors
+#'
+#' @return color vector of length n
+extend_palette <- function(n){
+
+    if(n < 3){
+        cols <- RColorBrewer::brewer.pal(3, "Set2")[1:n]}
+    else if(n >= 3 & n <= 8){
+        cols <- RColorBrewer::brewer.pal(n, "Set2")
+    } else {
+        cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(n)
+
+    }
+
+    return(cols)
+
+}

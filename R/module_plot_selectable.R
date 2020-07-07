@@ -100,6 +100,8 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
     }
 
 
+    # add .key ref for plot
+    plot_data$.key <- seq_len(nrow(plot_data))
 
     # if(!is.null(df$df$data)){
 
@@ -147,7 +149,26 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
         output$scatterselect <- plotly::renderPlotly({
 
 
-            rlang::eval_tidy(
+            shiny::observeEvent(plotly::event_data("plotly_click", source = "scatterselect" ,
+                                                   priority = "event"), {
+
+
+                                                       clicked <- plotly::event_data("plotly_click", source = "scatterselect" ,
+                                                                                     priority = "event")
+
+                                                       # get index of clicked point
+
+
+                                                       print(clicked)
+
+
+
+
+
+                                                   })
+
+
+            p <-  rlang::eval_tidy(
                 rlang::quo_squash(
                     rlang::quo({
 
@@ -160,14 +181,18 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
                         #                 mode = 'markers',
                         #                 showlegend = TRUE)
 
-                        plotly::plot_ly(data = plot_data) %>%
+                        plotly::plot_ly(data = plot_data,
+                                        source = "scatterselect") %>%
                             plotly::add_markers(x = ~ !!selector_inputs$xvar,
                                                 y = ~ !!selector_inputs$yvar,
                                                 color = ~as.factor(.index),
                                                 colors = col_value_vector,
                                                 type = 'scatter',
+                                                customdata = ~.dcrkey,
                                                 showlegend = TRUE) %>%
-                            plotly::layout(showlegend = TRUE)
+                            plotly::layout(showlegend = TRUE,
+                                           dragmode = "lasso") %>%
+                            plotly::event_register(event = "plotly_click")
 
 
                         # plotly::plot_ly(data = plot_data,
@@ -183,9 +208,12 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
                     })
                 )
-            )
+            ) #\ eval_tidy
 
 
+
+
+            plotly::plotly_build(p)
 
 
 

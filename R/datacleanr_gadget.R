@@ -254,6 +254,11 @@ datacleanr <- function(dataset){
 
             df <- apply_data_set_up(df = dataset, gvar())
 
+
+            # add .key ref for plot
+            df$.dcrkey <- seq_len(nrow(df))
+
+
             return(df)
         })
 

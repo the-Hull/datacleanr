@@ -211,3 +211,42 @@ extend_palette <- function(n){
     return(cols)
 
 }
+
+
+#' handle plotly selections
+#'
+#' @param old numeric or NULL
+#' @param new numeric or NULL
+#'
+#' @return numeric or NULL
+#'
+handle_selection <- function(old, new){
+
+
+
+    if(length(new)==0 & length(old) == 0){
+        sel <- NULL
+        print("no selected points")
+
+    } else if (length(new)==0 & length(old) > 0){
+
+        sel <- old
+        print("selection was empty")
+
+    } else if (any(new %in% old)) {
+        sel <- setdiff(old, new)
+        print("removing duplicates via selection")
+
+    } else {
+        sel <- c(new, old)
+        print("adding new points via selection")
+    }
+
+    print("data after selection is")
+    print(sel)
+
+    return(sel)
+
+
+}
+

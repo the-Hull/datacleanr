@@ -42,11 +42,11 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
         shiny::fluidRow(
             column(4, shiny::varSelectInput(ns('xvar'),
                                             label = "X Var",
-                                            data = df$df$data)),
+                                            data = df$df$data[ , colnames(df$df$data)!=".dcrkey"])),
             column(4,
                    shiny::varSelectInput(ns('yvar'),
                                          label = "Y Var",
-                                         data = df$df$data)),
+                                         data = df$df$data[ , colnames(df$df$data)!=".dcrkey"])),
             column(1,
                    style = "margin-top: 25px;",
                    shiny::actionButton(ns('startscatter'),

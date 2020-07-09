@@ -34,19 +34,31 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
 
 
     table_dat <- df$df$data[df$df$data$.dcrkey %in% sel_points, ]
-    table_dat$.annotation <- ""
+
+    if(nrow(table_dat)>0){
+        table_dat$.annotation <- ""
+    }
+
+
+    str(table_dat)
 
 
 
     disable_cols <- which(colnames(table_dat) != ".annotation")
+    #print(paste("disable", disable_cols))
 
 
-    columns2hide <- match(".dcrkey", colnames(table_dat)) - 1
+    columns2hide <- base::match(".dcrkey", colnames(table_dat))
 
-    output$dtannotation <- DT::renderDT(table_dat,
-                                        options = list(columnDefs = list(list(visible=FALSE, targets=columns2hide))),
-                                        editable = list(target = "column",
-                                                        disable = disable_cols))
+
+    shiny::observe({
+
+        output$dtannotation <- DT::renderDT(table_dat,
+                                            options = list(columnDefs = list(list(visible=FALSE, targets=columns2hide))),
+                                            editable = list(target = "column",
+                                                            disable = list(columns = disable_cols)))
+
+    })
 
     annotations <- NULL
 
@@ -56,26 +68,40 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
 
         if(length(sel_points > 0)){
             table_dat <<- DT::editData(table_dat, input$dtannotation_cell_edit, 'dtannotation')
-            print("table was edited")
+            #print("table was edited")
             annotations <- table_dat[ ,c(".dcrkey", ".annotation")]
-            print(annotations)
+            #print(annotations)
 
         }
     })
 
 
-    shiny::observeEvent({plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
+
+    shiny::observeEvent({
+        # plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
         plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
-        1}, {
 
-            req(table_dat)
-            table_dat <<- df$df$data[df$df$data$.dcrkey %in% sel_points, ]
+        # 1}, {
+    }, {
 
-        print("cleared annotations")
+        # req(table_dat)
+        if(nrow(table_dat) > 0){
+
+            #print("cleared annotations")
+            # table_dat <<- table_dat[0, ]
+            table_dat$.annotation <<- ""
+            #print("this is new table dat")
+            #print(table_dat)
+
+            # annotation <<- NULL
+
+        }
+
+
     })
 
     # annotations <- shiny::reactiveVal({table_dat[ ,c(".dcrkey", ".annotation")]})
-    # print(annotations())
+    # #print(annotations())
 
 
 

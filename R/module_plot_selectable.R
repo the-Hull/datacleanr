@@ -73,7 +73,7 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
 
 
-    coldf <- merge(data.frame(.index = as.factor(dplyr::group_indices(tmp_data))),
+    coldf <- base::merge(data.frame(.index = as.factor(dplyr::group_indices(tmp_data))),
                    cols)
 
     tmp_data <- dplyr::bind_cols(tmp_data, coldf)
@@ -103,6 +103,13 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
 
     opacity <- ifelse(plot_data$.dcrkey %in% sel_points, 0.25, 0.9)
+    plot_data$.opacity <- opacity
+
+
+    print("-------AGAIN-------")
+    print(sel_points)
+
+
     # adjust selection
     # alpha <- ifelse(plot_data$.dcrkey %in% sel_points, 0.75, 0.35)
 
@@ -175,6 +182,9 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
             #
             #
 
+    View(coldf)
+    View(plot_data)
+    View(col_value_vector)
 
 
 
@@ -184,12 +194,13 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
 
                         print("redrawing")
+                        # plotly::plot_ly(data = tidyr::drop_na(plot_data),
                         plotly::plot_ly(data = plot_data,
-                                        source = "scatterselect",
-                                        marker = list(size = 7,
-                                                      line = list(color = col2plotlyrgba("gray60", 0.9),
-                                                      width = 1)
-                                        )
+                                        source = "scatterselect"
+                                        # marker = list(size = 7,
+                                        #               line = list(color = col2plotlyrgba("gray60", 0.9),
+                                        #               width = 1)
+                                        # )
                         ) %>%
                             plotly::add_markers(x = ~ !!selector_inputs$xvar,
                                                 y = ~ !!selector_inputs$yvar,
@@ -198,12 +209,12 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
                                                 type = 'scatter',
                                                 customdata = ~.dcrkey,
                                                 showlegend = TRUE,
-                                                marker = list(opacity = opacity,
+                                                marker = list(opacity = ~.opacity,
                                                               line = list(color = col2plotlyrgba("gray60", 0.9),
-                                                                          width = 1)),
-                                                unselected = list(marker = list(opacity = 0.9))
-                                                # opacity = opacity) %>%
-                                                ) %>%
+                                                                          width = 1))) %>%
+                                                # ,
+                                                # unselected = list(marker = list(opacity = 0.9))) %>%
+                                                # opacity = ~.opacity) %>%
                             plotly::layout(showlegend = TRUE,
                                            # dragmode =  FALSE
                                            dragmode = "lasso"

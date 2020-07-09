@@ -254,6 +254,11 @@ datacleanr <- function(dataset){
 
             df <- apply_data_set_up(df = dataset, gvar())
 
+
+            # add .key ref for plot
+            df$.dcrkey <- seq_len(nrow(df))
+
+
             return(df)
         })
 
@@ -432,29 +437,172 @@ datacleanr <- function(dataset){
 
 
                     selector_vals <<- shiny::callModule(module_server_plot_selectorcontrols,
-                                                       "selectors",
-                                                       plot_df)
+                                                        "selectors",
+                                                        plot_df)
+
+                    print(input[["selectors-startscatter"]])
+
+
                 }
+
             })
 
 
 
-        # handle plotting
-        shiny::observe({
 
+
+
+        # handle plotting
+        # shiny::observeEvent(selector_vals, {
+        shiny::observe({
+            # shiny::observeEvent(input[["selectors-startscatter"]], {
+
+            req(input[["selectors-startscatter"]])
 
             selected_row$group_row <- input$`dtgrouprow-grouptable_rows_selected`
 
 
-            if(!is.null(plot_df$df$data) ){
+            if(!is.null(plot_df$df$data)){
 
                 shiny::callModule(module_server_plot_selectable,
                                   id = "plot",
                                   df = plot_df,
                                   group_row = selected_row,
-                                  selector_inputs = selector_vals)
+                                  selector_inputs = selector_vals,
+                                  sel_points = selected_data())
+
+
+
             }
+
         })
+
+
+        selected_data <- shiny::reactiveVal()
+
+        # handle clicks
+        shiny::observeEvent({plotly::event_data("plotly_click", priority = "event", source = "scatterselect")}, {
+
+            shiny::req(input[["selectors-startscatter"]])
+
+            selected_data_old <- selected_data()
+
+            clicked <- event_data("plotly_click",
+                                  source = "scatterselect",
+                                  priority = "event")
+
+            print("clicked data is")
+            print(clicked)
+            selected_data_new <- clicked$customdata
+
+
+            # if(length(selected_data_new)==0){
+            #     selected_data(NULL)
+            #     print("no selected left")
+            # } else if (any(selected_data_new %in% selected_data_old)) {
+            #     selected_data(setdiff(selected_data_old, selected_data_new))
+            #     print("removing duplicates via click")
+            # } else {
+            #     selected_data(c(selected_data_new, selected_data_old))
+            #     print("adding new points via click")
+            # }
+            # print("data after click is")
+            # print(selected_data())
+
+
+            selected_data(handle_selection(old = selected_data_old,
+                                           new = selected_data_new))
+
+        })
+
+
+        # handle selections
+        shiny::observeEvent({plotly::event_data("plotly_selected", priority = "event", source = "scatterselect")}, {
+
+            shiny::req(input[["selectors-startscatter"]])
+
+            selected_data_old <- selected_data()
+
+            print("selected!")
+
+            selected <- event_data("plotly_selected",
+                                   source = "scatterselect",
+                                   priority = "event")
+
+            shiny::req(selected)
+            selected_data_new <- selected$customdata
+
+
+
+            #     if(length(selected_data_new)==0 & length(selected_data_old) == 0){
+            #         selected_data(NULL)
+            #         print("no selected points")
+            #     } else if (any(selected_data_new %in% selected_data_old)) {
+            #         selected_data(setdiff(selected_data_old, selected_data_new))
+            #         print("removing duplicates via selection")
+            #     } else {
+            #         selected_data(c(selected_data_new, selected_data_old))
+            #         print("adding new points via selection")
+            #     }
+            #     print("data after selection is")
+            #     print(selected_data())
+
+
+            selected_data(handle_selection(old = selected_data_old,
+                                           new = selected_data_new))
+        })
+
+        # clear on dbl click
+        shiny::observeEvent({plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
+            plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
+            1}, {
+
+            # shiny::req(input[["selectors-startscatter"]])
+            print("data cleared on dbl click")
+            selected_data(NULL)
+        })
+
+
+
+
+        # shiny::observeEvent({plotly::event_data("plotly_click", priority = "event", source = "scatterselect")
+        #     plotly::event_data("plotly_selected", priority = "event", source = "scatterselect")
+        #     1}, {
+        #
+        #         shiny::req(input[["selectors-startscatter"]])
+        #
+        #
+        #
+        #         clicked <- event_data("plotly_click",
+        #                               source = "scatterselect",
+        #                               priority = "event")
+        #         slctd <- event_data("plotly_selected",
+        #                             source = "scatterselect",
+        #                             priority = "event")
+        #
+        #
+        #         selected_data_new <- c(clicked$customdata,
+        #                                slctd$customdata)
+        #
+        #         if(length(selected_data_new)==0){
+        #             selected_data(NULL)
+        #             print("no points")
+        #         } else if (any(selected_data_new %in% selected_data_old)) {
+        #             selected_data(setdiff(selected_data_old, selected_data_new))
+        #             print("removing duplicates")
+        #         } else {
+        #             selected_data(c(selected_data_new, selected_data_old))
+        #             print("adding new points")
+        #         }
+        #
+        #         selected_data_new <- NULL
+        #
+        #         # }
+        #
+        #
+        #
+        #
+        #     })
 
         # old ------------ --------------------------------------------------------
 

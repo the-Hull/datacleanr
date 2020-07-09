@@ -38,14 +38,14 @@ module_ui_plot_selectable <- function(id) {
 #' @param group_row numeric, selected group_index
 #' @param df reactive df, with df as element
 #' @param selector_inputs reactive, output from module_plot_selectorcontrols
+#' @param sel_points numeric, provides .dcrkey of selected points
 #'
-#' @details provides UI text box element
-#' @details provides UI text box element
-module_server_plot_selectable <- function(input, output, session, df, group_row, selector_inputs){
+#' @details provides plot, note, that data set needs a column .dcrkey, added in initial processing step
+module_server_plot_selectable <- function(input, output, session, df, group_row, selector_inputs, sel_points){
     ns = session$ns
 
     # print(paste("sellll rooo is:", group_row$group_row))
-    print(paste("sellll rooo is:", input[[ns("dtgrouprow-grouptable_rows_selected")]]))
+    # print(paste("sellll rooo is:", input[[ns("dtgrouprow-grouptable_rows_selected")]]))
 
 
     tmp_data <- df$df$data
@@ -78,7 +78,7 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
     tmp_data <- dplyr::bind_cols(tmp_data, coldf)
 
-    print(head(tmp_data))
+    # print(head(tmp_data))
 
 
     if(!dplyr::is.grouped_df(tmp_data)){
@@ -100,6 +100,15 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
     }
 
 
+    # adjust selection
+    opacity <- ifelse(plot_data$.dcrkey %in% sel_points, 0.3, 1)
+
+    # print("opacity is")
+    # print(opacity)
+
+
+    # add .key ref for plot
+    # plot_data$.key <- seq_len(nrow(plot_data))
 
     # if(!is.null(df$df$data)){
 
@@ -138,7 +147,10 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
     # print(dplyr::group_indices(tmp_data))
     # print(dplyr::group_indices(plot_data))
     # print(coldf)
-    print(plot_data, n = 150)
+    # print(plot_data, n = 150)
+
+
+    # plotted, true or false?
 
 
 
@@ -147,28 +159,45 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
         output$scatterselect <- plotly::renderPlotly({
 
 
-            rlang::eval_tidy(
+            # clicked <- shiny::reactiveValues(event_df = NULL)
+            #
+            # shiny::observe({
+            #     clicked$event_df <- plotly::event_data("plotly_click", source = "scatterselect" ,
+            #                                   priority = "event")
+            #     })
+            #
+            #
+            #
+
+
+
+
+            p <-  rlang::eval_tidy(
                 rlang::quo_squash(
                     rlang::quo({
 
-                        # plotly::plot_ly(data = plot_data,
-                        #                 x = ~ !!selector_inputs$xvar,
-                        #                 y = ~ !!selector_inputs$yvar,
-                        #                 color = ~as.factor(.index),
-                        #                 colors = col_value_vector,
-                        #                 type = 'scatter',
-                        #                 mode = 'markers',
-                        #                 showlegend = TRUE)
 
-                        plotly::plot_ly(data = plot_data) %>%
+                        print("redrawing")
+                        plotly::plot_ly(data = plot_data,
+                                        source = "scatterselect") %>%
                             plotly::add_markers(x = ~ !!selector_inputs$xvar,
                                                 y = ~ !!selector_inputs$yvar,
                                                 color = ~as.factor(.index),
                                                 colors = col_value_vector,
                                                 type = 'scatter',
-                                                showlegend = TRUE) %>%
-                            plotly::layout(showlegend = TRUE)
-
+                                                customdata = ~.dcrkey,
+                                                showlegend = TRUE,
+                                                marker = list(opacity = opacity),
+                                                unselected = list(marker = list(opacity = 1)),
+                                                opacity = opacity) %>%
+                            plotly::layout(showlegend = TRUE,
+                                           # dragmode =  FALSE
+                                           dragmode = "lasso"
+                                           )  %>%
+                            plotly::event_register(event = "plotly_doubleclick") %>%
+                            plotly::event_register(event = "plotly_deselect") %>%
+                            plotly::event_register(event = "plotly_click") %>%
+                            plotly::event_register(event = "plotly_selected")
 
                         # plotly::plot_ly(data = plot_data,
                         #                 x = ~ !!selector_inputs$xvar,
@@ -183,9 +212,12 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
                     })
                 )
-            )
+            ) #\ eval_tidy
 
 
+
+
+            plotly::plotly_build(p)
 
 
 
@@ -205,6 +237,9 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
         })
     })
+
+
+    # )
 
 
     # }

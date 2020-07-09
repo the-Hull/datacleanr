@@ -25,4 +25,5 @@ Imports:
     dplyr,
     rlang,
     DT,
-    magrittr
+    magrittr,
+    plotly

@@ -61,11 +61,11 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
     }
 
     # adjust colors
-    cols <-  data.frame(.index = unique(group_indices(tmp_data)),
+    cols <-  data.frame(.index = unique(dplyr::group_indices(tmp_data)),
                         .color = extend_palette(
                             length(
                                 unique(
-                                    group_indices(tmp_data)
+                                    dplyr::group_indices(tmp_data)
                                 ) # / unique
                             ) # / length
                         ),
@@ -128,11 +128,11 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
     col_value_vector <- extend_palette(
         length(
             unique(
-                group_indices(tmp_data)
+                dplyr::group_indices(tmp_data)
             ) # / unique
         ) # / length
     )
-    names(col_value_vector) <- unique(group_indices(tmp_data))
+    names(col_value_vector) <- unique(dplyr::group_indices(tmp_data))
 
     # print(col_value_vector)
     # print(dplyr::group_indices(tmp_data))

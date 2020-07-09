@@ -102,7 +102,7 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
 
 
-    opacity <- ifelse(plot_data$.dcrkey %in% sel_points, 0.35, 0.9)
+    opacity <- ifelse(plot_data$.dcrkey %in% sel_points, 0.25, 0.9)
     # adjust selection
     # alpha <- ifelse(plot_data$.dcrkey %in% sel_points, 0.75, 0.35)
 
@@ -188,7 +188,7 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
                                         source = "scatterselect",
                                         marker = list(size = 7,
                                                       line = list(color = col2plotlyrgba("gray60", 0.9),
-                                                      width = 2)
+                                                      width = 1)
                                         )
                         ) %>%
                             plotly::add_markers(x = ~ !!selector_inputs$xvar,
@@ -200,9 +200,10 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
                                                 showlegend = TRUE,
                                                 marker = list(opacity = opacity,
                                                               line = list(color = col2plotlyrgba("gray60", 0.9),
-                                                                          width = 2)),
-                                                unselected = list(marker = list(opacity = 0.9)),
-                                                opacity = opacity) %>%
+                                                                          width = 1)),
+                                                unselected = list(marker = list(opacity = 0.9))
+                                                # opacity = opacity) %>%
+                                                ) %>%
                             plotly::layout(showlegend = TRUE,
                                            # dragmode =  FALSE
                                            dragmode = "lasso"

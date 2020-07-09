@@ -167,7 +167,8 @@ datacleanr <- function(dataset){
                                                                                     module_ui_group_selector_table("dtgrouprow")),
                                                  mainPanel = shiny::mainPanel(width = 8,
                                                                               module_ui_plot_selectorcontrols("selectors"),
-                                                                              module_ui_plot_selectable("plot"))
+                                                                              module_ui_plot_selectable("plot"),
+                                                                              module_ui_plot_annotation_table("annotator"))
                                              )
 
                              )
@@ -541,6 +542,33 @@ datacleanr <- function(dataset){
             print("data cleared on dbl click")
             selected_data(NULL)
             print(selected_data())
+        })
+
+
+
+
+
+
+        # insert editable table for annotations
+        shiny::observe({
+
+
+        # shiny::observeEvent(selected_data, {
+            shiny::req(input[["selectors-startscatter"]])
+
+
+
+            annotations <- shiny::callModule(module_server_plot_annotation_table,
+                              "annotator",
+                              df = plot_df,
+                              sel_points = selected_data())
+
+
+            # print(annotations())
+
+
+
+
         })
 
 

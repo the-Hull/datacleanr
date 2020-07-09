@@ -412,6 +412,18 @@ datacleanr <- function(dataset){
                                         df_filtered = filtered_data,
                                         df_original = datareactive)
 
+        # handle group/ungroup after hitting start button
+        # to supply plot_df (e.g. for viz selection table)
+        # this is necessary, as changing grouping levels
+        # would not affect plot_df, as it is already supplied in event handler
+        # below (handle table + variable inputs; observevent gobutton)
+        shiny::observeEvent(input$gobutton, {
+
+            plot_df$df$data <- datareactive()
+
+        })
+
+
         # handle table + variable inputs
         shiny::observeEvent({
             input$gobutton
@@ -440,7 +452,6 @@ datacleanr <- function(dataset){
                                                         "selectors",
                                                         plot_df)
 
-                    print(input[["selectors-startscatter"]])
 
 
                 }
@@ -487,28 +498,13 @@ datacleanr <- function(dataset){
 
             selected_data_old <- selected_data()
 
-            clicked <- event_data("plotly_click",
+            clicked <- plotly::event_data("plotly_click",
                                   source = "scatterselect",
                                   priority = "event")
 
             print("clicked data is")
             print(clicked)
             selected_data_new <- clicked$customdata
-
-
-            # if(length(selected_data_new)==0){
-            #     selected_data(NULL)
-            #     print("no selected left")
-            # } else if (any(selected_data_new %in% selected_data_old)) {
-            #     selected_data(setdiff(selected_data_old, selected_data_new))
-            #     print("removing duplicates via click")
-            # } else {
-            #     selected_data(c(selected_data_new, selected_data_old))
-            #     print("adding new points via click")
-            # }
-            # print("data after click is")
-            # print(selected_data())
-
 
             selected_data(handle_selection(old = selected_data_old,
                                            new = selected_data_new))
@@ -525,28 +521,12 @@ datacleanr <- function(dataset){
 
             print("selected!")
 
-            selected <- event_data("plotly_selected",
+            selected <- plotly::event_data("plotly_selected",
                                    source = "scatterselect",
                                    priority = "event")
 
             shiny::req(selected)
             selected_data_new <- selected$customdata
-
-
-
-            #     if(length(selected_data_new)==0 & length(selected_data_old) == 0){
-            #         selected_data(NULL)
-            #         print("no selected points")
-            #     } else if (any(selected_data_new %in% selected_data_old)) {
-            #         selected_data(setdiff(selected_data_old, selected_data_new))
-            #         print("removing duplicates via selection")
-            #     } else {
-            #         selected_data(c(selected_data_new, selected_data_old))
-            #         print("adding new points via selection")
-            #     }
-            #     print("data after selection is")
-            #     print(selected_data())
-
 
             selected_data(handle_selection(old = selected_data_old,
                                            new = selected_data_new))
@@ -560,49 +540,13 @@ datacleanr <- function(dataset){
             # shiny::req(input[["selectors-startscatter"]])
             print("data cleared on dbl click")
             selected_data(NULL)
+            print(selected_data())
         })
 
 
 
 
-        # shiny::observeEvent({plotly::event_data("plotly_click", priority = "event", source = "scatterselect")
-        #     plotly::event_data("plotly_selected", priority = "event", source = "scatterselect")
-        #     1}, {
-        #
-        #         shiny::req(input[["selectors-startscatter"]])
-        #
-        #
-        #
-        #         clicked <- event_data("plotly_click",
-        #                               source = "scatterselect",
-        #                               priority = "event")
-        #         slctd <- event_data("plotly_selected",
-        #                             source = "scatterselect",
-        #                             priority = "event")
-        #
-        #
-        #         selected_data_new <- c(clicked$customdata,
-        #                                slctd$customdata)
-        #
-        #         if(length(selected_data_new)==0){
-        #             selected_data(NULL)
-        #             print("no points")
-        #         } else if (any(selected_data_new %in% selected_data_old)) {
-        #             selected_data(setdiff(selected_data_old, selected_data_new))
-        #             print("removing duplicates")
-        #         } else {
-        #             selected_data(c(selected_data_new, selected_data_old))
-        #             print("adding new points")
-        #         }
-        #
-        #         selected_data_new <- NULL
-        #
-        #         # }
-        #
-        #
-        #
-        #
-        #     })
+
 
         # old ------------ --------------------------------------------------------
 

@@ -250,3 +250,43 @@ handle_selection <- function(old, new){
 
 }
 
+
+
+#' Color conversion for plotly with alpha
+#'
+#' @param colorname string, hex value or R color name
+#' @param alpha numeric, value for alpha (transparency)
+#'
+#' @return string, length 1, with rgb code for plotly
+#'
+col2plotlyrgba <- function(colorname, alpha){
+
+
+
+    rgbstring <- paste0("rgba(", paste(grDevices::col2rgb(colorname), collapse = ","), ", ", alpha, ")")
+
+    return(rgbstring)
+}
+
+
+
+
+#' Color conversion for plotly with alpha
+#'
+#' @param colorname string, hex value or R color name
+#'
+#' @return string, length 1, with rgb code for plotly
+#'
+col2plotlyrgb <- function(colorname){
+
+
+
+    rgbstring <- paste0("rgb(", paste(grDevices::col2rgb(colorname), collapse = ","), ")")
+
+    return(rgbstring)
+}
+
+
+
+
+

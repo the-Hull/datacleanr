@@ -100,8 +100,14 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
     }
 
 
+
+
+    opacity <- ifelse(plot_data$.dcrkey %in% sel_points, 0.35, 0.9)
     # adjust selection
-    opacity <- ifelse(plot_data$.dcrkey %in% sel_points, 0.3, 1)
+    # alpha <- ifelse(plot_data$.dcrkey %in% sel_points, 0.75, 0.35)
+
+    # plot_data$.colrgba <- ifelse(col2plotlyrgba(plot_data$.color, alpha))
+    # plot_data$.colrgbstroke <- col2plotlyrgb(plot_data$.color)
 
     # print("opacity is")
     # print(opacity)
@@ -179,7 +185,12 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
                         print("redrawing")
                         plotly::plot_ly(data = plot_data,
-                                        source = "scatterselect") %>%
+                                        source = "scatterselect",
+                                        marker = list(size = 7,
+                                                      line = list(color = col2plotlyrgba("gray60", 0.9),
+                                                      width = 2)
+                                        )
+                        ) %>%
                             plotly::add_markers(x = ~ !!selector_inputs$xvar,
                                                 y = ~ !!selector_inputs$yvar,
                                                 color = ~as.factor(.index),
@@ -187,13 +198,15 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
                                                 type = 'scatter',
                                                 customdata = ~.dcrkey,
                                                 showlegend = TRUE,
-                                                marker = list(opacity = opacity),
-                                                unselected = list(marker = list(opacity = 1)),
+                                                marker = list(opacity = opacity,
+                                                              line = list(color = col2plotlyrgba("gray60", 0.9),
+                                                                          width = 2)),
+                                                unselected = list(marker = list(opacity = 0.9)),
                                                 opacity = opacity) %>%
                             plotly::layout(showlegend = TRUE,
                                            # dragmode =  FALSE
                                            dragmode = "lasso"
-                                           )  %>%
+                            )  %>%
                             plotly::event_register(event = "plotly_doubleclick") %>%
                             plotly::event_register(event = "plotly_deselect") %>%
                             plotly::event_register(event = "plotly_click") %>%

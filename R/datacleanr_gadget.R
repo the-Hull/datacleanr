@@ -470,28 +470,35 @@ datacleanr <- function(dataset){
 
         # handle plotting
         # shiny::observeEvent(selector_vals, {
-        shiny::observe({
-            # shiny::observeEvent(input[["selectors-startscatter"]], {
-
-            req(input[["selectors-startscatter"]])
-
-            selected_row$group_row <- input$`dtgrouprow-grouptable_rows_selected`
-
-
-            if(!is.null(plot_df$df$data)){
-
-                shiny::callModule(module_server_plot_selectable,
-                                  id = "plot",
-                                  df = plot_df,
-                                  group_row = selected_row,
-                                  selector_inputs = selector_vals,
-                                  sel_points = selected_data())
-
-
-
+        # shiny::observe({
+        # shiny::observeEvent(input[["selectors-startscatter"]], {
+        shiny::observeEvent(
+            {input[["selectors-startscatter"]]
+                selector_vals
+                input[["dtgrouprow-grouptable_rows_selected"]]
+                1
             }
+            , {
 
-        })
+                req(input[["selectors-startscatter"]])
+
+                selected_row$group_row <- input$`dtgrouprow-grouptable_rows_selected`
+
+
+                if(!is.null(plot_df$df$data)){
+
+                    shiny::callModule(module_server_plot_selectable,
+                                      id = "plot",
+                                      df = plot_df,
+                                      group_row = selected_row,
+                                      selector_inputs = selector_vals,
+                                      sel_points = selected_data())
+
+
+
+                }
+
+            })
 
 
         selected_data <- shiny::reactiveVal()
@@ -504,8 +511,8 @@ datacleanr <- function(dataset){
             selected_data_old <- selected_data()
 
             clicked <- plotly::event_data("plotly_click",
-                                  source = "scatterselect",
-                                  priority = "event")
+                                          source = "scatterselect",
+                                          priority = "event")
 
             print("clicked data is")
             print(clicked)
@@ -527,8 +534,8 @@ datacleanr <- function(dataset){
             print("selected!")
 
             selected <- plotly::event_data("plotly_selected",
-                                   source = "scatterselect",
-                                   priority = "event")
+                                           source = "scatterselect",
+                                           priority = "event")
 
             shiny::req(selected)
             selected_data_new <- selected$customdata
@@ -542,11 +549,11 @@ datacleanr <- function(dataset){
             plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
             1}, {
 
-            # shiny::req(input[["selectors-startscatter"]])
-            print("data cleared on dbl click")
-            selected_data(NULL)
-            print(selected_data())
-        })
+                # shiny::req(input[["selectors-startscatter"]])
+                print("data cleared on dbl click")
+                selected_data(NULL)
+                print(selected_data())
+            })
 
 
 
@@ -557,15 +564,15 @@ datacleanr <- function(dataset){
         shiny::observe({
 
 
-        # shiny::observeEvent(selected_data, {
+            # shiny::observeEvent(selected_data, {
             shiny::req(input[["selectors-startscatter"]])
 
 
 
             annotations <- shiny::callModule(module_server_plot_annotation_table,
-                              "annotator",
-                              df = plot_df,
-                              sel_points = selected_data())
+                                             "annotator",
+                                             df = plot_df,
+                                             sel_points = selected_data())
 
 
             # print(annotations())

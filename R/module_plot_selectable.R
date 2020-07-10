@@ -184,13 +184,15 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
 
 
+
             p <-  rlang::eval_tidy(
                 rlang::quo_squash(
                     rlang::quo({
 
 
                         print("redrawing")
-                        plotly::plot_ly(data = tidyr::drop_na(plot_data),
+                        plotly::plot_ly(data = plot_data,
+                        # plotly::plot_ly(data = tidyr::drop_na(plot_data),
                         # plotly::plot_ly(data = na.omit(plot_data),
                                         source = "scatterselect"
                                         # marker = list(size = 7,
@@ -200,14 +202,18 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
                         ) %>%
                             plotly::add_markers(x = ~ !!selector_inputs$xvar,
                                                 y = ~ !!selector_inputs$yvar,
-                                                color = ~as.factor(.index),
-                                                colors = col_value_vector,
+                                                # color = ~as.factor(.index),
+                                                name = ~as.factor(.index),
+                                                # colors = col_value_vector,
                                                 type = 'scatter',
                                                 customdata = ~.dcrkey,
                                                 showlegend = TRUE,
-                                                marker = list(opacity = ~.opacity,
+                                                marker = list(color = sapply(plot_data$.color,
+                                                                             col2plotlyrgba, 0.9,
+                                                                             USE.NAMES = FALSE),
                                                               line = list(color = col2plotlyrgba("gray60", 0.9),
-                                                                          width = 1))) %>%
+                                                                          width = 1)),
+                                                unselected = list(marker = list(opacity = 0.9))) %>%
                                                 # ,
                                                 # unselected = list(marker = list(opacity = 0.9))) %>%
                                                 # opacity = ~.opacity) %>%
@@ -261,32 +267,53 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
         })
 
-
-        # handle zoom
-
-        shiny::observeEvent(plotly::event_data("plotly_relayout", source = "scatterselect"), {
-            d <- event_data("plotly_relayout", source = "scatterselect")
-
-            print(d)
-            str(d)
-
-            # unfortunately, the data structure emitted is different depending on
-            # whether the relayout is triggered from the rangeslider or the plot
-            # xmin <- if (length(d[["xaxis.range[0]"]])) d[["xaxis.range[0]"]] else d[["xaxis.range"]][1]
-            # xmax <- if (length(d[["xaxis.range[1]"]])) d[["xaxis.range[1]"]] else d[["xaxis.range"]][2]
-            # if (is.null(xmin) || is.null(xmax)) return(NULL)
-
-            # compute the y-range based on the new x-range
-            # idx <- with(txhousing, xmin <= date & date <= xmax)
-            # yrng <- extendrange(txhousing$median[idx])
-
-            # plotlyProxy("plot", session) %>%
-            # plotlyProxyInvoke("relayout", list(yaxis = list(range = yrng)))
-        })
     })
 
 
-    # )
+    shiny::observeEvent(sel_points,
+                        {
+        # if (length(sel_points) > 0) {
+            # this is essentially the plotly.js way of doing
+            # `p %>% add_lines(x = ~x, y = ~yhat) %>% toWebGL()`
+            # without having to redraw the entire plot
+
+            add_points <- plot_data[plot_data$.dcrkey %in% sel_points, ]
+
+            print("adding these points")
+            print(add_points)
+
+            plotly::plotlyProxy("scatterselect", session) %>%
+                plotly::plotlyProxyInvoke(
+                    "addTraces",
+                    # list(
+                    #     x = add_points[ , selector_inputs$xvar],
+                    #     y = add_points[ , selector_inputs$yvar],
+                    #     type = "scatter",
+                    #     mode = "marker",
+                    #     marker = list(line = list(color = sapply(plot_data$.color,
+                    #                                  col2plotlyrgba, 0.9,
+                    #                                  USE.NAMES = FALSE),
+                    #                               width = 2),
+                    #                   color = col2plotlyrgba("white", 0.9),
+                    #                               width = 1)
+                    # )
+                    list(
+                        x = add_points[ , selector_inputs$xvar],
+                        y = add_points[ , selector_inputs$yvar],
+                        type = "scatter",
+                        mode = "markers",
+                        color = I("red"))
+                        # line = list(color = sapply(plot_data$.color,
+                                                                 # col2plotlyrgba, 0.9,
+                                                                 # USE.NAMES = FALSE),
+                                    # width = 2),
+                        # color = col2plotlyrgba("white", 0.9)
+                        # )
+
+                )
+        # }
+    })
+
 
 
     # }

@@ -182,10 +182,6 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
             #
             #
 
-    View(coldf)
-    View(plot_data)
-    View(col_value_vector)
-
 
 
             p <-  rlang::eval_tidy(
@@ -194,8 +190,8 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
 
                         print("redrawing")
-                        # plotly::plot_ly(data = tidyr::drop_na(plot_data),
-                        plotly::plot_ly(data = plot_data,
+                        plotly::plot_ly(data = tidyr::drop_na(plot_data),
+                        # plotly::plot_ly(data = na.omit(plot_data),
                                         source = "scatterselect"
                                         # marker = list(size = 7,
                                         #               line = list(color = col2plotlyrgba("gray60", 0.9),
@@ -221,6 +217,7 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
                             )  %>%
                             plotly::event_register(event = "plotly_doubleclick") %>%
                             plotly::event_register(event = "plotly_deselect") %>%
+                            plotly::event_register(event = "plotly_relayout") %>%
                             plotly::event_register(event = "plotly_click") %>%
                             plotly::event_register(event = "plotly_selected")
 
@@ -246,6 +243,8 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
 
 
+
+
             # plotly::ggplotly(
             #     ggplot2::ggplot(data = plot_data,
             #                     ggplot2::aes(x = !!selector_inputs$xvar,
@@ -260,6 +259,29 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
             #
             # )
 
+        })
+
+
+        # handle zoom
+
+        shiny::observeEvent(plotly::event_data("plotly_relayout", source = "scatterselect"), {
+            d <- event_data("plotly_relayout", source = "scatterselect")
+
+            print(d)
+            str(d)
+
+            # unfortunately, the data structure emitted is different depending on
+            # whether the relayout is triggered from the rangeslider or the plot
+            # xmin <- if (length(d[["xaxis.range[0]"]])) d[["xaxis.range[0]"]] else d[["xaxis.range"]][1]
+            # xmax <- if (length(d[["xaxis.range[1]"]])) d[["xaxis.range[1]"]] else d[["xaxis.range"]][2]
+            # if (is.null(xmin) || is.null(xmax)) return(NULL)
+
+            # compute the y-range based on the new x-range
+            # idx <- with(txhousing, xmin <= date & date <= xmax)
+            # yrng <- extendrange(txhousing$median[idx])
+
+            # plotlyProxy("plot", session) %>%
+            # plotlyProxyInvoke("relayout", list(yaxis = list(range = yrng)))
         })
     })
 

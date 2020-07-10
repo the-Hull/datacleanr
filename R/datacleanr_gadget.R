@@ -203,6 +203,10 @@ datacleanr <- function(dataset){
     server <- function(input, output, session){
 
 
+        # suppress plotly warnings, etc.
+        # options(warn = -1)
+
+
         # DIAGNOSTICS ----------------------
 
         AllInputs <- shiny::reactive({

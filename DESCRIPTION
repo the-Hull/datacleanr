@@ -26,4 +26,6 @@ Imports:
     rlang,
     DT,
     magrittr,
-    plotly
+    plotly,
+    grDevices,
+    stats

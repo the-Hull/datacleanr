@@ -40,7 +40,6 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
     }
 
 
-    str(table_dat)
 
 
 

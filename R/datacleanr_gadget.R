@@ -501,6 +501,11 @@ datacleanr <- function(dataset){
             })
 
 
+
+
+
+
+
         selected_data <- shiny::reactiveVal()
 
         # handle clicks
@@ -583,8 +588,66 @@ datacleanr <- function(dataset){
         })
 
 
+        # update plot with selection
 
 
+        shiny::observe({
+
+            req(selected_data())
+            add_points <- plot_df$df$data[plot_df$df$data$.dcrkey %in% selected_data(), ]
+
+            print(lubridate::tz(add_points[ , as.character(selector_vals$xvar)]))
+
+
+
+            plotly::plotlyProxy("plot-scatterselect", session) %>%
+                plotly::plotlyProxyInvoke(
+                    "addTraces",
+
+                    list(
+                        x = add_points[ , as.character(selector_vals$xvar), drop = TRUE],
+                        y = add_points[ , as.character(selector_vals$yvar), drop = TRUE],
+                        type = "scatter",
+                        mode = "markers",
+                        name = "Removed",
+                        marker = list(color = "red"),
+                        showlegend = FALSE)
+
+                )
+        })
+
+
+        shiny::observeEvent({plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
+            plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
+            1}, {
+
+                print("remove removed")
+
+            # req(selected_data())
+
+
+
+            plotly::plotlyProxy("plot-scatterselect", session) %>%
+                plotly::plotlyProxyInvoke(
+                    "deleteTraces",
+                    "Removed"
+
+                )
+        })
+
+
+
+
+        # OUTLIST
+        # shiny::observeEvent(input[["selectors-startscatter"]], {
+        #     outs <- outputOptions(output)
+        #     print(outs)
+        #     print("ya")
+        #     lapply(names(outs), function(name) {
+        #         outputOptions(output, name, suspendWhenHidden = FALSE)
+        #     })
+        #
+        # })
 
 
         # old ------------ --------------------------------------------------------

@@ -48,6 +48,7 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
     # print(paste("sellll rooo is:", input[[ns("dtgrouprow-grouptable_rows_selected")]]))
 
 
+
     tmp_data <- df$df$data
 
     if(length(group_row$group_row)!=0){
@@ -106,8 +107,6 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
     plot_data$.opacity <- opacity
 
 
-    print("-------AGAIN-------")
-    print(sel_points)
 
 
     # adjust selection
@@ -269,50 +268,50 @@ module_server_plot_selectable <- function(input, output, session, df, group_row,
 
     })
 
-
-    shiny::observeEvent(sel_points,
-                        {
-        # if (length(sel_points) > 0) {
-            # this is essentially the plotly.js way of doing
-            # `p %>% add_lines(x = ~x, y = ~yhat) %>% toWebGL()`
-            # without having to redraw the entire plot
-
-            add_points <- plot_data[plot_data$.dcrkey %in% sel_points, ]
-
-            print("adding these points")
-            print(add_points)
-
-            plotly::plotlyProxy("scatterselect", session) %>%
-                plotly::plotlyProxyInvoke(
-                    "addTraces",
-                    # list(
-                    #     x = add_points[ , selector_inputs$xvar],
-                    #     y = add_points[ , selector_inputs$yvar],
-                    #     type = "scatter",
-                    #     mode = "marker",
-                    #     marker = list(line = list(color = sapply(plot_data$.color,
-                    #                                  col2plotlyrgba, 0.9,
-                    #                                  USE.NAMES = FALSE),
-                    #                               width = 2),
-                    #                   color = col2plotlyrgba("white", 0.9),
-                    #                               width = 1)
-                    # )
-                    list(
-                        x = add_points[ , selector_inputs$xvar],
-                        y = add_points[ , selector_inputs$yvar],
-                        type = "scatter",
-                        mode = "markers",
-                        color = I("red"))
-                        # line = list(color = sapply(plot_data$.color,
-                                                                 # col2plotlyrgba, 0.9,
-                                                                 # USE.NAMES = FALSE),
-                                    # width = 2),
-                        # color = col2plotlyrgba("white", 0.9)
-                        # )
-
-                )
-        # }
-    })
+#
+#     shiny::observe({
+#
+#
+#         # if (length(sel_points) > 0) {
+#             # this is essentially the plotly.js way of doing
+#             # `p %>% add_lines(x = ~x, y = ~yhat) %>% toWebGL()`
+#             # without having to redraw the entire plot
+#
+#             add_points <- plot_data[plot_data$.dcrkey %in% sel_points, ]
+#
+#
+#
+#             plotly::plotlyProxy("scatterselect", session) %>%
+#                 plotly::plotlyProxyInvoke(
+#                     "addTraces",
+#                     # list(
+#                     #     x = add_points[ , selector_inputs$xvar],
+#                     #     y = add_points[ , selector_inputs$yvar],
+#                     #     type = "scatter",
+#                     #     mode = "marker",
+#                     #     marker = list(line = list(color = sapply(plot_data$.color,
+#                     #                                  col2plotlyrgba, 0.9,
+#                     #                                  USE.NAMES = FALSE),
+#                     #                               width = 2),
+#                     #                   color = col2plotlyrgba("white", 0.9),
+#                     #                               width = 1)
+#                     # )
+#                     list(
+#                         x = add_points[ , as.character(selector_inputs$xvar)],
+#                         y = add_points[ , as.character(selector_inputs$yvar)],
+#                         type = "scatter",
+#                         mode = "markers",
+#                         color = I("red"))
+#                         # line = list(color = sapply(plot_data$.color,
+#                                                                  # col2plotlyrgba, 0.9,
+#                                                                  # USE.NAMES = FALSE),
+#                                     # width = 2),
+#                         # color = col2plotlyrgba("white", 0.9)
+#                         # )
+#
+#                 )
+#         # }
+#     })
 
 
 

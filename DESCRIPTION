@@ -28,4 +28,5 @@ Imports:
     magrittr,
     plotly,
     grDevices,
-    stats
+    stats,
+    htmlwidgets

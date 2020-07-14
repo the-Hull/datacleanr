@@ -492,7 +492,7 @@ datacleanr <- function(dataset){
                                       df = plot_df,
                                       group_row = selected_row,
                                       selector_inputs = selector_vals,
-                                      sel_points = selected_data())
+                                      sel_points = selected_data)
 
 
 
@@ -591,49 +591,78 @@ datacleanr <- function(dataset){
         # update plot with selection
 
 
-        shiny::observe({
+        # shiny::observe({
 
-            req(selected_data())
-            add_points <- plot_df$df$data[plot_df$df$data$.dcrkey %in% selected_data(), ]
-
-            print(lubridate::tz(add_points[ , as.character(selector_vals$xvar)]))
-
-
-
-            plotly::plotlyProxy("plot-scatterselect", session) %>%
-                plotly::plotlyProxyInvoke(
-                    "addTraces",
-
-                    list(
-                        x = add_points[ , as.character(selector_vals$xvar), drop = TRUE],
-                        y = add_points[ , as.character(selector_vals$yvar), drop = TRUE],
-                        type = "scatter",
-                        mode = "markers",
-                        name = "Removed",
-                        marker = list(color = "red"),
-                        showlegend = FALSE)
-
-                )
-        })
-
-
-        shiny::observeEvent({plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
-            plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
-            1}, {
-
-                print("remove removed")
-
-            # req(selected_data())
-
-
-
-            plotly::plotlyProxy("plot-scatterselect", session) %>%
-                plotly::plotlyProxyInvoke(
-                    "deleteTraces",
-                    "Removed"
-
-                )
-        })
+#         shiny::observeEvent({plotly::event_data("plotly_click", source = "scatterselect", priority = "event")
+#             plotly::event_data("plotly_selected", source = "scatterselect", priority = "event")
+#             1}, {
+#
+#             req(selected_data())
+#             add_points <- plot_df$df$data[plot_df$df$data$.dcrkey %in% selected_data(), ]
+#
+#             cols <- rep("gray60", nrow(plot_df$df$data))
+#             cols[plot_df$df$data$.dcrkey %in% selected_data()] <- "red"
+#
+#
+#             print("this is from add traces")
+#             print(head(add_points))
+#             print(lubridate::tz(add_points))
+#
+#
+#
+#             plotly::plotlyProxy("plot-scatterselect", session) %>%
+#                 plotly::plotlyProxyInvoke(
+#                     "addTraces",
+#                     #
+#                     list(
+#                         x = add_points[ , as.character(selector_vals$xvar), drop = TRUE],
+#                         y = add_points[ , as.character(selector_vals$yvar), drop = TRUE],
+#                         type = "scatter",
+#                         mode = "markers",
+#                         name = "outlier",
+#                         marker = list(color = "red"),
+#                         showlegend = FALSE)
+#
+#
+#
+# #
+# #                     "restyle",
+# #                     marker.color = list(I(cols))
+#                     # marker = list(color = list(sapply(cols,
+#                     #                              col2plotlyrgba, 0.9,
+#                     #                              USE.NAMES = FALSE)))
+#                     # color = sapply(cols,
+#                     #                              col2plotlyrgba, 0.9,
+#                     #                              USE.NAMES = FALSE)
+#                     # marker.color = list(cols)
+#
+#                 )
+#         })
+#
+#
+#         shiny::observeEvent({plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
+#             plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
+#             1}, {
+#
+#                 print("remove removed")
+#
+#             # req(selected_data())
+#                 # req(input$tracemap)
+#
+#                 print(input$tracemap)
+#                 traces <- matrix(input$tracemap, ncol = 2, byrow = TRUE)
+#                 indices <- as.integer(traces[traces[, 1] == "outlier", 2])
+#
+#                 print(indices)
+#
+#
+#             plotly::plotlyProxy("plot-scatterselect", session) %>%
+#                 plotly::plotlyProxyInvoke(
+#                     "deleteTraces",
+#                     indices
+#
+#                 )
+#         })
 
 
 

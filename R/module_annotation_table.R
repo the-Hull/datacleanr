@@ -40,6 +40,9 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
     }
 
 
+    print("this is from table")
+    print(table_dat)
+    print(lubridate::tz(table_dat))
 
 
 
@@ -47,13 +50,13 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
     #print(paste("disable", disable_cols))
 
 
-    columns2hide <- base::match(".dcrkey", colnames(table_dat))
+    # columns2hide <- base::match(".dcrkey", colnames(table_dat))
 
 
     shiny::observe({
 
         output$dtannotation <- DT::renderDT(table_dat,
-                                            options = list(columnDefs = list(list(visible=FALSE, targets=columns2hide))),
+                                            # options = list(columnDefs = list(list(visible=FALSE, targets=columns2hide))),
                                             editable = list(target = "column",
                                                             disable = list(columns = disable_cols)))
 

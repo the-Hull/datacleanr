@@ -172,7 +172,7 @@ jsfull <- "function(el, x, data){
 
 
 
-    opacity <- ifelse(plot_data$.dcrkey %in% sel_points(), 0.25, 0.9)
+    opacity <- ifelse(plot_data$.dcrkey %in% sel_points$df$keys, 0.25, 0.9)
     plot_data$.opacity <- opacity
 
 
@@ -348,10 +348,10 @@ jsfull <- "function(el, x, data){
     shiny::observeEvent(plotly::event_data("plotly_click", source = "scatterselect", priority = "input"),
 
         {
-            if(length(sel_points() > 0)){
+            if(length(sel_points$df$keys > 0)){
 
 
-                add_points <- plot_data[plot_data$.dcrkey %in% sel_points(), ]
+                add_points <- plot_data[plot_data$.dcrkey %in% sel_points$df$keys, ]
 
                 print("this is from add traces click")
                 print(head(add_points))
@@ -386,10 +386,10 @@ jsfull <- "function(el, x, data){
     shiny::observeEvent(plotly::event_data("plotly_selected", source = "scatterselect", priority = "input"),
 
                         {
-                            if(length(sel_points() > 0)){
+                            if(length(sel_points$df$keys > 0)){
 
 
-                                add_points <- plot_data[plot_data$.dcrkey %in% sel_points(), ]
+                                add_points <- plot_data[plot_data$.dcrkey %in% sel_points$df$keys, ]
 
                                 print("this is from add traces lasso")
                                 print(head(add_points))

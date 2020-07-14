@@ -506,25 +506,35 @@ datacleanr <- function(dataset){
 
 
 
-        selected_data <- shiny::reactiveVal()
+        selected_data <- shiny::reactiveValues(df = data.frame(keys = character(0), selection_count = integer(0)))
 
         # handle clicks
         shiny::observeEvent({plotly::event_data("plotly_click", priority = "event", source = "scatterselect")}, {
 
             shiny::req(input[["selectors-startscatter"]])
 
-            selected_data_old <- selected_data()
-
             clicked <- plotly::event_data("plotly_click",
                                           source = "scatterselect",
                                           priority = "event")
 
+
             print("clicked data is")
             print(clicked)
-            selected_data_new <- clicked$customdata
 
-            selected_data(handle_selection(old = selected_data_old,
-                                           new = selected_data_new))
+            if(nrow(selected_data$df) > 0){
+                new <- data.frame(keys = as.character(clicked$customdata),
+                                  selection_count = max(selected_data$df$selection_count))
+
+
+            } else {
+
+                new <- data.frame(keys = as.character(clicked$customdata),
+                                  selection_count = 1)
+            }
+
+            selected_data$df <- rbind(selected_data$df, new)
+
+            print(selected_data$df)
 
         })
 
@@ -534,7 +544,6 @@ datacleanr <- function(dataset){
 
             shiny::req(input[["selectors-startscatter"]])
 
-            selected_data_old <- selected_data()
 
             print("selected!")
 
@@ -542,11 +551,21 @@ datacleanr <- function(dataset){
                                            source = "scatterselect",
                                            priority = "event")
 
-            shiny::req(selected)
-            selected_data_new <- selected$customdata
 
-            selected_data(handle_selection(old = selected_data_old,
-                                           new = selected_data_new))
+            if(nrow(selected_data$df) > 0){
+                new <- data.frame(keys = as.character(selected$customdata),
+                                  selection_count = max(selected_data$df$selection_count))
+
+
+            } else {
+
+                new <- data.frame(keys = as.character(selected$customdata),
+                                  selection_count = 1)
+            }
+
+            selected_data$df <- rbind(selected_data$df, new)
+
+            print(selected_data$df)
         })
 
         # clear on dbl click
@@ -556,8 +575,8 @@ datacleanr <- function(dataset){
 
                 # shiny::req(input[["selectors-startscatter"]])
                 print("data cleared on dbl click")
-                selected_data(NULL)
-                print(selected_data())
+                selected_data$df <- selected_data$df[ max(selected_data$df$selection_count), ]
+                print(selected_data$df)
             })
 
 
@@ -577,7 +596,7 @@ datacleanr <- function(dataset){
             annotations <- shiny::callModule(module_server_plot_annotation_table,
                                              "annotator",
                                              df = plot_df,
-                                             sel_points = selected_data())
+                                             sel_points = selected_data)
 
 
             # print(annotations())

@@ -330,11 +330,12 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
                         name = "outlier",
                         customdata = add_points[ , ".dcrkey", drop = TRUE],
                         # legendgroup = "out",
-                        marker = list(color = "white",
-                                      line = list(color = "red",
-                                                  width = 2),
-                                      opacity = 0.9),
-                        unselected = list(opacity = 0.9),
+                        marker = list(
+                            color = "black",
+                            line = list(color = "red",
+                                        width = 2),
+                            opacity = 1),
+                        unselected = list(marker = list(opacity = 1)),
                         showlegend = TRUE)
                 )
 
@@ -352,7 +353,7 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
 
     }
 
-            return(ok)
+    return(ok)
 
 }
 

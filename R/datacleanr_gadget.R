@@ -555,15 +555,12 @@ datacleanr <- function(dataset){
             {input[["selectors-startscatter"]]
                 selector_vals
                 # input[["dtgrouprow-grouptable_rows_selected"]]
-                1
-            }
-        ,
+                1},
         {
-
-
-                req(input$gobutton)
-                start_scatter(input[["selectors-startscatter"]])
-                req(start_scatter)
+            req(input$gobutton)
+            req(input[["selectors-startscatter"]])
+                # shiny::isolate(start_scatter(input[["selectors-startscatter"]]))
+                # req(start_scatter)
 
                 # if(!is.null(plot_df$df$data)){
 
@@ -605,7 +602,7 @@ datacleanr <- function(dataset){
                                           priority = "event")
 
             if(nrow(selected_data$df) > 0 & nrow(clicked) > 0){
-                new <- data.frame(keys = integer(clicked$customdata),
+                new <- data.frame(keys = as.integer(clicked$customdata),
                                   selection_count = max(selected_data$df$selection_count) + 1,
                                   stringsAsFactors = FALSE)
 
@@ -616,7 +613,7 @@ datacleanr <- function(dataset){
                 selected_data$df <- rbind(selected_data$df, new)
 
             } else {
-                new <- data.frame(keys = integer(clicked$customdata),
+                new <- data.frame(keys = as.integer(clicked$customdata),
                                   selection_count = 1,
                                   stringsAsFactors = FALSE)
                 selected_data$df <- new

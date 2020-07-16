@@ -182,12 +182,12 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
 
                         ok <- handle_add_traces(sp = sel_points,
                                           pd = plot_data,
-                                          ok = old_keys,
+                                          ok = shiny::isolate(old_keys),
                                           selectors = selector_inputs,
                                           source = "scatterselect",
                                           session = session)
 
-                        old_keys(ok())
+                        shiny::isolate(old_keys(ok()))
                       })
 
 
@@ -200,12 +200,12 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
 
                         ok <- handle_add_traces(sp = sel_points,
                                           pd = plot_data,
-                                          ok = old_keys,
+                                          ok = shiny::isolate(old_keys),
                                           selectors = selector_inputs,
                                           source = "scatterselect",
                                           session = session)
 
-                        old_keys(ok())
+                        shiny::isolate(old_keys(ok()))
 
 
                       })

@@ -171,7 +171,7 @@ datacleanr <- function(dataset){
 
                                              shiny::sidebarLayout(
                                                  sidebarPanel = shiny::sidebarPanel(width = 4,
-                                                                                    module_ui_group_selector_table("dtgrouprow")),
+                                                                                    shiny::p("Placeholder")),
                                                  mainPanel = shiny::mainPanel(width = 8,
                                                                               module_ui_plot_selectorcontrols("selectors"),
                                                                               module_ui_plot_selectable("plot"),
@@ -230,7 +230,21 @@ datacleanr <- function(dataset){
 
 
 
-        # grouping ---------------------------
+
+        # Set-up ------------------------------------------------------------------
+
+
+        # handle initialization
+        datareactive <- shiny::reactiveVal()
+        plot_df <- shiny::reactiveValues(df = NULL)
+        filtered_df <- shiny::reactiveValues(df = NULL)
+        selected_row <- shiny::reactiveValues(group_row = NULL)
+        selector_vals <- NULL
+
+        start_scatter <- shiny::reactiveVal()
+
+
+        # GROUPING ---------------------------
 
 
         # get grouping
@@ -260,9 +274,36 @@ datacleanr <- function(dataset){
 
         })
 
-        # handle initialization
+
+
+
+
+
+        # datareactive <- shiny::eventReactive(input$gobutton, {
+        #
+        #     df <- apply_data_set_up(df = dataset, gvar())
+        #
+        #
+        #     # add .key ref for plot
+        #     df$.dcrkey <- seq_len(nrow(df))
+        #
+        #
+        #     return(df)
+        # })
+
+        shiny::observe({print(gvar())})
+        shiny::observe({print(input$`grouptick-checkbox`)})
+
+
+
+        # SUMMARY + START/RESET -------------------
+
         datareactive <- shiny::reactiveVal()
-        datareactive <- shiny::eventReactive(input$gobutton, {
+
+        # handle summary operations when go button is hit
+        shiny::observeEvent(input$gobutton, {
+
+
 
             df <- apply_data_set_up(df = dataset, gvar())
 
@@ -270,19 +311,9 @@ datacleanr <- function(dataset){
             # add .key ref for plot
             df$.dcrkey <- seq_len(nrow(df))
 
+            datareactive(df)
 
-            return(df)
-        })
-
-        shiny::observe({print(gvar())})
-        shiny::observe({print(input$`grouptick-checkbox`)})
-
-
-
-        # summary -------------------
-
-        # handle summary operations when go button is hit
-        shiny::observeEvent(input$gobutton, {
+            print(paste("Is DF Grouped??", dplyr::is.grouped_df(datareactive())))
 
 
             shiny::callModule(module_server_summary,
@@ -301,8 +332,36 @@ datacleanr <- function(dataset){
                               df_label = df_name)
 
 
+            # reset values
+
+            # plot_df$df <- NULL
+
+
+
+
+            # filtered_df$df <- NULL
+            # selected_row$group_row <- NULL
+            selector_vals <- NULL
+
+            start_scatter(NULL)
+
+
+            # provide data set in case filtering is skipped
+
+            if(!is.null(filtered_df$df)){
+                filtered_df$df$data <- datareactive()
+            }
+
+            if(!is.null(plot_df$df)){
+                plot_df$df$data <- datareactive()
+            }
+
+
+            print(paste(start_scatter(), "started"))
+
+
         })
-        # filter ------------------
+        # FILTER STATEMENTS ------------------
 
         # CREATE EMPTY DATAFRAME
         add.filter <- shiny::reactiveValues()
@@ -398,15 +457,18 @@ datacleanr <- function(dataset){
         })
 
 
-        filtered_data <- shiny::reactiveValues(df = NULL)
+        # filtered_df <- shiny::reactiveValues(df = NULL)
         # apply filtering
         shiny::observe({
-            filtered_data$df <- shiny::callModule(module = module_server_df_filter,
+
+            req(add.filter)
+            req(input$gobutton)
+            filtered_df$df <- shiny::callModule(module = module_server_df_filter,
                                                   id = "check",
                                                   df = datareactive(),
                                                   statements = add.filter$df$filter)
 
-            print(paste("filter output in app is:", nrow(filtered_data$df)))
+            print(paste("filter output in app is:", nrow(filtered_df$df)))
 
 
         })
@@ -415,80 +477,108 @@ datacleanr <- function(dataset){
 
 
         # set up variables for vis panel
-        plot_df <- shiny::reactiveValues(df = NULL)
-        selected_row <- shiny::reactiveValues(group_row = NULL)
-        selector_vals <- NULL
+        # plot_df <- shiny::reactiveValues(df = NULL)
+        # selected_row <- shiny::reactiveValues(group_row = NULL)
+        # selector_vals <- NULL
 
 
+
+        # APPLY/UNDO FILTER------------------
         plot_df$df <- shiny::callModule(module = module_server_apply_reset,
                                         id = "appfilt",
-                                        df_filtered = filtered_data,
+                                        df_filtered = filtered_df,
                                         df_original = datareactive)
 
         # handle group/ungroup after hitting start button
         # to supply plot_df (e.g. for viz selection table)
-        # this is necessary, as changing grouping levels
-        # would not affect plot_df, as it is already supplied in event handler
         # below (handle table + variable inputs; observevent gobutton)
-        shiny::observeEvent(input$gobutton, {
+        shiny::observeEvent(input[["selectors-startscatter"]], {
 
-            plot_df$df$data <- datareactive()
+            if(is.null(filtered_df$df) &
+               is.null(plot_df$df)){
+
+                plot_df$df$data <- datareactive()
+
+            }
+
 
         })
 
 
-        # handle table + variable inputs
+        # GENERATE PLOT CONTROLS --------------
+
+        # handle data for plotting after gobutton
+        shiny::observeEvent(
+            input$gobutton,{
+ # provide data set in case filtering is skipped
+                # plot_df$df$data <- datareactive()
+                if(!is.null(plot_df$df$data)){
+                    selector_vals <<- shiny::callModule(module_server_plot_selectorcontrols,
+                                                        "selectors",
+                                                        plot_df)
+
+
+                }
+            })
+
+
+
+        # handle data for plotting after gobutton + filtering
         shiny::observeEvent({
-            input$gobutton
+            # input$gobutton
             input$`appfilt-applyfilter`
             input$`appfilt-applyreset`
             1},
             {
 
-                # provide data set in case filtering is skipped
-                if(is.null(plot_df$df$data)){
-
-                    plot_df$df$data <- datareactive()
-                }
-
+                # if(is.null(plot_df$df$data)){
+                #     plot_df$df$data <- datareactive()
+                # }
                 if(!is.null(plot_df$df$data)){
-
-                    shiny::callModule(module_server_group_selector_table,
-                                      id = "dtgrouprow",
-                                      df = plot_df,
-                                      df_label = df_name)
-
                     selector_vals <<- shiny::callModule(module_server_plot_selectorcontrols,
                                                         "selectors",
                                                         plot_df)
                 }
             })
 
+
+
+
+        ## PLOTTING -----------------
+        # shiny::observe(
+            # {input[["selectors-startscatter"]]
+                # selector_vals
+                # input[["dtgrouprow-grouptable_rows_selected"]]
+                # 1
+            # }
         shiny::observeEvent(
             {input[["selectors-startscatter"]]
                 selector_vals
-                input[["dtgrouprow-grouptable_rows_selected"]]
+                # input[["dtgrouprow-grouptable_rows_selected"]]
                 1
             }
-            , {
-
-                req(input[["selectors-startscatter"]])
-
-                selected_row$group_row <- input$`dtgrouprow-grouptable_rows_selected`
+        ,
+        {
 
 
-                if(!is.null(plot_df$df$data)){
+                req(input$gobutton)
+                start_scatter(input[["selectors-startscatter"]])
+                req(start_scatter)
 
-                    shiny::callModule(module_server_plot_selectable,
-                                      id = "plot",
-                                      df = plot_df,
-                                      group_row = selected_row,
-                                      selector_inputs = selector_vals,
-                                      sel_points = shiny::isolate(selected_data))
+                # if(!is.null(plot_df$df$data)){
+
+                shiny::callModule(module_server_plot_selectable,
+                                  id = "plot",
+                                  df = plot_df,
+                                  selector_inputs = selector_vals,
+                                  # sel_points = selected_data)
+                                  sel_points = selected_data)
 
 
 
-                }
+                # }
+
+                # print(paste(start_scatter(), "started"))
 
             })
 
@@ -498,9 +588,14 @@ datacleanr <- function(dataset){
 
 
 
-        selected_data <- shiny::reactiveValues(df = data.frame(keys = character(0), selection_count = integer(0)))
+        selected_data <- shiny::reactiveValues(df = data.frame(keys = integer(0),
+                                                               selection_count = integer(0),
+                                                               stringsAsFactors = FALSE)
+                                               )
 
-        # handle clicks
+
+
+         # handle clicks
         shiny::observeEvent({plotly::event_data("plotly_click", priority = "event", source = "scatterselect")}, {
 
             shiny::req(input[["selectors-startscatter"]])
@@ -510,8 +605,9 @@ datacleanr <- function(dataset){
                                           priority = "event")
 
             if(nrow(selected_data$df) > 0 & nrow(clicked) > 0){
-                new <- data.frame(keys = as.character(clicked$customdata),
-                                  selection_count = max(selected_data$df$selection_count) + 1)
+                new <- data.frame(keys = integer(clicked$customdata),
+                                  selection_count = max(selected_data$df$selection_count) + 1,
+                                  stringsAsFactors = FALSE)
 
                 if(any(new$keys %in% selected_data$df$keys)){
                     new <- new[!{new$keys %in% selected_data$df$keys}, ]
@@ -520,10 +616,12 @@ datacleanr <- function(dataset){
                 selected_data$df <- rbind(selected_data$df, new)
 
             } else {
-                new <- data.frame(keys = as.character(clicked$customdata),
-                                  selection_count = 1)
+                new <- data.frame(keys = integer(clicked$customdata),
+                                  selection_count = 1,
+                                  stringsAsFactors = FALSE)
                 selected_data$df <- new
             }
+            print(paste("orig selection:"))
             print(selected_data$df)
         })
 
@@ -544,19 +642,22 @@ datacleanr <- function(dataset){
             if(length(selected)>0){
 
                 if(nrow(selected_data$df) > 0 & nrow(selected) > 0){
-                    new <- data.frame(keys = as.character(selected$customdata),
-                                      selection_count = max(selected_data$df$selection_count) + 1)
+                    new <- data.frame(keys = as.integer(selected$customdata),
+                                      selection_count = max(selected_data$df$selection_count) + 1,
+                                      stringsAsFactors = FALSE)
 
                     if(any(new$keys %in% selected_data$df$keys)){
                         new <- new[!{new$keys %in% selected_data$df$keys}, ]
                     }
                     selected_data$df <- rbind(selected_data$df, new)
                 } else {
-                    new <- data.frame(keys = as.character(selected$customdata),
-                                      selection_count = 1)
+                    new <- data.frame(keys = as.integer(selected$customdata),
+                                      selection_count = 1,
+                                      stringsAsFactors = FALSE)
                     selected_data$df <- new
                 }
 
+                print(paste("orig selection:"))
                 print(selected_data$df)
             }
 
@@ -586,6 +687,7 @@ datacleanr <- function(dataset){
 
             # shiny::observeEvent(selected_data, {
             shiny::req(input[["selectors-startscatter"]])
+            shiny::req(selected_data)
 
             annotations <- shiny::callModule(module_server_plot_annotation_table,
                                              "annotator",

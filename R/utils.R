@@ -307,20 +307,18 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
         if(!identical(ok(),
                       sp$df$keys)){
 
+            max_sel_count <- max(sp$df$selection_count)
 
+            last_sel_keys <- as.integer(sp$df$keys[sp$df$selection_count == max_sel_count])
             # grab points
-            add_points <- pd[pd$.dcrkey %in% sp$df$keys, ]
-
+            add_points <- pd[pd$.dcrkey %in% last_sel_keys, ]
             # handle plotly - only adds trace for array > 2L
-            if(nrow(add_points == 1)){
+            if(nrow(add_points) == 1){
                 add_points <- rbind(add_points, add_points)
             }
 
+            print("---- adding traces -----")
 
-
-            print("this is from add traces clicked")
-
-            print(add_points)
             plotly::plotlyProxy(source, session) %>%
                 plotly::plotlyProxyInvoke(
                     "addTraces",
@@ -334,7 +332,9 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
                         # legendgroup = "out",
                         marker = list(color = "white",
                                       line = list(color = "red",
-                                                  width = 2)),
+                                                  width = 2),
+                                      opacity = 0.9),
+                        unselected = list(opacity = 0.9),
                         showlegend = TRUE)
                 )
 

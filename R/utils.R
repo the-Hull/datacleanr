@@ -289,4 +289,72 @@ col2plotlyrgb <- function(colorname){
 
 
 
+#' Handle Add traces
+#'
+#' @param sp selected points
+#' @param pd plot data
+#' @param ok reactive, old keys
+#' @param selectors reactive input selectors
+#' @param source plotly source
+#' @param session active session
+#'
+handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", session){
+
+
+    if(length(sp$df$keys) > 0){
+
+        # check if selection is new
+        if(!identical(ok(),
+                      sp$df$keys)){
+
+
+            # grab points
+            add_points <- pd[pd$.dcrkey %in% sp$df$keys, ]
+
+            # handle plotly - only adds trace for array > 2L
+            if(nrow(add_points == 1)){
+                add_points <- rbind(add_points, add_points)
+            }
+
+
+
+            print("this is from add traces clicked")
+
+            print(add_points)
+            plotly::plotlyProxy(source, session) %>%
+                plotly::plotlyProxyInvoke(
+                    "addTraces",
+                    list(
+                        x = add_points[ , as.character(selectors$xvar), drop = TRUE],
+                        y = add_points[ , as.character(selectors$yvar), drop = TRUE],
+                        type = "scatter",
+                        mode = "markers",
+                        name = "outlier",
+                        customdata = add_points[ , ".dcrkey", drop = TRUE],
+                        # legendgroup = "out",
+                        marker = list(color = "white",
+                                      line = list(color = "red",
+                                                  width = 2)),
+                        showlegend = TRUE)
+                )
+
+            # update the old keys
+            ok(sp$df$keys)
+
+
+        } else {
+
+            cat("WE DOWN\n")
+
+        }
+
+
+
+    }
+
+            return(ok)
+
+}
+
+
 

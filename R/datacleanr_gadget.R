@@ -8,6 +8,13 @@
 #'
 datacleanr <- function(dataset){
 
+
+    # set tz too UTC for plotly
+
+    old_tz <- Sys.getenv("TZ")
+    Sys.setenv(TZ = "UTC")
+
+
     df_name <- deparse(substitute(dataset))
 
     # Panel texts ----------------------------
@@ -280,6 +287,7 @@ datacleanr <- function(dataset){
 
             shiny::callModule(module_server_summary,
                               "summary",
+
                               df =  {if(!is.null(datareactive()) &&
                                         !input$`grouptick-checkbox`){
 
@@ -443,8 +451,6 @@ datacleanr <- function(dataset){
                     plot_df$df$data <- datareactive()
                 }
 
-
-
                 if(!is.null(plot_df$df$data)){
 
                     shiny::callModule(module_server_group_selector_table,
@@ -452,26 +458,12 @@ datacleanr <- function(dataset){
                                       df = plot_df,
                                       df_label = df_name)
 
-
                     selector_vals <<- shiny::callModule(module_server_plot_selectorcontrols,
                                                         "selectors",
                                                         plot_df)
-
-
-
                 }
-
             })
 
-
-
-
-
-
-        # handle plotting
-        # shiny::observeEvent(selector_vals, {
-        # shiny::observe({
-        # shiny::observeEvent(input[["selectors-startscatter"]], {
         shiny::observeEvent(
             {input[["selectors-startscatter"]]
                 selector_vals
@@ -492,7 +484,7 @@ datacleanr <- function(dataset){
                                       df = plot_df,
                                       group_row = selected_row,
                                       selector_inputs = selector_vals,
-                                      sel_points = selected_data)
+                                      sel_points = shiny::isolate(selected_data))
 
 
 
@@ -517,25 +509,22 @@ datacleanr <- function(dataset){
                                           source = "scatterselect",
                                           priority = "event")
 
-
-            print("clicked data is")
-            print(clicked)
-
-            if(nrow(selected_data$df) > 0){
+            if(nrow(selected_data$df) > 0 & nrow(clicked) > 0){
                 new <- data.frame(keys = as.character(clicked$customdata),
-                                  selection_count = max(selected_data$df$selection_count))
+                                  selection_count = max(selected_data$df$selection_count) + 1)
 
+                if(any(new$keys %in% selected_data$df$keys)){
+                    new <- new[!{new$keys %in% selected_data$df$keys}, ]
+                }
+
+                selected_data$df <- rbind(selected_data$df, new)
 
             } else {
-
                 new <- data.frame(keys = as.character(clicked$customdata),
                                   selection_count = 1)
+                selected_data$df <- new
             }
-
-            selected_data$df <- rbind(selected_data$df, new)
-
             print(selected_data$df)
-
         })
 
 
@@ -547,25 +536,30 @@ datacleanr <- function(dataset){
 
             print("selected!")
 
+            # selected <- shiny::reactiveVal()
             selected <- plotly::event_data("plotly_selected",
                                            source = "scatterselect",
                                            priority = "event")
 
+            if(length(selected)>0){
 
-            if(nrow(selected_data$df) > 0){
-                new <- data.frame(keys = as.character(selected$customdata),
-                                  selection_count = max(selected_data$df$selection_count))
+                if(nrow(selected_data$df) > 0 & nrow(selected) > 0){
+                    new <- data.frame(keys = as.character(selected$customdata),
+                                      selection_count = max(selected_data$df$selection_count) + 1)
 
+                    if(any(new$keys %in% selected_data$df$keys)){
+                        new <- new[!{new$keys %in% selected_data$df$keys}, ]
+                    }
+                    selected_data$df <- rbind(selected_data$df, new)
+                } else {
+                    new <- data.frame(keys = as.character(selected$customdata),
+                                      selection_count = 1)
+                    selected_data$df <- new
+                }
 
-            } else {
-
-                new <- data.frame(keys = as.character(selected$customdata),
-                                  selection_count = 1)
+                print(selected_data$df)
             }
 
-            selected_data$df <- rbind(selected_data$df, new)
-
-            print(selected_data$df)
         })
 
         # clear on dbl click
@@ -573,10 +567,12 @@ datacleanr <- function(dataset){
             plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
             1}, {
 
-                # shiny::req(input[["selectors-startscatter"]])
+
+                req(nrow(selected_data$df) > 0)
                 print("data cleared on dbl click")
-                selected_data$df <- selected_data$df[ max(selected_data$df$selection_count), ]
-                print(selected_data$df)
+
+                drop_ind <- which(selected_data$df$selection_count == max(selected_data$df$selection_count, na.rm = TRUE))
+                selected_data$df <- selected_data$df[ -drop_ind, ]
             })
 
 
@@ -591,97 +587,13 @@ datacleanr <- function(dataset){
             # shiny::observeEvent(selected_data, {
             shiny::req(input[["selectors-startscatter"]])
 
-
-
             annotations <- shiny::callModule(module_server_plot_annotation_table,
                                              "annotator",
                                              df = plot_df,
                                              sel_points = selected_data)
 
-
-            # print(annotations())
-
-
-
-
         })
 
-
-        # update plot with selection
-
-
-        # shiny::observe({
-
-#         shiny::observeEvent({plotly::event_data("plotly_click", source = "scatterselect", priority = "event")
-#             plotly::event_data("plotly_selected", source = "scatterselect", priority = "event")
-#             1}, {
-#
-#             req(selected_data())
-#             add_points <- plot_df$df$data[plot_df$df$data$.dcrkey %in% selected_data(), ]
-#
-#             cols <- rep("gray60", nrow(plot_df$df$data))
-#             cols[plot_df$df$data$.dcrkey %in% selected_data()] <- "red"
-#
-#
-#             print("this is from add traces")
-#             print(head(add_points))
-#             print(lubridate::tz(add_points))
-#
-#
-#
-#             plotly::plotlyProxy("plot-scatterselect", session) %>%
-#                 plotly::plotlyProxyInvoke(
-#                     "addTraces",
-#                     #
-#                     list(
-#                         x = add_points[ , as.character(selector_vals$xvar), drop = TRUE],
-#                         y = add_points[ , as.character(selector_vals$yvar), drop = TRUE],
-#                         type = "scatter",
-#                         mode = "markers",
-#                         name = "outlier",
-#                         marker = list(color = "red"),
-#                         showlegend = FALSE)
-#
-#
-#
-# #
-# #                     "restyle",
-# #                     marker.color = list(I(cols))
-#                     # marker = list(color = list(sapply(cols,
-#                     #                              col2plotlyrgba, 0.9,
-#                     #                              USE.NAMES = FALSE)))
-#                     # color = sapply(cols,
-#                     #                              col2plotlyrgba, 0.9,
-#                     #                              USE.NAMES = FALSE)
-#                     # marker.color = list(cols)
-#
-#                 )
-#         })
-#
-#
-#         shiny::observeEvent({plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
-#             plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
-#             1}, {
-#
-#                 print("remove removed")
-#
-#             # req(selected_data())
-#                 # req(input$tracemap)
-#
-#                 print(input$tracemap)
-#                 traces <- matrix(input$tracemap, ncol = 2, byrow = TRUE)
-#                 indices <- as.integer(traces[traces[, 1] == "outlier", 2])
-#
-#                 print(indices)
-#
-#
-#             plotly::plotlyProxy("plot-scatterselect", session) %>%
-#                 plotly::plotlyProxyInvoke(
-#                     "deleteTraces",
-#                     indices
-#
-#                 )
-#         })
 
 
 
@@ -698,136 +610,26 @@ datacleanr <- function(dataset){
         # })
 
 
-        # old ------------ --------------------------------------------------------
-
-
-        #
-        #
-        #         #
-        #          shiny::observeEvent(input$addbutton, {
-        #
-        #             all_filters_lgl <- grepl("filter[0-9]+-strfilter", names(input))
-        #             all_filters <- names(input)[all_filters_lgl]
-        #
-        #              if(any(all_filters_lgl)){
-        #
-        #
-        #
-        #             # all_filters <- sub("[ ]", replacement = "", all_filters)
-        #
-        #                  filter_vals <- sapply(all_filters, function(x) input[[x]], USE.NAMES = FALSE)
-        #
-        #                  keep <- sapply(filter_vals, nchar) > 0
-        #
-        #                  filter_vals <- filter_vals[keep]
-        #
-        # #
-        # #             filter_numbers <- gsub(pattern = "[^0-9]",
-        # #                                   replacement = "",
-        # #                                   x = all_filters)
-        #
-        #             # max_filter <- which.max(filter_numbers)
-        #             #
-        #             # last_filter <- all_filters[max_filter]
-        #
-        #
-        #             print(filter_vals)
-        #
-        #              }
-        #
-        #         })
-        #
-        #         #
-        #
-        #         # incrementor for button clicks
-        #         filter_control <- shiny::reactiveValues(value = 1)
-        #
-        #
-        #         # data frame to collect filter statements
-        #         filter_statements <- reactiveValues()
-        #
-        #         filter_statements$df <- data.frame(
-        #             "statement" = character(0),
-        #             stringsAsFactors = FALSE
-        #         )
-        #
-        #         shiny::observeEvent(input$addbutton, {
-        #
-        #             shiny::callModule(module_server_box_str_filter,
-        #                               "textselect",
-        #                               selector = "#placeholder",
-        #                               # selector = "p",
-        #                               actionbtn = filter_control$value)
-        #
-        #
-        #
-        #
-        #
-        #
-        # #
-        #             filter_control$value <- filter_control$value + 1
-        #
-        #         })
-        #
-        #
-        #
-        #
-        #
-        #
-        #
-        #
-        #         shiny::observeEvent(input[[shiny::NS(paste0("filter",
-        #                                                     filter_control$value-1),
-        #                                              "strfilter")]], {
-        #
-        #                                                  # print(input[[shiny::NS(paste0("filter",
-        #                                                  #                               filter_control$value-1),
-        #                                                  #                        "strfilter")]])
-        #
-        #                                                  # filter_statements$df[filter_control$value - 1,
-        #                                                  #                      "statements"] <- input[[shiny::NS(paste0("filter",
-        #                                                  #                                                               filter_control$value -1),
-        #                                                  #                                                        "strfilter ")]]
-        #                                              })
-        #
-        #
-        #
-        #
-        #         observeEvent(input$removebutton, {
-        #
-        #             # print(input$`filter1-strfilter`)
-        #             # print(input$`filter2-strfilter`)
-        #
-        #             # active_filters <- check_active_filters(allinputs = AllInputs())
-        #
-        #             btn <- filter_control$value
-        #             removeUI(
-        #                 selector = paste0("#div-filter",filter_control$value - 1)
-        #             )
-        #
-        #
-        #             filter_control$value <- filter_control$value - 1
-        #
-        #             if(filter_control$value < 1){
-        #                 filter_control$value <- 1
-        #             }
-        #
-        #         })
-
 
 
 
         # END ---------------------------
         observeEvent(input$done, {
+
+            Sys.setenv(TZ = old_tz)
             stopApp("Done")
         })
         observeEvent(input$cancel, {
+
             stopApp(NULL)
+            Sys.setenv(TZ = old_tz)
         })
 
 
 
     }
+
+
 
 
 

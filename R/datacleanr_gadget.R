@@ -552,10 +552,12 @@ datacleanr <- function(dataset){
                 # 1
             # }
         shiny::observeEvent(
-            {input[["selectors-startscatter"]]
-                selector_vals
-                # input[["dtgrouprow-grouptable_rows_selected"]]
-                1},
+            input[["selectors-startscatter"]],
+        # shiny::observeEvent(
+        #     {input[["selectors-startscatter"]]
+        #         selector_vals
+        #         # input[["dtgrouprow-grouptable_rows_selected"]]
+        #         1},
         {
             req(input$gobutton)
             req(input[["selectors-startscatter"]])
@@ -661,9 +663,11 @@ datacleanr <- function(dataset){
         })
 
         # clear on dbl click
-        shiny::observeEvent({plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
+        shiny::observeEvent(
+        # shiny::observeEvent({
+            # plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
             plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
-            1}, {
+            , {
 
 
                 req(nrow(selected_data$df) > 0)
@@ -679,14 +683,16 @@ datacleanr <- function(dataset){
 
 
         # insert editable table for annotations
-        shiny::observe({
+        # shiny::observe({
+        shiny::observeEvent(selected_data$df, {
 
 
             # shiny::observeEvent(selected_data, {
             shiny::req(input[["selectors-startscatter"]])
             shiny::req(selected_data)
 
-            annotations <- shiny::callModule(module_server_plot_annotation_table,
+            # annotations <-
+             shiny::callModule(module_server_plot_annotation_table,
                                              "annotator",
                                              df = plot_df,
                                              sel_points = selected_data)

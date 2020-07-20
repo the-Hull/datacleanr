@@ -30,30 +30,18 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
   sessionval <- session$ns("")
 
 
-#   jsfull <- "function(el, x, data){
-#   var id = el.getAttribute('id');
-#   var d3 = Plotly.d3;
-#   el.on('plotly_click', function(event) {
-#       var out = [];
-#       d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
-#         var trace = d3.select(this)[0][0].__data__[0].trace;
-#         out.push([name=trace.name, index=trace.index]);
-#       });
-#       Shiny.setInputValue(data.ns + data.x, out);
-#   });
-#   el.on('plotly_selected', function(event) {
-#       var out = [];
-#       d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
-#         var trace = d3.select(this)[0][0].__data__[0].trace;
-#         out.push([name=trace.name, index=trace.index]);
-#       });
-#       Shiny.setInputValue(data.ns + data.x, out);
-#   });
-# }"
   jsfull <- "function(el, x, data){
   var id = el.getAttribute('id');
   var d3 = Plotly.d3;
-  el.on('plotly_afterplot', function(event) {
+  el.on('plotly_click', function(event) {
+      var out = [];
+      d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
+        var trace = d3.select(this)[0][0].__data__[0].trace;
+        out.push([name=trace.name, index=trace.index]);
+      });
+      Shiny.setInputValue(data.ns + data.x, out);
+  });
+  el.on('plotly_selected', function(event) {
       var out = [];
       d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
         var trace = d3.select(this)[0][0].__data__[0].trace;
@@ -62,6 +50,22 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
       Shiny.setInputValue(data.ns + data.x, out);
   });
 }"
+
+  # var trace = d3.select(this)[0][0].__data__[0].trace;
+
+#   jsfull <- "function(el, x, data){
+#   var id = el.getAttribute('id');
+#   var d3 = Plotly.d3;
+#   el.on('plotly_afterplot', function(event) {
+#       var out = [];
+#       d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
+#         var trace = d3.select(this)[0][0].__data__[0].trace;
+#         out.push([name=trace.name, index=trace.index]);
+#       });
+#       Shiny.setInputValue(data.ns + data.x, out);
+#   });
+# }"
+      # Shiny.setInputValue(data.ns + data.x, out);
 
   plot_data <- df$df$data
 
@@ -138,7 +142,7 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
                              # dragmode =  FALSE
                              dragmode = "lasso"
               )  %>%
-              plotly::event_register(event = "plotly_doubleclick") %>%
+              # plotly::event_register(event = "plotly_doubleclick") %>%
               plotly::event_register(event = "plotly_deselect") %>%
               plotly::event_register(event = "plotly_click") %>%
               plotly::event_register(event = "plotly_selected") %>%
@@ -178,6 +182,7 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
                       {
 
 
+                        "that"
 
 
                         ok <- handle_add_traces(sp = sel_points,
@@ -196,6 +201,7 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
 
                       {
 
+                        "this"
 
 
                         ok <- handle_add_traces(sp = sel_points,
@@ -211,29 +217,32 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
                       })
 
 
-  shiny::observeEvent(plotly::event_data(c("plotly_doubleclick"), source = "scatterselect", priority = "event"), {
-
-    print("remove dblclick")
-
-    req(input$tracemap)
-
-
-
-
-    traces <- matrix(input$tracemap, ncol = 2, byrow = TRUE)
-    indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces, 2])
-
-    print(traces)
-    print(indices)
-
-    if(length(indices)>0){
-      plotly::plotlyProxy("plot-scatterselect", session) %>%
-        plotly::plotlyProxyInvoke(
-          "deleteTraces",
-          max(indices)
-        )
-    }
-  })
+  # shiny::observeEvent(plotly::event_data(c("plotly_doubleclick"), source = "scatterselect", priority = "event"), {
+  #
+  #   print("remove dblclick")
+  #
+  #   req(input$tracemap)
+  #
+  #
+  #
+  #
+  #   traces <- matrix(input$tracemap, ncol = 2, byrow = TRUE)
+  #   indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces, 2])
+  #
+  #   print(paste("indices are:", indices))
+  #
+  #   if(length(indices)>0){
+  #     plotly::plotlyProxy("plot-scatterselect", session) %>%
+  #       plotly::plotlyProxyInvoke(
+  #         "deleteTraces",
+  #         max(indices)
+  #       )
+  #     print("removed trace!!")
+  #
+  #   }
+  #     print(traces)
+  #     old_keys(NULL)
+  # })
 
 
   shiny::observeEvent(plotly::event_data(c("plotly_deselect"), source = "scatterselect", priority = "event"), {
@@ -248,8 +257,7 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
     traces <- matrix(input$tracemap, ncol = 2, byrow = TRUE)
     indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces, 2])
 
-    print(traces)
-    print(indices)
+    print(paste("indices are:", indices))
 
     if(length(indices)>0){
       plotly::plotlyProxy("plot-scatterselect", session) %>%
@@ -257,7 +265,12 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
           "deleteTraces",
           max(indices)
         )
+
+      print("removed trace!!")
+
     }
 
+    old_keys(NULL)
+    print(traces)
   })
 }

@@ -303,6 +303,12 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
 
     if(length(sp$df$keys) > 0){
 
+        print(paste("selection is identical:", identical(ok(),
+                                                   sp$df$keys)))
+
+        print(paste("ok is", ok()))
+
+
         # check if selection is new
         if(!identical(ok(),
                       sp$df$keys)){
@@ -329,9 +335,10 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
                         mode = "markers",
                         name = "outlier",
                         customdata = add_points[ , ".dcrkey", drop = TRUE],
+                        text = add_points[ , ".dcrkey", drop = TRUE],
                         # legendgroup = "out",
                         marker = list(
-                            color = "black",
+                            color = "darkgray",
                             line = list(color = "red",
                                         width = 2),
                             opacity = 1),
@@ -356,6 +363,13 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
     return(ok)
 
 }
+
+
+# helpers ------------
+
+
+`%nin%` <-  Negate(`%in%`)
+
 
 
 

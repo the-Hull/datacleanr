@@ -19,8 +19,7 @@ module_ui_plot_selectable <- function(id) {
 #' Server Module: box for str filter condition
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
-#' @param df reactive df, with df as element
-#' @param df reactive df, with df as element
+#' @param df reactive df
 #' @param selector_inputs reactive, output from module_plot_selectorcontrols
 #' @param sel_points reactive, provides .dcrkey of selected points
 #'
@@ -67,7 +66,7 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
 # }"
       # Shiny.setInputValue(data.ns + data.x, out);
 
-  plot_data <- df$df$data
+  plot_data <- df()
 
   n_groups <- length(unique(dplyr::group_indices(plot_data)))
 

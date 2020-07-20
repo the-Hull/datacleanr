@@ -40,7 +40,7 @@ module_server_df_filter <- function(input, output, session, df, statements){
 
     if(hasName(out, "filtered_df")){
         percent_filtered <- round(100 * (1 - ( nrow(out$filtered_df) /
-                                       nrow(df))),0)
+                                                   nrow(df))),0)
     } else {
 
         percent_filtered <-  0
@@ -50,38 +50,38 @@ module_server_df_filter <- function(input, output, session, df, statements){
 
     output$filterdf <- shiny::renderUI({
 
-            if(!is.null(states) & any(!states)){
+        if(!is.null(states) & any(!states)){
 
-                return(shiny::tagList(shiny::tags$p("Filter(s) ",
-                                                    # str(states),
-                                                    shiny::tags$b(
-                                                        paste(which(states == FALSE),
-                                                              collapse = ", ")),
-                                                   " won't be applied, due to invalid statement(s).",
-                                                   shiny::tags$br(),
-                                                   shiny::tags$br(),
-                                                   "A total of",
-                                                   shiny::tags$b(paste(percent_filtered), "%"),
-                                                   "will be filtered.")))
+            return(shiny::tagList(shiny::tags$p("Filter(s) ",
+                                                # str(states),
+                                                shiny::tags$b(
+                                                    paste(which(states == FALSE),
+                                                          collapse = ", ")),
+                                                " won't be applied, due to invalid statement(s).",
+                                                shiny::tags$br(),
+                                                shiny::tags$br(),
+                                                "A total of",
+                                                shiny::tags$b(paste(percent_filtered), "%"),
+                                                "will be filtered.")))
 
-            } else if(!is.null(states) & all(states)){
+        } else if(!is.null(states) & all(states)){
 
-                return(shiny::tagList(shiny::tags$p(
-                    # "Filter(s) ",
-                                                    # str(states),
-                                                    # shiny::tags$b(
-                                                    #     paste(which(states == FALSE),
-                                                    #           collapse = ", ")),
-                                                    # " won't be applied, due to invalid statement(s).",
-                                                    # shiny::tags$br(),
-                                                    # shiny::tags$br(),
-                                                    "A total of",
-                                                    shiny::tags$b(paste(percent_filtered), "%"),
-                                                    "will be filtered.")))
+            return(shiny::tagList(shiny::tags$p(
+                # "Filter(s) ",
+                # str(states),
+                # shiny::tags$b(
+                #     paste(which(states == FALSE),
+                #           collapse = ", ")),
+                # " won't be applied, due to invalid statement(s).",
+                # shiny::tags$br(),
+                # shiny::tags$br(),
+                "A total of",
+                shiny::tags$b(paste(percent_filtered), "%"),
+                "will be filtered.")))
 
-            } else {
-                return(print(NULL))
-            }
+        } else {
+            return(print(NULL))
+        }
     })
 
     if(any(states)){

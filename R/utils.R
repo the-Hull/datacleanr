@@ -304,7 +304,7 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
     if(length(sp$df$keys) > 0){
 
         print(paste("selection is identical:", identical(ok(),
-                                                   sp$df$keys)))
+                                                         sp$df$keys)))
 
         print(paste("ok is", ok()))
 
@@ -329,8 +329,9 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
                 plotly::plotlyProxyInvoke(
                     "addTraces",
                     list(
-                        x = add_points[ , as.character(selectors$xvar), drop = TRUE],
-                        y = add_points[ , as.character(selectors$yvar), drop = TRUE],
+                        x = add_points[ , as.character(selectors$xvar()), drop = TRUE],
+                        y = add_points[ , as.character(selectors$yvar()), drop = TRUE],
+                        size = add_points[ , as.character(selectors$yvar()), drop = TRUE],
                         type = "scatter",
                         mode = "markers",
                         name = "outlier",

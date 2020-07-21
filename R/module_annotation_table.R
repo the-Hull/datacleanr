@@ -38,7 +38,7 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
 
 
     # table_dat <- shiny::reactiveVal(cbind(df$df$data[df$df$data$.dcrkey %in% sel_points$df$keys, ],
-                                          # ".annotation" =  character(length(sel_points$df$keys))))
+    # ".annotation" =  character(length(sel_points$df$keys))))
     # table_dat <- shiny::isolate(shiny::reactiveVal(cbind(df$df$data[df$df$data$.dcrkey %in% sel_points$df$keys, ],
     #                                       ".annotation" =  character(length(sel_points$df$keys)))))
 
@@ -46,7 +46,7 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
     # str(df$df$data)
     # str(table_dat)
 
-    table_dat <- df$df$data[df$df$data$.dcrkey %in% sel_points$df$keys, ]
+    table_dat <- df()[df()$.dcrkey %in% sel_points$df$keys, ]
 
     # table_dat$.annotation <-
 
@@ -56,11 +56,6 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
     if(length(sel_points$df$keys) >= 1){
         table_dat$.annotation <- ""
     }
-
-
-
-
-
 
 
     disable_cols <- which(colnames(table_dat) != ".annotation")
@@ -73,15 +68,15 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
 
     # shiny::observe({
 
-        output$dtannotation <- DT::renderDT(table_dat,
-                                            # options = list(columnDefs = list(list(visible=FALSE, targets=columns2hide))),
-                                            editable = list(target = "column"))
+    output$dtannotation <- DT::renderDT(table_dat,
+                                        # options = list(columnDefs = list(list(visible=FALSE, targets=columns2hide))),
+                                        editable = list(target = "column"))
     # ,
-                                                            # disable = list(columns = disable_cols)))
+    # disable = list(columns = disable_cols)))
 
 
-        print(unique(table_dat$.annotation))
-        print("rendering table")
+    print(unique(table_dat$.annotation))
+    print("rendering table")
 
     # })
 

@@ -11,12 +11,12 @@ module_ui_box_str_filter <- function(id, actionbtn){
 
 
     shiny::tagList(shiny::h4(paste("Filter condition", actionbtn)),
-        shiny::textInput(inputId = ns("strfilter"),
-                         label = NULL,
-                         # label = paste("Filter condition", actionbtn),
-                         value = NULL,
-                         width = "100%",
-                         placeholder = NULL)
+                   shiny::textInput(inputId = ns("strfilter"),
+                                    label = NULL,
+                                    # label = paste("Filter condition", actionbtn),
+                                    value = NULL,
+                                    width = "100%",
+                                    placeholder = NULL)
     )
 }
 
@@ -38,7 +38,7 @@ module_server_box_str_filter <- function(input,
         where = "beforeEnd",
         ui = shiny::tags$div(id = paste0("div-filter", actionbtn),
 
-                      module_ui_box_str_filter(paste0("filter", actionbtn), actionbtn),
+                             module_ui_box_str_filter(paste0("filter", actionbtn), actionbtn),
         )
     )
 
@@ -63,7 +63,7 @@ module_ui_filter_str <- function(id) {
         id=paste0("filt", id),
         shiny::fluidRow(
 
-                shiny::uiOutput(ns('filter'))
+            shiny::uiOutput(ns('filter'))
 
         )
     )

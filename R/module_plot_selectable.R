@@ -24,7 +24,7 @@ module_ui_plot_selectable <- function(id) {
 #' @param sel_points reactive, provides .dcrkey of selected points
 #'
 #' @details provides plot, note, that data set needs a column .dcrkey, added in initial processing step
-module_server_plot_selectable <- function(input, output, session, df, selector_inputs, sel_points){
+module_server_plot_selectable <- function(input, output, session, selector_inputs, df, sel_points){
   ns = session$ns
   sessionval <- session$ns("")
 
@@ -104,6 +104,20 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
   names(col_value_vector) <- unique(dplyr::group_indices(plot_data))
 
 
+  print(selector_inputs$zvar())
+  print(nchar(selector_inputs$zvar()))
+
+
+  # handler for empty zvar selection
+  zvar_toggle <- nchar(selector_inputs$zvar())>0
+  if(zvar_toggle){
+    print("zvar given")
+    size_expression <- as.formula(paste("~", selector_inputs$zvar()))
+  } else {
+    size_expression <- rlang::quo_expr(NULL)
+    print("zvar empty")
+  }
+
 
 
 
@@ -123,7 +137,8 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
           ) %>%
             plotly::add_markers(x = ~ !!selector_inputs$xvar(),
                                 y = ~ !!selector_inputs$yvar(),
-                                size = ~ !!selector_inputs$zvar(),
+                                # size = ~ !!as.symbol(selector_inputs$zvar()),
+                                size = eval(size_expression),
                                 color = ~as.factor(.index),
                                 name = ~as.factor(.index),
                                 colors = col_value_vector,
@@ -164,7 +179,7 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
     #   # handle when input selector changes
 
 
-      shiny::observeEvent(selector_inputs$abutton(),{
+      shiny::observeEvent(input$`selectors-startscatter`,{
       # shiny::observeEvent(plotchange_observer(),{
 
         # shiny::validate(need(plotchange_observer,
@@ -242,7 +257,7 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
                         ok <- handle_add_traces(sp = sel_points,
                                                 pd = plot_data,
                                                 ok = shiny::isolate(old_keys),
-                                                selectors = selector_inputs,
+                                                # selectors = selector_inputs,
                                                 source = "scatterselect",
                                                 session = session)
 
@@ -261,7 +276,7 @@ module_server_plot_selectable <- function(input, output, session, df, selector_i
                         ok <- handle_add_traces(sp = sel_points,
                                           pd = plot_data,
                                           ok = shiny::isolate(old_keys),
-                                          selectors = selector_inputs,
+                                          # selectors = selector_inputs,
                                           source = "scatterselect",
                                           session = session)
 

@@ -40,17 +40,22 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
 
     output$scatterselectControl <- shiny::renderUI({
         shiny::fluidRow(
-            column(2, shiny::varSelectInput(ns('xvar'),
+            column(3, shiny::varSelectInput(ns('xvar'),
                                             label = "X Var",
                                             data = df()[ , colnames(df())!=".dcrkey"])),
-            column(2,
+            column(3,
                    shiny::varSelectInput(ns('yvar'),
                                          label = "Y Var",
                                          data = df()[ , colnames(df())!=".dcrkey"])),
-            column(2,
-                   shiny::varSelectInput(ns('zvar'),
-                                         label = "Z Var",
-                                         data = df()[ , colnames(df())!=".dcrkey"])),
+            # column(3,
+            #        shiny::varSelectInput(ns('zvar'),
+            #                              label = "Z Var",
+            #                              data = df()[ , colnames(df())!=".dcrkey"])),
+            column(3,
+                   shiny::selectInput(ns('zvar'),
+                                      label = "Z Var",
+                                      choices = c("", colnames(df())[colnames(df()) != ".dcrkey"]),
+                                      selected = NULL)),
             column(1,
                    style = "margin-top: 25px;",
                    shiny::actionButton(ns('startscatter'),
@@ -78,20 +83,20 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
     # })
 
 
-   inputs_to_monitor <- shiny::reactiveValues(xvar = NULL,
-                                              yvar= NULL,
-                                              abutton= NULL)
-
-   shiny::observe({
-       inputs_to_monitor$xvar <- shiny::reactive({input$xvar})
-       inputs_to_monitor$yvar <- shiny::reactive({input$yvar})
-       inputs_to_monitor$zvar <- shiny::reactive({input$zvar})
-       inputs_to_monitor$abutton <- shiny::reactive({input$startscatter})
-   })
-
-
-
-   return(inputs_to_monitor)
+   # inputs_to_monitor <- shiny::reactiveValues(xvar = NULL,
+   #                                            yvar= NULL,
+   #                                            abutton= NULL)
+   #
+   # shiny::observe({
+   #     inputs_to_monitor$xvar <- shiny::reactive({input$xvar})
+   #     inputs_to_monitor$yvar <- shiny::reactive({input$yvar})
+   #     inputs_to_monitor$zvar <- shiny::reactive({input$zvar})
+   #     inputs_to_monitor$abutton <- shiny::reactive({input$startscatter})
+   # })
+   #
+   #
+   #
+   # return(inputs_to_monitor)
 
 
 

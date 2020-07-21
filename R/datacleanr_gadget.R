@@ -211,7 +211,7 @@ datacleanr <- function(dataset){
                                                  reset_filters_button = NULL)
 
         # reactive inputs for plot variable selection
-        selector_vals <- shiny::reactiveValues()
+        # selector_vals <- shiny::reactiveValues()
 
 
         # tracker for plot initialization
@@ -449,6 +449,8 @@ datacleanr <- function(dataset){
 
 
 
+
+
 # // ----------------------------------------------------------------------
 
 
@@ -456,11 +458,15 @@ datacleanr <- function(dataset){
         # handle data for plotting after gobutton + filtering
         shiny::observe({
             req(datareactive)
-                    selector_vals <<-
+                    # selector_vals <<-
                         shiny::callModule(module_server_plot_selectorcontrols,
                                                         "selectors",
                                                         datareactive)
             })
+
+        selector_vals <- list(xvar = shiny::reactive(input$`selectors-xvar`),
+                              yvar = shiny::reactive(input$`selectors-yvar`),
+                              zvar = shiny::reactive(input$`selectors-zvar`))
 
 
         ## PLOTTING -----------------

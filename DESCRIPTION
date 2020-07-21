@@ -29,4 +29,5 @@ Imports:
     plotly,
     grDevices,
     stats,
-    htmlwidgets
+    htmlwidgets,
+    purrr

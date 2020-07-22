@@ -292,21 +292,22 @@ col2plotlyrgb <- function(colorname){
 #' Handle Add traces
 #'
 #' @param sp selected points
-#' @param pd plot data
+#' @param dframe plot data
 #' @param ok reactive, old keys
 #' @param selectors reactive input selectors
 #' @param source plotly source
 #' @param session active session
 #'
-handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", session){
+handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect", session){
+
 
 
     if(length(sp$df$keys) > 0){
 
-        print(paste("selection is identical:", identical(ok(),
-                                                         sp$df$keys)))
+        # print(paste("selection is identical:", identical(ok(),
+        #                                                  sp$df$keys)))
 
-        print(paste("ok is", ok()))
+        # print(paste("ok is", ok()))
 
 
         # check if selection is new
@@ -317,7 +318,7 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
 
             last_sel_keys <- as.integer(sp$df$keys[sp$df$selection_count == max_sel_count])
             # grab points
-            add_points <- pd[pd$.dcrkey %in% last_sel_keys, ]
+            add_points <- dframe()[dframe()$.dcrkey %in% last_sel_keys, ]
             # handle plotly - only adds trace for array > 2L
             if(nrow(add_points) == 1){
                 add_points <- rbind(add_points, add_points)
@@ -325,13 +326,25 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
 
             print("---- adding traces -----")
 
+            print(head(add_points))
+
+
+            zvar_toggle <- nchar(selectors$zvar())>0
+            if(zvar_toggle){
+                z <- add_points[ , as.character(selectors$zvar()), drop = TRUE]
+            } else {
+                z <- NULL
+                print("no zvar")
+            }
+
+
             plotly::plotlyProxy(source, session) %>%
                 plotly::plotlyProxyInvoke(
                     "addTraces",
                     list(
                         x = add_points[ , as.character(selectors$xvar()), drop = TRUE],
                         y = add_points[ , as.character(selectors$yvar()), drop = TRUE],
-                        size = add_points[ , as.character(selectors$yvar()), drop = TRUE],
+                        size = z,
                         type = "scatter",
                         mode = "markers",
                         name = "outlier",
@@ -362,6 +375,7 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
     }
 
     return(ok)
+
 
 }
 

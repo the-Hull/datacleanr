@@ -20,12 +20,12 @@ module_ui_plot_annotation_table <- function(id) {
 
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
-#' @param df df used for plotting
+#' @param dframe df used for plotting
 #' @param sel_point numeric, vector of .dcrkeys selected in plot
 #'
 #' @return df with .dcrkeys and annotations
 #'
-module_server_plot_annotation_table <- function(input, output, session, df, sel_points){
+module_server_plot_annotation_table <- function(input, output, session, dframe, sel_points){
     ns = session$ns
     print("Restarting Table Stuff")
 
@@ -46,7 +46,7 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
     # str(df$df$data)
     # str(table_dat)
 
-    table_dat <- df()[df()$.dcrkey %in% sel_points$df$keys, ]
+    table_dat <- dframe()[dframe()$.dcrkey %in% sel_points$df$keys, ]
 
     # table_dat$.annotation <-
 
@@ -75,8 +75,8 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
     # disable = list(columns = disable_cols)))
 
 
-    print(unique(table_dat$.annotation))
-    print("rendering table")
+    # print(unique(table_dat$.annotation))
+    # print("rendering table")
 
     # })
 
@@ -92,9 +92,9 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
         if(length(sel_points$df$keys) > 0){
             table_dat <- DT::editData(table_dat, input$dtannotation_cell_edit, 'dtannotation')
             # table_dat(DT::editData(shiny::isolate(table_dat()), input$dtannotation_cell_edit, 'dtannotation'))
-            print("table was edited")
+            # print("table was edited")
 
-            print(table_dat)
+            # print(table_dat)
             # print(head(table_dat()))
             #print(annotations)
 
@@ -160,7 +160,9 @@ module_server_plot_annotation_table <- function(input, output, session, df, sel_
 
     shiny::observeEvent(plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event"),
                         {
-                            req(nrow(sel_points$df) > 0)
+
+                            shiny::validate(shiny::need(nrow(sel_points$df) > 0,
+                                                        label = "need selected data"))
                             print("CLEARED TABLE VALS")
                             drop_ind <- which(sel_points$df$selection_count == max(sel_points$df$selection_count, na.rm = TRUE))
                             # get corresponding keys

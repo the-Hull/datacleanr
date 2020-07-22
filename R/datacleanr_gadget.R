@@ -199,6 +199,8 @@ datacleanr <- function(dataset){
         dataset$.dcrkey <- seq_len(nrow(dataset))
 
 
+
+
         # stores data used in app
         datareactive <- shiny::reactiveVal()
 
@@ -206,9 +208,10 @@ datacleanr <- function(dataset){
         recover_data <- shiny::reactiveVal()
 
         # tracks which version of data to pass to datareactive
-        action_tracking <- shiny::reactiveValues(start_button = NULL,
-                                                 applied_filters_button = NULL,
-                                                 reset_filters_button = NULL)
+        action_tracking <- shiny::reactiveValues(plot_start = NULL,
+                                                 action_tracking = NULL)
+                                                 # applied_filters_button = NULL,
+                                                 # reset_filters_button = NULL)
 
         # reactive inputs for plot variable selection
         # selector_vals <- shiny::reactiveValues()
@@ -219,8 +222,6 @@ datacleanr <- function(dataset){
 
 
 
-        plot_df <- shiny::reactiveValues(df = NULL)
-        filtered_df <- shiny::reactiveValues(df = NULL)
 
 
 # // ----------------------------------------------------------------------
@@ -243,11 +244,9 @@ datacleanr <- function(dataset){
         shiny::observeEvent(input$gobutton, {
 
             # handle actions
-            action_tracking$start_button <- TRUE
-            action_tracking$applied_filters_button <- FALSE
-            action_tracking$reset_filters_button <- FALSE
 
             df <- apply_data_set_up(df = dataset, gvar())
+            df$.dcrindex <- dplyr::group_indices(df)
 
             datareactive(df)
             recover_data(df)
@@ -368,8 +367,11 @@ datacleanr <- function(dataset){
 
 
         shiny::observe({
-            req(add.filter)
-            req(input$gobutton)
+
+            shiny::validate(shiny::need(add.filter,
+                                       label = "add filter"))
+            shiny::validate(shiny::need(input$gobutton,
+                                       label = "StartButton"))
 
             shiny::callModule(module = module_server_df_filter,
                                                   id = "check",
@@ -378,9 +380,13 @@ datacleanr <- function(dataset){
         })
 
         # FILTER Apply/Undo  -------------------------------------------------------
+
+        #apply
         shiny::observeEvent(input$apply_filter, {
-            req(add.filter)
-            req(input$gobutton)
+            shiny::validate(shiny::need(add.filter,
+                                       label = "add filter"))
+            shiny::validate(shiny::need(input$gobutton,
+                                       label = "StartButton"))
 
             df <- try({checked_filter(recover_data(),
                                       add.filter$df$filter)})
@@ -393,8 +399,10 @@ datacleanr <- function(dataset){
 
         # reset filtering
         shiny::observeEvent(input$reset_filter, {
-            req(add.filter)
-            req(input$gobutton)
+            shiny::validate(shiny::need(add.filter,
+                                       label = "add filter"))
+            shiny::validate(shiny::need(input$gobutton,
+                                       label = "StartButton"))
 
             datareactive(recover_data())
             print(paste("AFTER-RESET: filter output in app is:", nrow(datareactive())))
@@ -440,9 +448,6 @@ datacleanr <- function(dataset){
                               id = "df",
                               df = datareactive,
                               df_label = df_name)
-
-            print("here")
-
             }
 
         })
@@ -457,16 +462,36 @@ datacleanr <- function(dataset){
         # PLOT CONTROLS --------------
         # handle data for plotting after gobutton + filtering
         shiny::observe({
-            req(datareactive)
+
+            shiny::validate(shiny::need(datareactive,
+                                       label = "datareactive"))
                     # selector_vals <<-
                         shiny::callModule(module_server_plot_selectorcontrols,
                                                         "selectors",
                                                         datareactive)
             })
 
+
+
         selector_vals <- list(xvar = shiny::reactive(input$`selectors-xvar`),
                               yvar = shiny::reactive(input$`selectors-yvar`),
-                              zvar = shiny::reactive(input$`selectors-zvar`))
+                              zvar = shiny::reactive(input$`selectors-zvar`),
+                              startscatter = shiny::reactive(input$`selectors-startscatter`))
+
+
+        shiny::observeEvent({
+            selector_vals[[1]]()
+            selector_vals[[2]]()
+            selector_vals[[3]]()
+            }, {
+
+            shiny::validate(shiny::need(shiny::isolate(selector_vals),
+                                        label = "control vals"))
+            action_tracking$plot_start <- FALSE
+            action_tracking$controls <- TRUE
+
+            print("used controls - disable selecting")
+        })
 
 
         ## PLOTTING -----------------
@@ -475,16 +500,19 @@ datacleanr <- function(dataset){
             {
 
 
+                action_tracking$plot_start <- TRUE
+                action_tracking$controls <- FALSE
+                print("pressed start - enable selecting")
+
+
             shiny::validate(shiny::need(datareactive, label = "datareactive"))
             shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
-            # req(datareactive)
-            # req(input[["selectors-startscatter"]])
 
-                shiny::isolate(shiny::callModule(module_server_plot_selectable,
+                shiny::callModule(module_server_plot_selectable,
                                   id = "plot",
                                   df = datareactive,
-                                  selector_inputs = selector_vals,
-                                  sel_points = selected_data))
+                                  selector_inputs = shiny::isolate(selector_vals),
+                                  sel_points = selected_data)
 
             }) #/observe
 
@@ -496,11 +524,17 @@ datacleanr <- function(dataset){
         )
 
 
+        # PLOT DATA SELECTION ---------------
 
          # handle clicks
         shiny::observeEvent({plotly::event_data("plotly_click", priority = "event", source = "scatterselect")}, {
 
-            shiny::req(input[["selectors-startscatter"]])
+            # shiny::req(input[["selectors-startscatter"]])
+
+            # shiny::validate(shiny::need(input[["selectors-startscatter"]],
+            #                             label = "PlotStarter"))
+            shiny::validate(shiny::need(action_tracking$plot_start,
+                                        label = "PlotStarter"))
 
             clicked <- plotly::event_data("plotly_click",
                                           source = "scatterselect",
@@ -531,8 +565,10 @@ datacleanr <- function(dataset){
         # handle selections
         shiny::observeEvent({plotly::event_data("plotly_selected", priority = "event", source = "scatterselect")}, {
 
-            shiny::req(input[["selectors-startscatter"]])
-
+            # shiny::validate(shiny::need(input[["selectors-startscatter"]],
+            #                             label = "PlotStarter"))
+            shiny::validate(shiny::need(action_tracking$plot_start,
+                                        label = "PlotStarter"))
 
             print("selected!")
 
@@ -573,7 +609,8 @@ datacleanr <- function(dataset){
             , {
 
 
-                req(nrow(selected_data$df) > 0)
+                shiny::validate(shiny::need(nrow(selected_data$df) > 0,
+                                            label = "need selected data"))
                 print("data cleared on dbl click")
 
                 drop_ind <- which(selected_data$df$selection_count == max(selected_data$df$selection_count, na.rm = TRUE))
@@ -581,6 +618,106 @@ datacleanr <- function(dataset){
             })
 
 
+
+
+# PLOT ADD TRACES ---------------------------------------------------------
+
+
+
+
+        old_keys <- shiny::reactiveVal()
+
+
+
+
+        max_id_original_traces <- shiny::reactive({dplyr::n_groups(datareactive()) - 1})
+
+
+
+
+        shiny::observeEvent(plotly::event_data("plotly_click",
+                                               source = "scatterselect",
+                                               priority = "event"),
+                            {
+                                print("that")
+
+
+                                ok <- handle_add_traces(sp = selected_data,
+                                                        dframe = datareactive,
+                                                        ok = old_keys,
+                                                        selectors = selector_vals,
+                                                        source = "plot-scatterselect",
+                                                        session = session)
+
+                                old_keys(ok())
+                            }
+                            )
+
+
+        shiny::observeEvent(plotly::event_data("plotly_selected", source = "scatterselect", priority = "event"),
+                            # shiny::observeEvent(sel_points,
+
+                            {
+
+                                print("this")
+
+
+                                ok <- handle_add_traces(sp = selected_data,
+                                                        dframe = datareactive,
+                                                        ok = old_keys,
+                                                        selectors = selector_vals,
+                                                        source = "plot-scatterselect",
+                                                        session = session)
+
+                                old_keys(ok())
+
+
+                            })
+
+
+
+        shiny::observeEvent(plotly::event_data(c("plotly_deselect"), source = "scatterselect", priority = "event"), {
+
+            print("remove deselect")
+
+            shiny::validate(shiny::need(input$`plot-tracemap`,
+                                        label = "need tracepam"))
+
+
+
+
+            traces <- matrix(input$`plot-tracemap`, ncol = 2, byrow = TRUE)
+            indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+
+            print(paste("indices are:", indices))
+
+            if(length(indices)>0){
+                plotly::plotlyProxy("plot-scatterselect", session) %>%
+                    plotly::plotlyProxyInvoke(
+                        "deleteTraces",
+                        max(indices)
+                    )
+
+                print("removed trace!!")
+
+            }
+
+            old_keys(NULL)
+            print(traces)
+        })
+
+
+
+
+
+
+
+
+
+# // ----------------------------------------------------------------------
+
+
+# ANNOTATION TABLE --------------------------------------------------------
 
 
 
@@ -591,8 +728,11 @@ datacleanr <- function(dataset){
 
 
             # shiny::observeEvent(selected_data, {
-            shiny::req(input[["selectors-startscatter"]])
-            shiny::req(selected_data)
+            shiny::validate(shiny::need(input[["selectors-startscatter"]],
+                                        label = "PlotStarter"))
+
+            shiny::validate(shiny::need(selected_data,
+                                        label = "selected data"))
 
             # annotations <-
              shiny::callModule(module_server_plot_annotation_table,
@@ -633,9 +773,8 @@ datacleanr <- function(dataset){
             Sys.setenv(TZ = old_tz)
         })
 
+}
 
-
-    }
 
 
 

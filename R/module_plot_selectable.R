@@ -108,7 +108,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
           print("redrawing")
-          plotly::plot_ly(data = plot_data,
+          pnew <- plotly::plot_ly(data = plot_data,
                           source = "scatterselect"
           ) %>%
             plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar()),
@@ -151,50 +151,66 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
 
+
+    if(length(shiny::isolate(sel_points$df$keys)) > 0){
+
+
+      add_data <- dplyr::left_join(shiny::isolate(sel_points$df),
+                                   plot_data,
+                                   by = c('keys' = '.dcrkey'))
+
+      # print(head(add_data))
+      print("READDING traces---------------\\\\")
+
+      p <- rlang::eval_tidy(
+        rlang::quo_squash(
+          rlang::quo({
+            purrr::reduce(.x = split(add_data, f = add_data$selection_count),
+                            .f = function(oplot, spdf) {
+
+                              plotly::add_trace(oplot,
+                                                data = spdf,
+                                                x = ~ !!shiny::isolate(selector_inputs$xvar()),
+                                                y = ~ !!shiny::isolate(selector_inputs$yvar()),
+                                                size = eval(size_expression),
+                                                name = "outlier",
+                                                type = "scatter",
+                                                mode = "markers",
+                                                marker = list(
+                                                  color = "darkgray",
+                                                  line = list(color = "red",
+                                                              width = 2),
+                                                  opacity = 1),
+                                                unselected = list(marker = list(opacity = 1)))},
+                            .init = shiny::isolate(p)
+      )
+
+          })
+        )
+      ) #\ eval_tidy
+
+    } # /if
+
+
+
+
     #   # handle when input selector changes
 
 
     # shiny::observeEvent(selector_inputs$startscatter(),{
-    # # shiny::observeEvent(plotchange_observer(),{
-    #
-    #   # shiny::validate(need(plotchange_observer,
-    #   #                      label = "reactive for tracking plot inputs"))
-    #
-    #
-    #   if(length(shiny::isolate(sel_points$df$keys)) > 0){
-    #
-    #
-    #     add_data <- dplyr::left_join(shiny::isolate(sel_points$df),
-    #                                  plot_data,
-    #                                  by = c('keys' = '.dcrkey'))
-    #
-    #     # print(head(add_data))
-    #     print("READDING traces---------------\\\\")
-    #
-    #     pnew <- purrr::reduce(.x = split(add_data, f = add_data$selection_count),
-    #                        .f = function(oplot, spdf) {
-    #
-    #                          plotly::add_trace(oplot,
-    #                                            data = spdf,
-    #                                            x = ~ !!shiny::isolate(selector_inputs$xvar()),
-    #                                            y = ~ !!shiny::isolate(selector_inputs$yvar()),
-    #                                            size = eval(size_expression),
-    #                                            color = I("red"),
-    #                                            name = "outlier",
-    #                                            type = "scatter",
-    #                                            mode = "markers")},
-    #                        .init = shiny::isolate(p)
-    #     )
-    #
-    #     return(pnew)
-    #
-    #   } # /if
-    #
-    #
-    #                       }) #/observeevent
-    #
-    #
-    #
+    # shiny::observeEvent(plotchange_observer(),{
+
+      # shiny::validate(need(plotchange_observer,
+      #                      label = "reactive for tracking plot inputs"))
+
+
+
+
+
+                          # }) #/observeevent
+
+
+
 
 
     return(p)

@@ -512,7 +512,7 @@ datacleanr <- function(dataset){
                                   id = "plot",
                                   df = datareactive,
                                   selector_inputs = shiny::isolate(selector_vals),
-                                  sel_points = selected_data)
+                                  sel_points = shiny::isolate(selected_data))
 
             }) #/observe
 
@@ -627,64 +627,42 @@ datacleanr <- function(dataset){
 
         old_keys <- shiny::reactiveVal()
 
-
-
-
         max_id_original_traces <- shiny::reactive({dplyr::n_groups(datareactive()) - 1})
-
-
-
-
         shiny::observeEvent(plotly::event_data("plotly_click",
                                                source = "scatterselect",
                                                priority = "event"),
                             {
-                                print("that")
-
-
                                 ok <- handle_add_traces(sp = selected_data,
                                                         dframe = datareactive,
                                                         ok = old_keys,
                                                         selectors = selector_vals,
                                                         source = "plot-scatterselect",
                                                         session = session)
-
                                 old_keys(ok())
-                            }
-                            )
+                            })
 
 
-        shiny::observeEvent(plotly::event_data("plotly_selected", source = "scatterselect", priority = "event"),
-                            # shiny::observeEvent(sel_points,
-
+        shiny::observeEvent(plotly::event_data("plotly_selected",
+                                               source = "scatterselect",
+                                               priority = "event"),
                             {
-
-                                print("this")
-
-
                                 ok <- handle_add_traces(sp = selected_data,
                                                         dframe = datareactive,
                                                         ok = old_keys,
                                                         selectors = selector_vals,
                                                         source = "plot-scatterselect",
                                                         session = session)
-
                                 old_keys(ok())
-
-
                             })
 
 
 
-        shiny::observeEvent(plotly::event_data(c("plotly_deselect"), source = "scatterselect", priority = "event"), {
-
-            print("remove deselect")
-
+        shiny::observeEvent(plotly::event_data(c("plotly_deselect"),
+                                               source = "scatterselect",
+                                               priority = "event"),
+                            {
             shiny::validate(shiny::need(input$`plot-tracemap`,
                                         label = "need tracepam"))
-
-
-
 
             traces <- matrix(input$`plot-tracemap`, ncol = 2, byrow = TRUE)
             indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
@@ -697,21 +675,11 @@ datacleanr <- function(dataset){
                         "deleteTraces",
                         max(indices)
                     )
-
                 print("removed trace!!")
-
             }
-
             old_keys(NULL)
             print(traces)
         })
-
-
-
-
-
-
-
 
 
 # // ----------------------------------------------------------------------

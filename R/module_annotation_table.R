@@ -50,20 +50,27 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
 
     # table_dat$.annotation <-
 
-    if(length(sel_points$df$keys) < 1){
-        table_dat$.annotation <- character(0)
-    }
     if(length(sel_points$df$keys) >= 1){
-        table_dat$.annotation <- ""
+        table_dat <- dplyr::left_join(table_dat,
+                                      sel_points$df[ , c("keys", ".annotation", "selection_count")],
+                                      by = c(".dcrkey" = "keys"))
     }
+    # if(length(sel_points$df$keys) < 1){
+    #     table_dat$.annotation <- character(0)
+    # }
+    # if(length(sel_points$df$keys) >= 1){
+    #     table_dat$.annotation <- ""
+    # }
 
 
-    disable_cols <- which(colnames(table_dat) != ".annotation")
+    # disable_cols <- which(colnames(table_dat) != ".annotation")
     #print(paste("disable", disable_cols))
 
 
     # columns2hide <- base::match(".dcrkey", colnames(table_dat))
-    columns2hide <- grep("[.]dcr", colnames(dframe()))
+    columns2hide <- c(grep("[.]dcr", colnames(table_dat)),
+                      grep("selection_count", colnames(table_dat)))
+    columns2sort <- grep("selection_count", colnames(table_dat))
 
 
 
@@ -71,8 +78,10 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
 
         output$dtannotation <- DT::renderDT(table_dat,
                                             options = list(columnDefs = list(list(visible=FALSE,
-                                                                                  targets=columns2hide))),
-                                            editable = list(target = "column"))
+                                                                                  targets=columns2hide)),
+                                                           order = list(list(columns2sort, "desc"))))
+                                            # editable = list(target = "column")
+                                            # )
 
 
 

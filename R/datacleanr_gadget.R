@@ -29,23 +29,75 @@ datacleanr <- function(dataset){
         # shiny::p(
         # shiny::tags$b("Add/Remove"),
         # "text boxes and add unquoted filter statements."),
+        shiny::p(shiny::tags$b("Add/Remove"),
+                 "filter statements as necessary. These are passed to",
+                 shiny::tags$b("base::subset()"), "."),
         shiny::p("Use", shiny::tags$b("single quotes"), "for values of character/factor variables."),
-        shiny::p("Click", shiny::tags$b("'Apply Filter'"), "when you're ready."),
         shiny::tags$p("For example, valid statements for filtering",
                       shiny::tags$b("iris"),
                       "are:"),
         shiny::tags$ol(
             shiny::tags$li(shiny::tags$small("Species == 'setosa'")),
-            shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')")))
+            shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')"))),
+
+        shiny::br(),
+        shiny::p("Click",
+                 shiny::tags$b("'Apply'"),
+                 "when you're ready, and",
+                 shiny::tags$b("'Reset'"),
+                 "to start from scratch."))
 
 
-    )
+    text_annotate_side_panel <- shiny::tagList(
+        shiny::p("After selecting points by",
+                 shiny::tags$b("clicking/lasso-selecting"),
+                 "the",
+                 shiny::tags$b("last selection"),
+                 "can be annotated with a text label.",
+                 shiny::br(),
+                 "These labels are collected and provided as an additional column",
+                 shiny::tags$b("'.annotation'"),
+                 "in the table to the right and outputted via the",
+                 shiny::tags$b("Extraction Tab.")),
+        shiny::br(),
+
+        shiny::p("The annotation can be updated or removed by deleting all characters in the input box.",
+                 "Note, that the most-recent selection can be deleted with a ",
+                 shiny::tags$b("double-click on the plot."),
+                 "This also removes the respective annotations."))
+
+
+    text_plot_main_panel <- shiny::tagList(
+        shiny::p("Select at least ",
+                 shiny::tags$b("X and Y"),
+                 " variables and click",
+                 shiny::tags$b("'Plot!'"),
+                 ".",
+                 "The ",
+                 shiny::tags$b("Z"),
+                 "variable adjusts point size.",
+                 shiny::br(),
+                 shiny::br(),
+                 "To mark and exclude outliers, ",
+                 shiny::tags$b("click or lasso/box select"),
+                 "individual points.",
+                 "Double-click on the plot area to remove the last selection.",
+                 shiny::br(),
+                 "The plot's",
+                 shiny::tags$b("control bar"),
+                 "allows to",
+                 shiny::tags$b("Zoom and reset views"),
+                 "as well as extract a figure."),
+        shiny::br(),
+
+        shiny::p("Selected points appear in the",
+                 shiny::tags$b(" table below"),
+                 "and can be annotated with the tool to the left."))
 
 
 
-
-# UI ----------------------------------------------------------------------
-# //-------------------------------------------------------------------------
+    # UI ----------------------------------------------------------------------
+    # //-------------------------------------------------------------------------
 
 
 
@@ -93,6 +145,14 @@ datacleanr <- function(dataset){
                                              shiny::sidebarLayout(
                                                  sidebarPanel = shiny::sidebarPanel(
                                                      shiny::h4(shiny::tags$strong("Filter Statements")),
+
+                                                     shiny::actionLink("help-filter",
+                                                                       "Click for Help",
+                                                                       icon = shiny::icon("question-circle")),
+
+                                                     shiny::br(),
+                                                     shiny::br(),
+
                                                      shiny::actionButton("addbutton",
                                                                          "Add",
                                                                          icon = shiny::icon("plus-circle")),
@@ -100,10 +160,13 @@ datacleanr <- function(dataset){
                                                                          "Remove",
                                                                          icon = shiny::icon("trash")),
                                                      shiny::br(),
+                                                     # text_filtering_side_panel,
                                                      shiny::br(),
-                                                     text_filtering_side_panel,
-                                                     shiny::br(),
+
                                                      module_ui_df_filter("check"),
+
+                                                     shiny::br(),
+
                                                      shiny::tagList( shiny::actionButton(inputId = "apply_filter",
                                                                                          label = "Apply",
                                                                                          icon = shiny::icon("check-double"),
@@ -111,7 +174,15 @@ datacleanr <- function(dataset){
                                                                      shiny::actionButton(inputId = "reset_filter",
                                                                                          label = "Reset",
                                                                                          icon = shiny::icon("undo"),
-                                                                                         class = "btn-danger")),
+                                                                                         class = "btn-danger"),
+
+                                                                     shiny::br(),
+                                                                     shiny::br(),
+                                                                     # shiny::hr(style = "border-top: 1px solid #A0A0A0;"),
+
+                                                                     shiny::h4(shiny::tags$strong("Data Overview")),
+                                                                     shiny::br(),
+                                                                     module_ui_group_selector_table("df-filter-tab")),
 
 
                                                      width = 3
@@ -133,13 +204,28 @@ datacleanr <- function(dataset){
                                              icon = shiny::icon("chart-area"),
                                              shiny::sidebarLayout(
                                                  sidebarPanel = shiny::sidebarPanel(width = 4,
-                                                                                    shiny::h3("Data Overview"),
-                                                                                    module_ui_group_selector_table('df'),
-                                                                                    shiny::p("Placeholder")),
+                                                                                    shiny::h4(shiny::tags$strong("Data Overview")),
+                                                                                    shiny::br(),
+                                                                                    module_ui_group_selector_table("df"),
+
+                                                                                    shiny::br(),
+                                                                                    # shiny::hr(style = "border-top: 1px solid #A0A0A0;"),
+
+                                                                                    shiny::h4(shiny::tags$strong("Annotate last Selection")),
+                                                                                    shiny::actionLink("help-annotator",
+                                                                                                      "Click for Help",
+                                                                                                      icon = shiny::icon("question-circle")),
+
+                                                                                    shiny::br(),
+
+                                                                                    module_ui_text_annotator("annotator")),
                                                  mainPanel = shiny::mainPanel(width = 8,
                                                                               module_ui_plot_selectorcontrols("selectors"),
+                                                                              shiny::actionLink("help-plot",
+                                                                                                "Click for Help",
+                                                                                                icon = shiny::icon("question-circle")),
                                                                               module_ui_plot_selectable("plot"),
-                                                                              module_ui_plot_annotation_table("annotator"))
+                                                                              module_ui_plot_annotation_table("dt"))
                                              ) #/sidebarLayout
                              ) #/tabPanel
 
@@ -168,7 +254,7 @@ datacleanr <- function(dataset){
 
         ) #/navbarPageWithInputs
 
-# // ----------------------------------------------------------------------
+    # // ----------------------------------------------------------------------
     server <- function(input, output, session){
 
 
@@ -211,8 +297,8 @@ datacleanr <- function(dataset){
         # tracks which version of data to pass to datareactive
         action_tracking <- shiny::reactiveValues(plot_start = NULL,
                                                  action_tracking = NULL)
-                                                 # applied_filters_button = NULL,
-                                                 # reset_filters_button = NULL)
+        # applied_filters_button = NULL,
+        # reset_filters_button = NULL)
 
         # reactive inputs for plot variable selection
         # selector_vals <- shiny::reactiveValues()
@@ -225,7 +311,7 @@ datacleanr <- function(dataset){
 
 
 
-# // ----------------------------------------------------------------------
+        # // ----------------------------------------------------------------------
         # GROUPING ---------------------------
 
         # get grouping
@@ -278,7 +364,7 @@ datacleanr <- function(dataset){
         })
 
 
-# // ----------------------------------------------------------------------
+        # // ----------------------------------------------------------------------
 
 
         # FILTER STATEMENTS ------------------
@@ -295,68 +381,68 @@ datacleanr <- function(dataset){
 
         shiny::observe({
 
-                shiny::callModule(module_server_filter_str, id = 1)
+            shiny::callModule(module_server_filter_str, id = 1)
 
-                ## SAVE INPUTS FROM 1 INTO DATAFRAME
-                shiny::observeEvent(input[[NS(1, "filter")]], {
-                    add.filter$df[1, 1] <- input[[NS(1, "filter")]]
+            ## SAVE INPUTS FROM 1 INTO DATAFRAME
+            shiny::observeEvent(input[[NS(1, "filter")]], {
+                add.filter$df[1, 1] <- input[[NS(1, "filter")]]
+            })
+
+            # ADD VARIABLES
+
+            shiny::observeEvent(input$addbutton, {
+
+                # EACH TIME THE USER CLICKS, ADD 1 TO BUTTON VALUE
+                btn$value <- btn$value + 1
+
+                ## WHEN WE USE btn$value DIRECTLY WE LOSE REACTIVITY
+                ## PASSING IT TO btn.temp AND USING btn.tmp WORKS (SOMEHOW)
+                btn.tmp <- btn$value
+
+                # CALL MODULE NUMBER params$btn
+                shiny::callModule(module_server_filter_str, btn.tmp)
+
+                # INSERT MODULE UI
+                shiny::insertUI(
+                    selector = '#placeholder',
+                    where = "beforeEnd",
+                    ui = module_ui_filter_str(btn.tmp)
+                )
+
+                ## SAVE INPUTS FROM NUMBER COUNTER BTN INTO DATAFRAME
+                shiny::observeEvent(input[[shiny::NS(btn.tmp, "filter")]], {
+                    add.filter$df[btn.tmp, 1] <- input[[NS(btn.tmp, "filter")]]
                 })
 
-                # ADD VARIABLES
-
-                shiny::observeEvent(input$addbutton, {
-
-                    # EACH TIME THE USER CLICKS, ADD 1 TO BUTTON VALUE
-                    btn$value <- btn$value + 1
-
-                    ## WHEN WE USE btn$value DIRECTLY WE LOSE REACTIVITY
-                    ## PASSING IT TO btn.temp AND USING btn.tmp WORKS (SOMEHOW)
-                    btn.tmp <- btn$value
-
-                    # CALL MODULE NUMBER params$btn
-                    shiny::callModule(module_server_filter_str, btn.tmp)
-
-                    # INSERT MODULE UI
-                    shiny::insertUI(
-                        selector = '#placeholder',
-                        where = "beforeEnd",
-                        ui = module_ui_filter_str(btn.tmp)
-                    )
-
-                    ## SAVE INPUTS FROM NUMBER COUNTER BTN INTO DATAFRAME
-                    shiny::observeEvent(input[[shiny::NS(btn.tmp, "filter")]], {
-                        add.filter$df[btn.tmp, 1] <- input[[NS(btn.tmp, "filter")]]
-                    })
-
-                    print(btn$value)
+                print(btn$value)
 
 
-                })
+            })
 
-                # REMOVE VARIABLES
+            # REMOVE VARIABLES
 
-                shiny::observeEvent(input$removebutton, {
+            shiny::observeEvent(input$removebutton, {
 
-                    # REMOVE LAST LINE FROM DATAFRAME
-                    add.filter$df <- add.filter$df[-btn$value, , drop = FALSE]
-                    # print(str(add.filter$df))
+                # REMOVE LAST LINE FROM DATAFRAME
+                add.filter$df <- add.filter$df[-btn$value, , drop = FALSE]
+                # print(str(add.filter$df))
 
-                    # REMOVE LAST LINE MODULE UI
-                    shiny::removeUI(
-                        ## pass in appropriate div id
-                        selector = paste0('#filt', btn$value))
+                # REMOVE LAST LINE MODULE UI
+                shiny::removeUI(
+                    ## pass in appropriate div id
+                    selector = paste0('#filt', btn$value))
 
-                    # SUBTRACT 1 FROM BUTTON VALUE
-                    if(btn$value > 1){
-                        btn$value <- btn$value - 1
-                    } else {
-                        btn$value <- 0
-                    }
-                })
-                # OUTPUT DATAFRAME
-                output$outDF <- shiny::renderPrint({
-                    print(add.filter$df)
-                })
+                # SUBTRACT 1 FROM BUTTON VALUE
+                if(btn$value > 1){
+                    btn$value <- btn$value - 1
+                } else {
+                    btn$value <- 0
+                }
+            })
+            # OUTPUT DATAFRAME
+            output$outDF <- shiny::renderPrint({
+                print(add.filter$df)
+            })
 
 
         })
@@ -364,20 +450,20 @@ datacleanr <- function(dataset){
 
 
 
-# FILTER PREVIEW STRING ---------------------------------------------------
+        # FILTER PREVIEW STRING ---------------------------------------------------
 
 
         shiny::observe({
 
             shiny::validate(shiny::need(add.filter,
-                                       label = "add filter"))
+                                        label = "add filter"))
             shiny::validate(shiny::need(input$gobutton,
-                                       label = "StartButton"))
+                                        label = "StartButton"))
 
             shiny::callModule(module = module_server_df_filter,
-                                                  id = "check",
-                                                  df = shiny::isolate(recover_data()),
-                                                  statements = add.filter$df$filter)
+                              id = "check",
+                              df = shiny::isolate(recover_data()),
+                              statements = add.filter$df$filter)
         })
 
         # FILTER Apply/Undo  -------------------------------------------------------
@@ -385,9 +471,9 @@ datacleanr <- function(dataset){
         #apply
         shiny::observeEvent(input$apply_filter, {
             shiny::validate(shiny::need(add.filter,
-                                       label = "add filter"))
+                                        label = "add filter"))
             shiny::validate(shiny::need(input$gobutton,
-                                       label = "StartButton"))
+                                        label = "StartButton"))
 
             df <- try({checked_filter(recover_data(),
                                       add.filter$df$filter)})
@@ -401,9 +487,9 @@ datacleanr <- function(dataset){
         # reset filtering
         shiny::observeEvent(input$reset_filter, {
             shiny::validate(shiny::need(add.filter,
-                                       label = "add filter"))
+                                        label = "add filter"))
             shiny::validate(shiny::need(input$gobutton,
-                                       label = "StartButton"))
+                                        label = "StartButton"))
 
             datareactive(recover_data())
             print(paste("AFTER-RESET: filter output in app is:", nrow(datareactive())))
@@ -429,7 +515,7 @@ datacleanr <- function(dataset){
                        shiny::removeUI(
                            ## pass in appropriate div id
                            selector = paste0('#filt', i))
-                       }
+                   }
             )
 
             btn$value <- 0
@@ -438,17 +524,21 @@ datacleanr <- function(dataset){
 
 
 
-# // ----------------------------------------------------------------------
+        # // ----------------------------------------------------------------------
 
 
-# GROUPTABLE --------------------------------------------------------------
+        # GROUPTABLE --------------------------------------------------------------
 
         shiny::observe({
             if(!is.null(datareactive() )){
-            shiny::callModule(module_server_group_selector_table,
-                              id = "df",
-                              df = datareactive,
-                              df_label = df_name)
+                shiny::callModule(module_server_group_selector_table,
+                                  id = "df",
+                                  df = datareactive,
+                                  df_label = df_name)
+                shiny::callModule(module_server_group_selector_table,
+                                  id = "df-filter-tab",
+                                  df = datareactive,
+                                  df_label = df_name)
             }
 
         })
@@ -457,7 +547,7 @@ datacleanr <- function(dataset){
 
 
 
-# // ----------------------------------------------------------------------
+        # // ----------------------------------------------------------------------
 
 
         # PLOT CONTROLS --------------
@@ -465,12 +555,12 @@ datacleanr <- function(dataset){
         shiny::observe({
 
             shiny::validate(shiny::need(datareactive,
-                                       label = "datareactive"))
-                    # selector_vals <<-
-                        shiny::callModule(module_server_plot_selectorcontrols,
-                                                        "selectors",
-                                                        datareactive)
-            })
+                                        label = "datareactive"))
+            # selector_vals <<-
+            shiny::callModule(module_server_plot_selectorcontrols,
+                              "selectors",
+                              datareactive)
+        })
 
 
 
@@ -484,7 +574,7 @@ datacleanr <- function(dataset){
             selector_vals[[1]]()
             selector_vals[[2]]()
             selector_vals[[3]]()
-            }, {
+        }, {
 
             shiny::validate(shiny::need(shiny::isolate(selector_vals),
                                         label = "control vals"))
@@ -497,37 +587,38 @@ datacleanr <- function(dataset){
 
         ## PLOTTING -----------------
         shiny::observeEvent(input[["selectors-startscatter"]],
-        # shiny::observe(
-            {
+                            # shiny::observe(
+                            {
 
 
-                action_tracking$plot_start <- TRUE
-                action_tracking$controls <- FALSE
-                print("pressed start - enable selecting")
+                                action_tracking$plot_start <- TRUE
+                                action_tracking$controls <- FALSE
+                                print("pressed start - enable selecting")
 
 
-            shiny::validate(shiny::need(datareactive, label = "datareactive"))
-            shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
+                                shiny::validate(shiny::need(datareactive, label = "datareactive"))
+                                shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
 
-                shiny::callModule(module_server_plot_selectable,
-                                  id = "plot",
-                                  df = datareactive,
-                                  selector_inputs = shiny::isolate(selector_vals),
-                                  sel_points = shiny::isolate(selected_data))
+                                shiny::callModule(module_server_plot_selectable,
+                                                  id = "plot",
+                                                  df = datareactive,
+                                                  selector_inputs = shiny::isolate(selector_vals),
+                                                  sel_points = shiny::isolate(selected_data))
 
-            }) #/observe
+                            }) #/observe
 
 
         selected_data <- shiny::reactiveValues(
             df = data.frame(keys = integer(0),
                             selection_count = integer(0),
+                            .annotation = character(0),
                             stringsAsFactors = FALSE)
         )
 
 
         # PLOT DATA SELECTION ---------------
 
-         # handle clicks
+        # handle clicks
         shiny::observeEvent({plotly::event_data("plotly_click", priority = "event", source = "scatterselect")}, {
 
             # shiny::req(input[["selectors-startscatter"]])
@@ -544,6 +635,7 @@ datacleanr <- function(dataset){
             if(nrow(selected_data$df) > 0 & nrow(clicked) > 0){
                 new <- data.frame(keys = as.integer(clicked$customdata),
                                   selection_count = max(selected_data$df$selection_count) + 1,
+                                  .annotation = "",
                                   stringsAsFactors = FALSE)
 
                 if(any(new$keys %in% selected_data$df$keys)){
@@ -555,6 +647,7 @@ datacleanr <- function(dataset){
             } else {
                 new <- data.frame(keys = as.integer(clicked$customdata),
                                   selection_count = 1,
+                                  .annotation = "",
                                   stringsAsFactors = FALSE)
                 selected_data$df <- new
             }
@@ -583,6 +676,7 @@ datacleanr <- function(dataset){
                 if(nrow(selected_data$df) > 0 & nrow(selected) > 0){
                     new <- data.frame(keys = as.integer(selected$customdata),
                                       selection_count = max(selected_data$df$selection_count) + 1,
+                                      .annotation = "",
                                       stringsAsFactors = FALSE)
 
                     if(any(new$keys %in% selected_data$df$keys)){
@@ -592,6 +686,7 @@ datacleanr <- function(dataset){
                 } else {
                     new <- data.frame(keys = as.integer(selected$customdata),
                                       selection_count = 1,
+                                      .annotation = "",
                                       stringsAsFactors = FALSE)
                     selected_data$df <- new
                 }
@@ -604,7 +699,7 @@ datacleanr <- function(dataset){
 
         # clear on dbl click
         shiny::observeEvent(
-        # shiny::observeEvent({
+            # shiny::observeEvent({
             # plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
             plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
             , {
@@ -621,7 +716,7 @@ datacleanr <- function(dataset){
 
 
 
-# PLOT ADD TRACES ---------------------------------------------------------
+        # PLOT ADD TRACES ---------------------------------------------------------
 
 
 
@@ -662,31 +757,53 @@ datacleanr <- function(dataset){
                                                source = "scatterselect",
                                                priority = "event"),
                             {
-            shiny::validate(shiny::need(input$`plot-tracemap`,
-                                        label = "need tracepam"))
+                                shiny::validate(shiny::need(input$`plot-tracemap`,
+                                                            label = "need tracepam"))
 
-            traces <- matrix(input$`plot-tracemap`, ncol = 2, byrow = TRUE)
-            indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+                                traces <- matrix(input$`plot-tracemap`, ncol = 2, byrow = TRUE)
+                                indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
 
-            print(paste("indices are:", indices))
+                                print(paste("indices are:", indices))
 
-            if(length(indices)>0){
-                plotly::plotlyProxy("plot-scatterselect", session) %>%
-                    plotly::plotlyProxyInvoke(
-                        "deleteTraces",
-                        max(indices)
-                    )
-                print("removed trace!!")
-            }
-            old_keys(NULL)
-            print(traces)
+                                if(length(indices)>0){
+                                    plotly::plotlyProxy("plot-scatterselect", session) %>%
+                                        plotly::plotlyProxyInvoke(
+                                            "deleteTraces",
+                                            max(indices)
+                                        )
+                                    print("removed trace!!")
+                                }
+                                old_keys(NULL)
+                                print(traces)
+                            })
+
+
+        # // ----------------------------------------------------------------------
+
+
+        # ANNOTATION ADDING --------------------------------------------------------
+
+
+
+        # shiny::observe({
+        shiny::observeEvent(input$`annotator-annotate_button`, {
+
+            # if(nrow(shiny::isolate(selected_data$df))>0){
+
+            print(selected_data$df)
+
+                selected_data$df <- shiny::callModule(module_server_text_annotator,
+                                                      "annotator",
+                                                      sel_data = isolate(selected_data))
+            # shiny::validate(need(selected_data,
+            # label = "make selection first"))
+
+            print(selected_data$df)
+
         })
 
 
-# // ----------------------------------------------------------------------
-
-
-# ANNOTATION TABLE --------------------------------------------------------
+        # ANNOTATION TABLE --------------------------------------------------------
 
 
 
@@ -704,14 +821,58 @@ datacleanr <- function(dataset){
                                         label = "selected data"))
 
             # annotations <-
-             shiny::callModule(module_server_plot_annotation_table,
-                                             "annotator",
-                                             df = datareactive,
-                                             sel_points = selected_data)
+            shiny::callModule(module_server_plot_annotation_table,
+                              "dt",
+                              df = datareactive,
+                              sel_points = selected_data)
 
         })
 
 
+
+# // ----------------------------------------------------------------------
+
+
+# HELP LINKS --------------------------------------------------------------
+
+
+        ## Filter Tab
+        shiny::observeEvent(input$`help-filter`, {
+
+            shiny::showModal(shiny::modalDialog(
+                text_filtering_side_panel,
+                title = "Somewhat important message",
+                size = "m",
+                easyClose = TRUE,
+                footer = NULL
+            ))
+
+        })
+
+        # VIZ tab - annotator tool
+        shiny::observeEvent(input$`help-annotator`, {
+
+            shiny::showModal(shiny::modalDialog(
+                text_annotate_side_panel,
+                title = "Somewhat important message",
+                size = "m",
+                easyClose = TRUE,
+                footer = NULL
+            ))
+
+        })
+        # Viz tab - plot + selector tool
+        shiny::observeEvent(input$`help-plot`, {
+
+            shiny::showModal(shiny::modalDialog(
+                text_plot_main_panel,
+                title = "Somewhat important message",
+                size = "m",
+                easyClose = TRUE,
+                footer = NULL
+            ))
+
+        })
 
 
 
@@ -742,7 +903,7 @@ datacleanr <- function(dataset){
             Sys.setenv(TZ = old_tz)
         })
 
-}
+    }
 
 
 

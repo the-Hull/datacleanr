@@ -103,7 +103,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
     p <-  rlang::eval_tidy(
-      rlang::quo_squash(
+      rlang::quo_expr(
         rlang::quo({
 
 

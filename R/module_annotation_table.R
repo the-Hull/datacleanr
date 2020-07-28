@@ -63,13 +63,14 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
 
 
     # columns2hide <- base::match(".dcrkey", colnames(table_dat))
+    columns2hide <- grep("[.]dcr", colnames(dframe()))
 
 
 
     # shiny::observe({
 
     output$dtannotation <- DT::renderDT(table_dat,
-                                        # options = list(columnDefs = list(list(visible=FALSE, targets=columns2hide))),
+                                        options = list(columnDefs = list(list(visible=FALSE, targets=columns2hide))),
                                         editable = list(target = "column"))
     # ,
     # disable = list(columns = disable_cols)))

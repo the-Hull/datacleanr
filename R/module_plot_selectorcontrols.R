@@ -1,10 +1,6 @@
-
-# alternative -------------------------------------------------------------
-
-
 #------------------------------------------------------------------------------#
 # MODULE UI ----
-#' UI Module: plotly plot
+#' UI Module: selector controls
 #'
 #' @param id Character string
 #'

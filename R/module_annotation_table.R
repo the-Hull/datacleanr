@@ -67,40 +67,32 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
 
 
 
-    # shiny::observe({
-
-    output$dtannotation <- DT::renderDT(table_dat,
-                                        options = list(columnDefs = list(list(visible=FALSE, targets=columns2hide))),
-                                        editable = list(target = "column"))
-    # ,
-    # disable = list(columns = disable_cols)))
 
 
-    # print(unique(table_dat$.annotation))
-    # print("rendering table")
+        output$dtannotation <- DT::renderDT(table_dat,
+                                            options = list(columnDefs = list(list(visible=FALSE,
+                                                                                  targets=columns2hide))),
+                                            editable = list(target = "column"))
 
-    # })
-
-    annotations <- NULL
 
 
     # cell_edit <- shiny::reactiveVal()
     # edit all cells
-    shiny::observeEvent(input$dtannotation_cell_edit, {
-
-
-
-        if(length(sel_points$df$keys) > 0){
-            table_dat <- DT::editData(table_dat, input$dtannotation_cell_edit, 'dtannotation')
-            # table_dat(DT::editData(shiny::isolate(table_dat()), input$dtannotation_cell_edit, 'dtannotation'))
-            # print("table was edited")
-
-            # print(table_dat)
-            # print(head(table_dat()))
-            #print(annotations)
-
-        }
-    })
+    # shiny::observeEvent(input$dtannotation_cell_edit, {
+    #
+    #
+    #
+    #     if(length(sel_points$df$keys) > 0){
+    #         table_dat <<- DT::editData(table_dat, input$dtannotation_cell_edit, 'dtannotation')
+    #         # table_dat(DT::editData(shiny::isolate(table_dat()), input$dtannotation_cell_edit, 'dtannotation'))
+    #         print("table was edited")
+    #
+    #         # print(table_dat)
+    #         # print(head(table_dat()))
+    #         #print(annotations)
+    #
+    #     }
+    # })
 
 
     # if(nrow(table_dat) > 0){
@@ -159,20 +151,28 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
     #
     #                     })
 
-    shiny::observeEvent(plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event"),
-                        {
-
-                            shiny::validate(shiny::need(nrow(sel_points$df) > 0,
-                                                        label = "need selected data"))
-                            print("CLEARED TABLE VALS")
-                            drop_ind <- which(sel_points$df$selection_count == max(sel_points$df$selection_count, na.rm = TRUE))
-                            # get corresponding keys
-                            keys_to_clear <- sel_points$df$keys[drop_ind]
-                            print(keys_to_clear)
-                            # set rows in table_dat to ""
-                            print(table_dat$.dcrkey %in% keys_to_clear)
-                            table_dat$.annotation[table_dat$.dcrkey %in% keys_to_clear] <- ""
-
-                        })
+    # shiny::observeEvent(plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event"),
+    #                     {
+    #
+    #                         # shiny::validate(shiny::need(nrow(sel_points$df) > 0,
+    #                         #                             label = "need selected data"))
+    #
+    #                         if(shiny::req(nrow(sel_points$df) > 0)){
+    #
+    #                             print("CLEARED TABLE VALS")
+    #                             drop_ind <- which(sel_points$df$selection_count == max(sel_points$df$selection_count, na.rm = TRUE))
+    #                             # get corresponding keys
+    #                             keys_to_clear <- sel_points$df$keys[drop_ind]
+    #                             print(keys_to_clear)
+    #                             # set rows in table_dat to ""
+    #                             print(table_dat$.dcrkey %in% keys_to_clear)
+    #                             table_dat$.annotation[table_dat$.dcrkey %in% keys_to_clear] <- ""
+    #
+    #                             View(table_dat)
+    #
+    #                         }
+    #
+    #
+    #                     })
 
 }

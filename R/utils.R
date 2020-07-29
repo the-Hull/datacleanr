@@ -252,6 +252,47 @@ handle_selection <- function(old, new){
 
 
 
+
+#' Handle selections/clicks of outliers
+#'
+#' @param sel_data_old \code{data.frame}, which must have columns \code{keys}, \code{selection_count} and \code{.annotation}
+#' @param sel_data_new \code{data.frame}, from \code{plotly::event_data}, with column \code{customData} as \code{.dcrkey}
+#'
+#' @return \code{data.frame}, to update the input of \code{sel_data_old}.
+#'
+handle_outlier_selection <- function(sel_data_old, sel_data_new){
+
+
+
+    if(length(sel_data_new)>0){
+
+        if(nrow(sel_data_old) > 0 & nrow(sel_data_new) > 0){
+            new <- data.frame(keys = as.integer(sel_data_new$customdata),
+                              selection_count = max(sel_data_old$selection_count) + 1,
+                              .annotation = "",
+                              stringsAsFactors = FALSE)
+
+            if(any(new$keys %in% sel_data_old$keys)){
+                new <- new[!{new$keys %in% sel_data_old$keys}, ]
+            }
+
+            sel_data_old <- rbind(sel_data_old, new)
+
+        } else {
+            new <- data.frame(keys = as.integer(sel_data_new$customdata),
+                              selection_count = 1,
+                              .annotation = "",
+                              stringsAsFactors = FALSE)
+            sel_data_old <- new
+        }
+
+    }
+
+    return(sel_data_old)
+}
+
+
+
 #' Color conversion for plotly with alpha
 #'
 #' @param colorname string, hex value or R color name

@@ -61,7 +61,7 @@ datacleanr <- function(dataset){
                  shiny::tags$b("Extraction Tab.")),
         shiny::br(),
 
-        shiny::p("The annotation can be updated or removed by deleting all characters in the input box.",
+        shiny::p("The annotation can be updated or removed by deleting all characters in the input box and clicking the button again.",
                  "Note, that the most-recent selection can be deleted with a ",
                  shiny::tags$b("double-click on the plot."),
                  "This also removes the respective annotations."))
@@ -71,23 +71,31 @@ datacleanr <- function(dataset){
         shiny::p("Select at least ",
                  shiny::tags$b("X and Y"),
                  " variables and click",
-                 shiny::tags$b("'Plot!'"),
-                 ".",
-                 "The ",
+                 shiny::tags$b("'Plot!'."),
+                 "The",
                  shiny::tags$b("Z"),
                  "variable adjusts point size.",
+                 "The legend entries correspond with the rownumbers on the table to the left.",
+                 "Individual items (i.e. groups) can be",
+                 shiny::tags$b("hidden"),
+                 "by clicking on the legend.",
+                 "Double-clicking one item hides all others (speeding up selections), and a subsequent double-click displays all data."),
+        shiny::p("Note, that",
+                 shiny::tags$b("'Plot!'"),
+                 "must be clicked after any variable input has been",
+                 shiny::tags$b("clicked or changed."),
                  shiny::br(),
                  shiny::br(),
                  "To mark and exclude outliers, ",
                  shiny::tags$b("click or lasso/box select"),
                  "individual points.",
-                 "Double-click on the plot area to remove the last selection.",
+                 shiny::tags$b("Double-click"),
+                 "on the plot area to remove the last selection.",
                  shiny::br(),
                  "The plot's",
                  shiny::tags$b("control bar"),
                  "allows to",
-                 shiny::tags$b("Zoom and reset views"),
-                 "as well as extract a figure."),
+                 shiny::tags$b("zoom and reset views")),
         shiny::br(),
 
         shiny::p("Selected points appear in the",
@@ -211,7 +219,7 @@ datacleanr <- function(dataset){
                                                                                     shiny::br(),
                                                                                     # shiny::hr(style = "border-top: 1px solid #A0A0A0;"),
 
-                                                                                    shiny::h4(shiny::tags$strong("Annotate last Selection")),
+                                                                                    shiny::h4(shiny::tags$strong("Annotate last selection")),
                                                                                     shiny::actionLink("help-annotator",
                                                                                                       "Click for Help",
                                                                                                       icon = shiny::icon("question-circle")),
@@ -296,7 +304,7 @@ datacleanr <- function(dataset){
 
         # tracks which version of data to pass to datareactive
         action_tracking <- shiny::reactiveValues(plot_start = NULL,
-                                                 action_tracking = NULL)
+                                                 controls = NULL)
         # applied_filters_button = NULL,
         # reset_filters_button = NULL)
 
@@ -618,85 +626,127 @@ datacleanr <- function(dataset){
 
         # PLOT DATA SELECTION ---------------
 
+
         # handle clicks
-        shiny::observeEvent({plotly::event_data("plotly_click", priority = "event", source = "scatterselect")}, {
-
-            # shiny::req(input[["selectors-startscatter"]])
-
-            # shiny::validate(shiny::need(input[["selectors-startscatter"]],
-            #                             label = "PlotStarter"))
-            shiny::validate(shiny::need(action_tracking$plot_start,
-                                        label = "PlotStarter"))
-
-            clicked <- plotly::event_data("plotly_click",
-                                          source = "scatterselect",
-                                          priority = "event")
-
-            if(nrow(selected_data$df) > 0 & nrow(clicked) > 0){
-                new <- data.frame(keys = as.integer(clicked$customdata),
-                                  selection_count = max(selected_data$df$selection_count) + 1,
-                                  .annotation = "",
-                                  stringsAsFactors = FALSE)
-
-                if(any(new$keys %in% selected_data$df$keys)){
-                    new <- new[!{new$keys %in% selected_data$df$keys}, ]
-                }
-
-                selected_data$df <- rbind(selected_data$df, new)
-
-            } else {
-                new <- data.frame(keys = as.integer(clicked$customdata),
-                                  selection_count = 1,
-                                  .annotation = "",
-                                  stringsAsFactors = FALSE)
-                selected_data$df <- new
-            }
-            print(paste("orig selection:"))
-            print(selected_data$df)
-        })
 
 
         # handle selections
-        shiny::observeEvent({plotly::event_data("plotly_selected", priority = "event", source = "scatterselect")}, {
+        shiny::observeEvent({
+            plotly::event_data("plotly_selected", priority = "event", source = "scatterselect")}, {
+            print("selected!")
 
-            # shiny::validate(shiny::need(input[["selectors-startscatter"]],
-            #                             label = "PlotStarter"))
             shiny::validate(shiny::need(action_tracking$plot_start,
                                         label = "PlotStarter"))
 
-            print("selected!")
-
-            # selected <- shiny::reactiveVal()
             selected <- plotly::event_data("plotly_selected",
                                            source = "scatterselect",
                                            priority = "event")
 
-            if(length(selected)>0){
+            selected_data$df <- handle_outlier_selection(sel_data_old = selected_data$df,
+                                                         sel_data_new = selected)
 
-                if(nrow(selected_data$df) > 0 & nrow(selected) > 0){
-                    new <- data.frame(keys = as.integer(selected$customdata),
-                                      selection_count = max(selected_data$df$selection_count) + 1,
-                                      .annotation = "",
-                                      stringsAsFactors = FALSE)
-
-                    if(any(new$keys %in% selected_data$df$keys)){
-                        new <- new[!{new$keys %in% selected_data$df$keys}, ]
-                    }
-                    selected_data$df <- rbind(selected_data$df, new)
-                } else {
-                    new <- data.frame(keys = as.integer(selected$customdata),
-                                      selection_count = 1,
-                                      .annotation = "",
-                                      stringsAsFactors = FALSE)
-                    selected_data$df <- new
-                }
-
-                print(paste("orig selection:"))
-                print(selected_data$df)
-            }
 
         })
 
+
+        shiny::observeEvent({
+            plotly::event_data("plotly_click", priority = "event", source = "scatterselect")}, {
+                print("clicked!")
+
+                shiny::validate(shiny::need(action_tracking$plot_start,
+                                            label = "PlotStarter"))
+
+                clicked <- plotly::event_data("plotly_click",
+                                              source = "scatterselect",
+                                              priority = "event")
+
+                selected_data$df <- handle_outlier_selection(sel_data_old = selected_data$df,
+                                                             sel_data_new = clicked)
+
+
+            })
+
+
+
+        # # handle clicks
+        # shiny::observeEvent({plotly::event_data("plotly_click", priority = "event", source = "scatterselect")}, {
+        #
+        #     # shiny::req(input[["selectors-startscatter"]])
+        #
+        #     # shiny::validate(shiny::need(input[["selectors-startscatter"]],
+        #     #                             label = "PlotStarter"))
+        #     shiny::validate(shiny::need(action_tracking$plot_start,
+        #                                 label = "PlotStarter"))
+        #
+        #     clicked <- plotly::event_data("plotly_click",
+        #                                   source = "scatterselect",
+        #                                   priority = "event")
+        #
+        #     if(nrow(selected_data$df) > 0 & nrow(clicked) > 0){
+        #         new <- data.frame(keys = as.integer(clicked$customdata),
+        #                           selection_count = max(selected_data$df$selection_count) + 1,
+        #                           .annotation = "",
+        #                           stringsAsFactors = FALSE)
+        #
+        #         if(any(new$keys %in% selected_data$df$keys)){
+        #             new <- new[!{new$keys %in% selected_data$df$keys}, ]
+        #         }
+        #
+        #         selected_data$df <- rbind(selected_data$df, new)
+        #
+        #     } else {
+        #         new <- data.frame(keys = as.integer(clicked$customdata),
+        #                           selection_count = 1,
+        #                           .annotation = "",
+        #                           stringsAsFactors = FALSE)
+        #         selected_data$df <- new
+        #     }
+        #     print(paste("orig selection:"))
+        #     print(selected_data$df)
+        # })
+        #
+        #
+        # # handle selections
+        # shiny::observeEvent({plotly::event_data("plotly_selected", priority = "event", source = "scatterselect")}, {
+        #
+        #     # shiny::validate(shiny::need(input[["selectors-startscatter"]],
+        #     #                             label = "PlotStarter"))
+        #     shiny::validate(shiny::need(action_tracking$plot_start,
+        #                                 label = "PlotStarter"))
+        #
+        #     print("selected!")
+        #
+        #     # selected <- shiny::reactiveVal()
+        #     selected <- plotly::event_data("plotly_selected",
+        #                                    source = "scatterselect",
+        #                                    priority = "event")
+        #
+        #     if(length(selected)>0){
+        #
+        #         if(nrow(selected_data$df) > 0 & nrow(selected) > 0){
+        #             new <- data.frame(keys = as.integer(selected$customdata),
+        #                               selection_count = max(selected_data$df$selection_count) + 1,
+        #                               .annotation = "",
+        #                               stringsAsFactors = FALSE)
+        #
+        #             if(any(new$keys %in% selected_data$df$keys)){
+        #                 new <- new[!{new$keys %in% selected_data$df$keys}, ]
+        #             }
+        #             selected_data$df <- rbind(selected_data$df, new)
+        #         } else {
+        #             new <- data.frame(keys = as.integer(selected$customdata),
+        #                               selection_count = 1,
+        #                               .annotation = "",
+        #                               stringsAsFactors = FALSE)
+        #             selected_data$df <- new
+        #         }
+        #
+        #         print(paste("orig selection:"))
+        #         print(selected_data$df)
+        #     }
+        #
+        # })
+        #
         # clear on dbl click
         shiny::observeEvent(
             # shiny::observeEvent({
@@ -841,7 +891,7 @@ datacleanr <- function(dataset){
 
             shiny::showModal(shiny::modalDialog(
                 text_filtering_side_panel,
-                title = "Somewhat important message",
+                title = "How to filter data",
                 size = "m",
                 easyClose = TRUE,
                 footer = NULL
@@ -854,7 +904,7 @@ datacleanr <- function(dataset){
 
             shiny::showModal(shiny::modalDialog(
                 text_annotate_side_panel,
-                title = "Somewhat important message",
+                title = "How to annotate outliers",
                 size = "m",
                 easyClose = TRUE,
                 footer = NULL
@@ -866,7 +916,7 @@ datacleanr <- function(dataset){
 
             shiny::showModal(shiny::modalDialog(
                 text_plot_main_panel,
-                title = "Somewhat important message",
+                title = "Plotting data and selecting outliers",
                 size = "m",
                 easyClose = TRUE,
                 footer = NULL

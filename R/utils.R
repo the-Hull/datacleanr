@@ -345,10 +345,6 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
     if(length(sp$df$keys) > 0){
 
-        # print(paste("selection is identical:", identical(ok(),
-        #                                                  sp$df$keys)))
-
-        # print(paste("ok is", ok()))
 
 
         # check if selection is new
@@ -367,7 +363,6 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
             print("---- adding traces -----")
 
-            print(head(add_points))
 
 
             zvar_toggle <- nchar(selectors$zvar())>0
@@ -375,7 +370,7 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                 z <- add_points[ , as.character(selectors$zvar()), drop = TRUE]
             } else {
                 z <- NULL
-                print("no zvar")
+                # print("no zvar")
             }
 
 

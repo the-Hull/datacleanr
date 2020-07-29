@@ -1,6 +1,6 @@
 #' Data cleanr
 #'
-#' @param data_set dataframe
+#' @param dataset dataframe
 #'
 #' @return idxs of selected data
 #' @export

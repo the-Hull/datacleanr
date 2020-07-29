@@ -60,7 +60,7 @@ module_ui_filter_str <- function(id) {
     ns <- shiny::NS(id)
 
     shiny::tags$div(
-        id=paste0("filt", id),
+        id=paste0(id, "-filt"),
         shiny::fluidRow(
 
             shiny::uiOutput(ns('filter'))
@@ -83,7 +83,10 @@ module_server_filter_str <- function(input, output, session){
     output$filter <- shiny::renderUI({
         shiny::textInput(
             inputId = ns("filter"),
-            label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
+            # label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
+            label = paste0("Filter ", substr(x = ns(""),
+                                             regexpr("[0-9]", ns("")),
+                                             regexpr("[0-9]", ns("")))),
             value = NULL,
             width = "100%",
             placeholder = NULL

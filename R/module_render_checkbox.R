@@ -22,8 +22,7 @@ module_ui_checkbox <- function(id, cond_id) {
 
     shiny::tagList(
         # shiny::conditionalPanel(condition = paste0(space, cond_id, " !== null"),
-        shiny::conditionalPanel(condition = paste0("output['", cond_id ,"'] !== null"),
-        # shiny::conditionalPanel(condition = paste0("input.groupGroupvar", " !== null"),
+        shiny::conditionalPanel(condition = paste0("input['", cond_id ,"'] != ''"),
                                 shiny::htmlOutput(ns("checkbox")))
     )
 }

@@ -109,7 +109,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
           print("redrawing")
           pnew <- plotly::plot_ly(data = plot_data,
-                          source = "scatterselect"
+                                  source = "scatterselect"
           ) %>%
             plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar()),
                                 y = ~ !!shiny::isolate(selector_inputs$yvar()),

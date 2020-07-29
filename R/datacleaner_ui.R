@@ -113,7 +113,7 @@ datacleanr_ui <- function(id, dataset){
                                                  module_ui_group_select(df = dataset,
                                                                         id = ns("group")),
                                                  module_ui_checkbox(id = ns("grouptick"),
-                                                                    cond_id = "gvar"),
+                                                                    cond_id = "dcr-group-groupvar"),
                                                  shiny::br(),
                                                  shiny::actionButton(ns("gobutton"),
                                                                      "Start",

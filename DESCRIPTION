@@ -30,4 +30,6 @@ Imports:
     grDevices,
     stats,
     htmlwidgets,
-    purrr
+    purrr,
+    glue,
+    formatR

@@ -106,7 +106,8 @@ checked_filter <- function(df, statements){
                                     eval(str2expression(cond_string_full)))
 
         return(list(succeeded = checks,
-                    filtered_df = filtered_df))
+                    filtered_df = filtered_df,
+                    statement_strings = statements[checks]))
     } else {
 
         return(list(succeeded = checks))
@@ -130,6 +131,22 @@ checked_filter <- function(df, statements){
 #
 #     # extract filter numbers
 #     filter_numbers <- gsub(pattern = "[^0-9]",
+
+
+
+
+
+
+
+#' Tag to display code
+#'
+#' @param ... Character strings
+#'
+#' @noRd
+rCodeContainer <- function(...) {
+    code <- htmltools::HTML(as.character(tags$code(class = "language-r", ...)))
+    htmltools::tags$div(htmltools::tags$pre(code))
+}
 #                            replacement = "",
 #                            x = all_filters)
 #

@@ -90,7 +90,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     # print("zvar given")
     size_expression <- as.formula(paste("~", shiny::isolate(selector_inputs$zvar())))
   } else {
-    size_expression <- rlang::quo_expr(NULL)
+    size_expression <- rlang::quo_squash(NULL)
     # print("zvar empty")
   }
 
@@ -103,7 +103,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
     p <-  rlang::eval_tidy(
-      rlang::quo_expr(
+      rlang::quo_squash(
         rlang::quo({
 
 

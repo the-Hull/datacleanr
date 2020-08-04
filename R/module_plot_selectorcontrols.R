@@ -79,20 +79,20 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
     # })
 
 
-   # inputs_to_monitor <- shiny::reactiveValues(xvar = NULL,
-   #                                            yvar= NULL,
-   #                                            abutton= NULL)
-   #
-   # shiny::observe({
-   #     inputs_to_monitor$xvar <- shiny::reactive({input$xvar})
-   #     inputs_to_monitor$yvar <- shiny::reactive({input$yvar})
-   #     inputs_to_monitor$zvar <- shiny::reactive({input$zvar})
-   #     inputs_to_monitor$abutton <- shiny::reactive({input$startscatter})
-   # })
-   #
-   #
-   #
-   # return(inputs_to_monitor)
+    # inputs_to_monitor <- shiny::reactiveValues(xvar = NULL,
+    #                                            yvar= NULL,
+    #                                            abutton= NULL)
+    #
+    # shiny::observe({
+    #     inputs_to_monitor$xvar <- shiny::reactive({input$xvar})
+    #     inputs_to_monitor$yvar <- shiny::reactive({input$yvar})
+    #     inputs_to_monitor$zvar <- shiny::reactive({input$zvar})
+    #     inputs_to_monitor$abutton <- shiny::reactive({input$startscatter})
+    # })
+    #
+    #
+    #
+    # return(inputs_to_monitor)
 
 
 

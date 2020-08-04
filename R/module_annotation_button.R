@@ -63,30 +63,30 @@ module_server_text_annotator  <- function(input, output, session, sel_data){
 
 
 
-        # shiny::observeEvent(input[[ns('annotate_button')]], {
-        # shiny::observeEvent(input$annotate_button, {
+    # shiny::observeEvent(input[[ns('annotate_button')]], {
+    # shiny::observeEvent(input$annotate_button, {
 
-            print("button pressed")
-            if(nrow(sel_data$df) > 0){
+    print("button pressed")
+    if(nrow(sel_data$df) > 0){
 
-                annotate_ind <- which(sel_data$df$selection_count == max(sel_data$df$selection_count, na.rm = TRUE))
+        annotate_ind <- which(sel_data$df$selection_count == max(sel_data$df$selection_count, na.rm = TRUE))
 
-                sel_data$df[annotate_ind, ".annotation"] <- input$textinput
+        sel_data$df[annotate_ind, ".annotation"] <- input$textinput
 
-                print("in the loop")
-
-
-
-                }
+        print("in the loop")
 
 
 
+    }
 
 
-        # })
 
 
-        return(sel_data$df)
+
+    # })
+
+
+    return(sel_data$df)
 
 
 }

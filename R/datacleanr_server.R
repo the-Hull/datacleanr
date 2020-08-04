@@ -9,13 +9,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     old_tz <- Sys.getenv("TZ")
     Sys.setenv(TZ = "UTC")
 
-    print(str(dataset))
 
     # suppress plotly warnings, etc.
     # options(warn = -1)
 
 
-# Help Texts --------------------------------------------------------------
+    # Help Texts --------------------------------------------------------------
 
     text_filtering_side_panel <- shiny::tagList(
         # shiny::p(
@@ -294,6 +293,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     # FILTER Apply/Undo  -------------------------------------------------------
 
+    # used for extraction tab
+    filter_string <- shiny::reactiveVal()
+
     #apply
     shiny::observeEvent(input$apply_filter, {
         shiny::validate(shiny::need(add.filter,
@@ -306,6 +308,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
         if(any(df$succeeded)){
             datareactive(df$filtered_df)
+            filter_string(df$statement_strings)
         }
         rm(df)
     })
@@ -333,6 +336,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         )
 
         btn$value <- 0
+        filter_string(NULL)
+
     })
 
 
@@ -716,6 +721,23 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     })
 
+    # // ---------------------------------------------------------------------
+
+
+    # EXTRACTION --------------------------------------------------------------
+
+
+    shiny::observe({
+
+        req(datareactive())
+
+        shiny::callModule(module_server_extract_code,
+                          id = "extract",
+                          df_label = df_name,
+                          filter_strings = filter_string,
+                          sel_points = selected_data)
+
+    })
 
 
     # // ----------------------------------------------------------------------

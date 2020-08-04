@@ -209,9 +209,7 @@ datacleanr_ui <- function(id, dataset){
                                                                                 shiny::actionLink(ns("help-annotator"),
                                                                                                   "Click for Help",
                                                                                                   icon = shiny::icon("question-circle")),
-
                                                                                 shiny::br(),
-
                                                                                 module_ui_text_annotator(ns("annotator"))),
                                              mainPanel = shiny::mainPanel(width = 8,
                                                                           module_ui_plot_selectorcontrols(ns("selectors")),
@@ -228,7 +226,12 @@ datacleanr_ui <- function(id, dataset){
                          # TAB EXTRACT -------------
                          shiny::tabPanel("Extraction",
                                          value = ns("extract"),
-                                         icon = shiny::icon("file-export")), #/tabPanel
+                                         icon = shiny::icon("file-export"),
+                                         shiny::sidebarLayout(
+                                             sidebarPanel = shiny::sidebarPanel(width = 4),
+                                             mainPanel = shiny::mainPanel(width = 8,
+                                                                          module_ui_extract_code(ns("extract"))))
+                                             ), #/tabPanel
 
 
                          inputs = list(miniUI::miniTitleBarButton(ns("done"),

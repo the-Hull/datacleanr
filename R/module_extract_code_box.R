@@ -8,41 +8,44 @@ module_ui_extract_code <- function(id) {
     ns <- shiny::NS(id)
 
 
-    shiny::tagList(
-
-        shiny::fluidRow(
-            align = "left",
-            column(width = 4,
-                   shiny::selectInput(
+    shiny::tagList(shiny::fluidRow(
+        shiny::column(
+            # align = "left",
+            width = 6,
+            shiny::selectInput(
                 inputId = ns("paradigm"),
                 label = "Choose coding style",
                 choices = c("base", "data.table", "dplyr"),
                 selected = "base",
                 selectize = TRUE,
                 multiple = FALSE
-            )),
+            )
+        ),
 
-            shiny::column(width = 4,
-                          style = "margin-top: 25px;",
-                   shiny::actionButton(
+        shiny::column(
+            # align = "left",
+            width = 3,
+            style = "margin-top: 25px;",
+            shiny::actionButton(
                 inputId = ns("codebtn"),
                 label = "Send to RStudio",
                 class = "btn-info",
                 icon = shiny::icon("check-double")
-            )),
-
-            shiny::column(width = 4,
-                          style = "margin-top: 25px;",
-                   shiny::actionButton(
+            )
+        ),
+        shiny::column(
+            width = 3,
+            style = "margin-top: 25px;",
+            shiny::actionButton(
                 inputId = ns("copybtn"),
                 label = "Copy to clipboard",
                 class = "btn-info",
                 icon = shiny::icon("check-double")
-            ))
-        ),
+            )
+    )),
 
-        shiny::verbatimTextOutput(ns("codeprint"))
-        # shiny::uiOutput(ns("codeprint")))
+    shiny::verbatimTextOutput(ns("codeprint"))
+    # shiny::uiOutput(ns("codeprint")))
     )
 
 }
@@ -56,6 +59,7 @@ module_ui_extract_code <- function(id) {
 #' @param df_label string, name of original df input
 #' @param filter_strings reactive value, individual strings from filtering
 #' @param filter_strings reactive values, data frame with selected point keys, annotations, and selection count
+#' @param overwrite reacive value, TRUE/FALSE from checkbox input
 #'
 #'
 module_server_extract_code  <-
@@ -64,14 +68,28 @@ module_server_extract_code  <-
              session,
              df_label,
              filter_strings,
-             sel_points) {
+             sel_points,
+             overwrite) {
         ns = session$ns
 
 
-        setup_string <-
-            glue::glue('{df_label}$.dcrkey <- seq_len(nrow({df_label}))')
 
-
+        setup_string <-  base::switch(
+            input$paradigm,
+            base =  glue::glue('{df_label}$.dcrkey <- seq_len(nrow({df_label}))'),
+            dplyr = glue::glue(
+                '
+                library(dplyr)\n
+                {df_label} <- {df_label} %>% dplyr::mutate(.dcrkey = seq_len(nrow(.)))
+                '
+            ),
+            data.table = glue::glue(
+                'library(data.table)\n
+                {df_label} <- data.table::as.data.table({df_label});
+                {df_label}[ , .dcrkey := seq_len(nrow(.SD))]
+                '
+            )
+        )
 
 
 
@@ -101,7 +119,11 @@ module_server_extract_code  <-
 
 
         if (!is.null(filter_strings())) {
-            df_label_filtered <- paste0(df_label, "_filtered")
+            if (!overwrite) {
+                df_label_filtered <- paste0(df_label, "_filtered")
+            } else {
+                df_label_filtered <- df_label
+            }
 
             subset_strings$base <- glue::glue('
                     subset({df_label},
@@ -121,7 +143,7 @@ module_server_extract_code  <-
 
 
             use_code_subset <- base::switch(
-                input$paradigm,
+                as.character(input$paradigm),
                 base = subset_strings$base,
                 dplyr = subset_strings$dplyr,
                 data.table = subset_strings$dt
@@ -152,11 +174,32 @@ module_server_extract_code  <-
 
             }
 
+
+            # extra string as comment
+
+            info_comment_outlier_obs <-
+                " observations from manual selection (Viz tab);"
+            info_comment_outlier_merge <-
+                " create data set with annotation column (non-outliers are NA);"
+            info_comment_outlier_removal <-
+                " comment out below to keep manually selected obs in data set;"
+
+
+
+
+            if (!overwrite) {
+                df_label_outlier <- paste0(df_label, "_outlier")
+            } else {
+                df_label_outlier <- df_label
+            }
+
+
             sepo <- sel_points$df %>%
                 dplyr::rename(.dcrkey = keys)
 
 
-            sepo$.annotation[which(nchar(sepo$.annotation) == 0)] <- NA
+            # sepo$.annotation[which(nchar(sepo$.annotation) == 0)] <-
+            #     NA
 
 
             sel_points_str <-
@@ -165,36 +208,74 @@ module_server_extract_code  <-
 
 
             sel_points_strings$code_make_outlier_var <-
-                glue::glue('{df_label}_outlier_selection <- {sel_points_str}')
+                glue::glue(
+                    '
+                           # {info_comment_outlier_obs}
+                           {df_label}_outlier_selection <- {sel_points_str}
+                           '
+                )
 
             sel_points_strings$code_join_outlier_dplyr <-
                 glue::glue(
-                    '{df_label}_outlier  <- dplyr::left_join({df_label}, {df_label}_outlier_selection, by = ".dcrkey")'
+                    '
+                    # {info_comment_outlier_merge}
+                    {df_label_outlier}  <- dplyr::left_join({df_label}, {df_label}_outlier_selection, by = ".dcrkey");
+
+                    # {info_comment_outlier_removal}
+                    {df_label_outlier}  <- {df_label_outlier} %>% dplyr::filter(is.na(.annotation))
+
+                    '
                 )
 
             sel_points_strings$code_join_outlier_dt <-
                 glue::glue(
-                    '{df_label}_outlier  <- merge({df_label}, {df_label}_outlier_selection, by = ".dcrkey", all = TRUE)'
+                    '
+                    # {info_comment_outlier_merge}
+                    {df_label_outlier}  <- merge({df_label}, {df_label}_outlier_selection, by = ".dcrkey", all = TRUE)
+
+                    # {info_comment_outlier_removal}
+                    {df_label_outlier}  <- {df_label_outlier}[is.na(.annotation), ]
+                    '
                 )
 
 
+            sel_points_strings$code_join_outlier_base <-
+                glue::glue(
+                    '
+                    # {info_comment_outlier_merge}
+                    {df_label_outlier}  <- merge({df_label}, {df_label}_outlier_selection, by = ".dcrkey", all = TRUE)
+
+                    # {info_comment_outlier_removal}
+                    {df_label_outlier}  <- {df_label_outlier}[is.na({df_label_outlier}$.annotation), ]
+                    '
+                )
+
             use_code_outlier <-  base::switch(
                 input$paradigm,
-                base = sel_points_strings$code_join_outlier_dt,
+                base = sel_points_strings$code_join_outlier_base,
                 dplyr = sel_points_strings$code_join_outlier_dplyr,
                 data.table = sel_points_strings$code_join_outlier_dt
             )
 
 
             text_out <- glue::glue(
-                '{text_out}
+                '
+                {text_out}
 
+                                # observations from manual selection in Viz. Tab
                                 {sel_points_strings$code_make_outlier_var}
 
                                 {use_code_outlier}
+
                                 '
             )
         }
+
+
+
+
+
+
 
 
 
@@ -204,7 +285,15 @@ module_server_extract_code  <-
 
         # text_out <- paste(capture.output(styler::style_text(as.character(text_out),
 
-        text_out <- paste(formatR::tidy_source(text = text_out)$text.tidy, collapse = "\n")
+        text_out <-
+            paste(
+                formatR::tidy_source(
+                    text = text_out,
+                    output = FALSE,
+                    width = 100
+                )$text.tidy,
+                collapse = "\n"
+            )
 
 
         output$codeprint <- shiny::renderText(text_out)

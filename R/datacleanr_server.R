@@ -735,7 +735,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                           id = "extract",
                           df_label = df_name,
                           filter_strings = filter_string,
-                          sel_points = selected_data)
+                          sel_points = selected_data,
+                          overwrite = input$overwrite)
 
     })
 

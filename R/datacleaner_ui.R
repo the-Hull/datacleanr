@@ -228,10 +228,15 @@ datacleanr_ui <- function(id, dataset){
                                          value = ns("extract"),
                                          icon = shiny::icon("file-export"),
                                          shiny::sidebarLayout(
-                                             sidebarPanel = shiny::sidebarPanel(width = 4),
+
+                                             sidebarPanel = shiny::sidebarPanel(width = 4,
+                                                                                shiny::checkboxInput(ns("overwrite"),
+                                                                                                     label = "Concise code?",
+                                                                                                     value = FALSE)),
+
                                              mainPanel = shiny::mainPanel(width = 8,
                                                                           module_ui_extract_code(ns("extract"))))
-                                             ), #/tabPanel
+                         ), #/tabPanel
 
 
                          inputs = list(miniUI::miniTitleBarButton(ns("done"),

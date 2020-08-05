@@ -382,7 +382,7 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
 
 
-            zvar_toggle <- nchar(selectors$zvar())>0
+            zvar_toggle <- nchar(selectors$zvar)>0
             if(zvar_toggle){
                 z <- add_points[ , as.character(selectors$zvar()), drop = TRUE]
             } else {
@@ -395,8 +395,8 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                 plotly::plotlyProxyInvoke(
                     "addTraces",
                     list(
-                        x = add_points[ , as.character(selectors$xvar()), drop = TRUE],
-                        y = add_points[ , as.character(selectors$yvar()), drop = TRUE],
+                        x = add_points[ , as.character(selectors$xvar), drop = TRUE],
+                        y = add_points[ , as.character(selectors$yvar), drop = TRUE],
                         size = z,
                         type = "scatter",
                         mode = "markers",

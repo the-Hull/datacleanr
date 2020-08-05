@@ -25,7 +25,7 @@ module_ui_plot_selectorcontrols <- function(id) {
 #' Server Module: box for str filter condition
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
-#' @param df reactive df
+#' @param df df (not reactive - prevent re-execution of observer)
 #'
 #' @details provides UI text box element
 #'
@@ -38,19 +38,19 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
         shiny::fluidRow(
             column(3, shiny::varSelectInput(ns('xvar'),
                                             label = "X Var",
-                                            data = df()[ , !grepl("[.]dcr", colnames(df()))])),
+                                            data = df[ , !grepl("[.]dcr", colnames(df))])),
             column(3,
                    shiny::varSelectInput(ns('yvar'),
                                          label = "Y Var",
-                                         data = df()[ ,!grepl("[.]dcr", colnames(df()))])),
+                                         data = df[ ,!grepl("[.]dcr", colnames(df))])),
             # column(3,
             #        shiny::varSelectInput(ns('zvar'),
             #                              label = "Z Var",
-            #                              data = df()[ , colnames(df())!=".dcrkey"])),
+            #                              data = df[ , colnames(df)!=".dcrkey"])),
             column(3,
                    shiny::selectInput(ns('zvar'),
                                       label = "Z Var",
-                                      choices = c("", colnames(df())[!grepl("[.]dcr", colnames(df()))]),
+                                      choices = c("", colnames(df)[!grepl("[.]dcr", colnames(df))]),
                                       selected = NULL)),
             column(1,
                    style = "margin-top: 25px;",

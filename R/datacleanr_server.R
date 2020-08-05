@@ -131,7 +131,19 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     action_tracking <- shiny::reactiveValues(plot_start = NULL,
                                              controls = NULL)
 
+    # stores recent data selection (used when filtering is reset)
+    selected_data_recovery <- shiny::reactiveVal()
 
+    # used for extraction tab
+    filter_string <- shiny::reactiveVal()
+
+    # holds plotly selection data
+    selected_data <- shiny::reactiveValues(
+        df = data.frame(keys = integer(0),
+                        selection_count = integer(0),
+                        .annotation = character(0),
+                        stringsAsFactors = FALSE)
+    )
 
 
 
@@ -295,11 +307,15 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     # FILTER Apply/Undo  -------------------------------------------------------
 
-    # used for extraction tab
-    filter_string <- shiny::reactiveVal()
+    # # used for extraction tab
+    # filter_string <- shiny::reactiveVal()
+    # selected_data_recovery <- shiny::reactiveVal()
 
     #apply
     shiny::observeEvent(input$apply_filter, {
+
+
+
         shiny::validate(shiny::need(add.filter,
                                     label = "add filter"))
         shiny::validate(shiny::need(input$gobutton,
@@ -313,6 +329,39 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
             filter_string(df$statement_strings)
         }
         rm(df)
+
+        ## Logic to handle removal of selected data in plotly
+        # id points in selection now missing in data
+        if(nrow(selected_data$df) > 0){
+
+            absent_selection <- selected_data$df$keys %nin% datareactive()$.dcrkey
+
+            if(!is.null(selected_data_recovery())){
+                selected_data_recovery(rbind(selected_data$df[absent_selection, ], selected_data_recovery()))
+            } else {
+                selected_data_recovery(selected_data$df[absent_selection, ])
+            }
+
+            # adjust selection
+            selected_data$df <- selected_data$df[!absent_selection, ]
+
+
+            #
+
+
+
+        }
+
+
+        if(!is.null(selector_vals$startscatter)){
+
+            selector_vals$startscatter <- selector_vals$startscatter + 1
+
+            print("here - incremented the plotter!")
+            print(selector_vals$startscatter)
+
+        }
+
     })
 
 
@@ -339,6 +388,23 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
         btn$value <- 0
         filter_string(NULL)
+
+        # reset selected data
+        if(!is.null(selected_data_recovery())){
+            # adjust selection
+            selected_data$df <- rbind(selected_data$df,
+                                      selected_data_recovery())
+        }
+
+        ## Logic to handle removal of selected data in plotly
+        selected_data_recovery(NULL)
+
+        if(!is.null(selector_vals$startscatter)){
+
+            selector_vals$startscatter <- selector_vals$startscatter + 1
+
+        }
+
 
     })
 
@@ -373,31 +439,57 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # // ----------------------------------------------------------------------
 
 
+    selector_vals <- shiny::reactiveValues()
+
     # PLOT CONTROLS --------------
     # handle data for plotting after gobutton + filtering
-    shiny::observe({
+    # shiny::observe({
+    shiny::observeEvent({
+        input$gobutton
+        # input$apply_filter
+    },
+    {
 
+        print("this is going now!")
         shiny::validate(shiny::need(datareactive,
                                     label = "datareactive"))
-        # selector_vals <<-
+
         shiny::callModule(module_server_plot_selectorcontrols,
                           "selectors",
-                          datareactive)
+                          shiny::isolate(datareactive()))
+
+    })
+
+
+    # selector_vals <- list(xvar = shiny::reactive(input$`selectors-xvar`),
+    #                       yvar = shiny::reactive(input$`selectors-yvar`),
+    #                       zvar = shiny::reactive(input$`selectors-zvar`),
+    #                       startscatter = shiny::reactiveVal(input$`selectors-startscatter`))
+
+    shiny::observe({
+
+        selector_vals$xvar <-  input$`selectors-xvar`
+        selector_vals$yvar <- input$`selectors-yvar`
+        selector_vals$zvar <- input$`selectors-zvar`
+        selector_vals$startscatter <- input$`selectors-startscatter`
+
+        print(selector_vals$startscatter)
+
     })
 
 
 
-    selector_vals <- list(xvar = shiny::reactive(input$`selectors-xvar`),
-                          yvar = shiny::reactive(input$`selectors-yvar`),
-                          zvar = shiny::reactive(input$`selectors-zvar`),
-                          startscatter = shiny::reactive(input$`selectors-startscatter`))
-
 
     shiny::observeEvent({
-        selector_vals[[1]]()
-        selector_vals[[2]]()
-        selector_vals[[3]]()
+        selector_vals$xvar
+        selector_vals$xvar
+        selector_vals$zvar
     }, {
+    # shiny::observeEvent({
+    #     selector_vals[[1]]()
+    #     selector_vals[[2]]()
+    #     selector_vals[[3]]()
+    # }, {
 
         shiny::validate(shiny::need(shiny::isolate(selector_vals),
                                     label = "control vals"))
@@ -409,7 +501,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
     ## PLOTTING -----------------
-    shiny::observeEvent(input[["selectors-startscatter"]],
+    # shiny::observeEvent(input[["selectors-startscatter"]],
+    shiny::observeEvent(selector_vals$startscatter,
                         # shiny::observe(
                         {
 
@@ -431,12 +524,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                         }) #/observe
 
 
-    selected_data <- shiny::reactiveValues(
-        df = data.frame(keys = integer(0),
-                        selection_count = integer(0),
-                        .annotation = character(0),
-                        stringsAsFactors = FALSE)
-    )
+    # selected_data <- shiny::reactiveValues(
+    #     df = data.frame(keys = integer(0),
+    #                     selection_count = integer(0),
+    #                     .annotation = character(0),
+    #                     stringsAsFactors = FALSE)
+    # )
 
 
     # PLOT DATA SELECTION ---------------
@@ -739,11 +832,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
         code_out(
             shiny::callModule(module_server_extract_code,
-                          id = "extract",
-                          df_label = df_name,
-                          filter_strings = filter_string,
-                          sel_points = selected_data,
-                          overwrite = input$overwrite)
+                              id = "extract",
+                              df_label = df_name,
+                              filter_strings = filter_string,
+                              sel_points = selected_data,
+                              overwrite = input$overwrite)
         )
 
     })

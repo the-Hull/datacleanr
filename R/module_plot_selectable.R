@@ -85,10 +85,10 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
   # handler for empty zvar selection
-  zvar_toggle <- nchar(shiny::isolate(selector_inputs$zvar()))>0
+  zvar_toggle <- nchar(shiny::isolate(selector_inputs$zvar))>0
   if(zvar_toggle){
     # print("zvar given")
-    size_expression <- as.formula(paste("~", shiny::isolate(selector_inputs$zvar())))
+    size_expression <- as.formula(paste("~", shiny::isolate(selector_inputs$zvar)))
   } else {
     size_expression <- rlang::quo_squash(NULL)
     # print("zvar empty")
@@ -111,8 +111,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
           pnew <- plotly::plot_ly(data = plot_data,
                                   source = "scatterselect"
           ) %>%
-            plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar()),
-                                y = ~ !!shiny::isolate(selector_inputs$yvar()),
+            plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar),
+                                y = ~ !!shiny::isolate(selector_inputs$yvar),
                                 size = eval(size_expression),
                                 color = ~as.factor(.dcrindex),
                                 name = ~as.factor(.dcrindex),
@@ -170,8 +170,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
                               plotly::add_trace(oplot,
                                                 data = spdf,
-                                                x = ~ !!shiny::isolate(selector_inputs$xvar()),
-                                                y = ~ !!shiny::isolate(selector_inputs$yvar()),
+                                                x = ~ !!shiny::isolate(selector_inputs$xvar),
+                                                y = ~ !!shiny::isolate(selector_inputs$yvar),
                                                 size = eval(size_expression),
                                                 name = "outlier",
                                                 type = "scatter",
@@ -348,20 +348,20 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     #   # handle when input selector changes
     #   plotchange_observer <- shiny::isolate(shiny::reactive(
     # {
-    #     list( selector_inputs$xvar(),
-    #             selector_inputs$yvar(),
+    #     list( selector_inputs$xvar,
+    #             selector_inputs$yvar,
     #             selector_inputs$abutton())}))
     #   #
     #   # # shiny::observeEvent(selector_inputs,
     #   shiny::observeEvent(plotchange_observer(),
-    #   # shiny::observeEvent(selector_inputs$yvar(),
+    #   # shiny::observeEvent(selector_inputs$yvar,
     #   #
     #   {
     #
     #     shiny::validate(need(plotchange_observer, label = "reactive for tracking plot inputs"))
     #   #
     #
-    #                 print(selector_inputs$xvar())
+    #                 print(selector_inputs$xvar)
     #                   print(shiny::is.reactive(selector_inputs$xvar))
     #                   print("new case here")
     #

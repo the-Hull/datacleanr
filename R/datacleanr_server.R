@@ -1,4 +1,6 @@
 #' datacleanr server function
+#' @param dataset data.frame, tibble or data.table that needs cleaning
+#' @param df_name character, name of dataset passed into shiny app
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
 datacleanr_server <- function(input, output, session, dataset, df_name){
@@ -727,16 +729,39 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # EXTRACTION --------------------------------------------------------------
 
 
+
+
+    code_out <- shiny::reactiveVal()
+
     shiny::observe({
 
         req(datareactive())
 
-        shiny::callModule(module_server_extract_code,
+        code_out(
+            shiny::callModule(module_server_extract_code,
                           id = "extract",
                           df_label = df_name,
                           filter_strings = filter_string,
                           sel_points = selected_data,
                           overwrite = input$overwrite)
+        )
+
+    })
+
+
+    observeEvent(input$`extract-codebtn`, {
+
+
+        context <- rstudioapi::getSourceEditorContext()
+        rstudioapi::insertText(text = paste0("\n", code_out(), "\n"),
+                               id = context$id)
+    })
+
+    observeEvent(input$`extract-copybtn`, {
+
+
+        clipr::write_clip(content = code_out(),
+                          object_type = "character")
 
     })
 

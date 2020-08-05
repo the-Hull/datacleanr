@@ -8,22 +8,19 @@ module_server_plot_selectable(
   input,
   output,
   session,
-  df,
-  group_row,
   selector_inputs,
+  df,
   sel_points
 )
 }
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
-\item{df}{reactive df, with df as element}
-
-\item{group_row}{numeric, selected group_index}
-
 \item{selector_inputs}{reactive, output from module_plot_selectorcontrols}
 
-\item{sel_points}{numeric, provides .dcrkey of selected points}
+\item{df}{reactive df}
+
+\item{sel_points}{reactive, provides .dcrkey of selected points}
 }
 \description{
 Server Module: box for str filter condition

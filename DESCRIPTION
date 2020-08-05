@@ -32,4 +32,6 @@ Imports:
     htmlwidgets,
     purrr,
     glue,
-    formatR
+    formatR,
+    RColorBrewer,
+    clipr

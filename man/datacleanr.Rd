@@ -7,7 +7,7 @@
 datacleanr(dataset)
 }
 \arguments{
-\item{data_set}{dataframe}
+\item{dataset}{dataframe}
 }
 \value{
 idxs of selected data

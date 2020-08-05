@@ -85,7 +85,7 @@ check_individual_statement <- function(df, statement){
 #' Filter a data frame with series of statements
 #'
 #' @param df data frame / tibble to be filtered
-#' @param statement character vector of individual conditional statements; need not evaluate successfully individually
+#' @param statements character vector of individual conditional statements; need not evaluate successfully individually
 #'
 #' @return list, logical vector of success and failures, and
 #'

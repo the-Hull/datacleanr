@@ -9,7 +9,7 @@ checked_filter(df, statements)
 \arguments{
 \item{df}{data frame / tibble to be filtered}
 
-\item{statement}{character vector of individual conditional statements; need not evaluate successfully individually}
+\item{statements}{character vector of individual conditional statements; need not evaluate successfully individually}
 }
 \value{
 list, logical vector of success and failures, and

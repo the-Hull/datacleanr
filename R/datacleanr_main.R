@@ -1,8 +1,8 @@
 #' Data cleanr
 #'
 #' @param dframe dataframe
+#' @param viewer character, "browser", "pane" for respective viewers; any other string will open the RStudio dialaogue view
 #'
-#' @return idxs of selected data
 #' @export
 #'
 #'
@@ -17,11 +17,11 @@ datacleanr_module <- function(dframe, viewer = "browser"){
 
 
     if (viewer == "browser") {
-        inviewer <- shiny::browserViewer(browser = getOption("browser"))
+        vw <- shiny::browserViewer(browser = getOption("browser"))
     } else if (viewer == "pane") {
-        inviewer <- shiny::paneViewer(minHeight = "maximize")
+        vw <- shiny::paneViewer(minHeight = "maximize")
     } else {
-        inviewer <- shiny::dialogViewer(
+        vw <- shiny::dialogViewer(
             dialogName = "Clean it up!",
             width = 1200,
             height = 850
@@ -42,7 +42,7 @@ datacleanr_module <- function(dframe, viewer = "browser"){
                              df_name = df_name
                          )
                      },
-                     viewer = inviewer
+                     viewer = vw
     )
 
 

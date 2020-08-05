@@ -58,9 +58,8 @@ module_ui_extract_code <- function(id) {
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param df_label string, name of original df input
 #' @param filter_strings reactive value, individual strings from filtering
-#' @param filter_strings reactive values, data frame with selected point keys, annotations, and selection count
+#' @param sel_points reactive values, data frame with selected point keys, annotations, and selection count
 #' @param overwrite reacive value, TRUE/FALSE from checkbox input
-#'
 #'
 module_server_extract_code  <-
     function(input,
@@ -71,6 +70,8 @@ module_server_extract_code  <-
              sel_points,
              overwrite) {
         ns = session$ns
+
+
 
 
 
@@ -273,13 +274,6 @@ module_server_extract_code  <-
 
 
 
-
-
-
-
-
-
-
         # Rendering ---------------------------------------------------------------
 
 
@@ -304,7 +298,11 @@ module_server_extract_code  <-
 
 
 
+        # print(text_out)
 
+        return(text_out)
+
+# Copy/Send Code ----------------------------------------------------------
 
 
 

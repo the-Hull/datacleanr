@@ -27,7 +27,7 @@ module_ui_df_filter <- function(id){
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param df data frame/tibble for filtering
-#' @param statements character, lengths >= 0, with (valid) statements for \code{\link{base::subset}}
+#' @param statements character, lengths >= 0, with (valid) statements for \code{base::subset}
 #'
 #' @return df, either filtered or original, based on validity of \code{statements}
 #'

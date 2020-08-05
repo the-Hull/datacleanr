@@ -2,24 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{extend_palette}
 \alias{extend_palette}
-\title{Identify filter inputs by id and label}
+\title{check if filtering statement is successfull}
 \usage{
 extend_palette(n)
 }
 \arguments{
 \item{n}{numeric, number of colors}
 
-\item{allinputs}{list of all currently active inputs}
-
 \item{df}{dataframe to be filtered}
 
 \item{statements}{character, vector with individual statements for filtering}
 }
 \value{
-list with id of last filter (character), and number of last filter (numeric)
-
-check if filtering statement is successfull
-
 logical vector of fails and successes
 
 extend brewer palette
@@ -27,5 +21,5 @@ extend brewer palette
 color vector of length n
 }
 \description{
-Identify filter inputs by id and label
+check if filtering statement is successfull
 }

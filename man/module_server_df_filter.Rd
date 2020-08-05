@@ -11,7 +11,7 @@ module_server_df_filter(input, output, session, df, statements)
 
 \item{df}{data frame/tibble for filtering}
 
-\item{statements}{character, lengths >= 0, with (valid) statements for \code{\link{base::subset}}}
+\item{statements}{character, lengths >= 0, with (valid) statements for \code{base::subset}}
 }
 \value{
 df, either filtered or original, based on validity of \code{statements}

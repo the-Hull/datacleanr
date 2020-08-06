@@ -647,7 +647,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         # shiny::observeEvent({
         # plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
       {plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
-        input[['undo-undoselection']] }
+        input[['undo-undoselection']]
+        1}
         , {
 
 

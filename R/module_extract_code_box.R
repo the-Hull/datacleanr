@@ -258,7 +258,7 @@ module_server_extract_code  <-
             )
 
 
-        output$codeprint <- shiny::renderUI(text_out)
+        output$codeprint <- shiny::renderText(text_out)
 
         return(text_out)
 

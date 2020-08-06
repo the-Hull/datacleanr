@@ -139,6 +139,9 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                            # dragmode =  FALSE
                            dragmode = "lasso"
             )  %>%
+            plotly::config(displaylogo = FALSE,
+                           modeBarButtonsToRemove = list("hoverCompareCartesian")) %>%
+
             # plotly::event_register(event = "plotly_doubleclick") %>%
             plotly::event_register(event = "plotly_deselect") %>%
             plotly::event_register(event = "plotly_click") %>%

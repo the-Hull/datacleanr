@@ -64,6 +64,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
   # n_groups <- length(unique(dplyr::group_indices(plot_data)))
   n_groups <- dplyr::n_groups(plot_data)
+  n_groups_original <- max(plot_data$.dcrindex)
+
 
   # identifier to cross-ref with grouping table
   # plot_data$.dcrindex <- dplyr::group_indices(plot_data)
@@ -73,13 +75,13 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   #
 
   col_value_vector <- extend_palette(
-    length(
-      unique(
-        dplyr::group_indices(plot_data)
-      ) # / unique
-    ) # / length
+    n_groups_original
   )
-  names(col_value_vector) <- unique(dplyr::group_indices(plot_data))
+  names(col_value_vector) <- seq_len(n_groups_original)
+
+  # subset to available groups
+  groups_available <- names(col_value_vector) %in% unique(plot_data$.dcrindex)
+  col_value_vector <- col_value_vector[groups_available]
 
 
 

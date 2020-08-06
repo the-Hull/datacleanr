@@ -345,21 +345,10 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
             # adjust selection
             selected_data$df <- selected_data$df[!absent_selection, ]
 
-
-            #
-
-
-
         }
-
-
         if(!is.null(selector_vals$startscatter)){
 
             selector_vals$startscatter <- selector_vals$startscatter + 1
-
-            print("here - incremented the plotter!")
-            print(selector_vals$startscatter)
-
         }
 
     })
@@ -450,7 +439,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     },
     {
 
-        print("this is going now!")
         shiny::validate(shiny::need(datareactive,
                                     label = "datareactive"))
 
@@ -473,7 +461,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         selector_vals$zvar <- input$`selectors-zvar`
         selector_vals$startscatter <- input$`selectors-startscatter`
 
-        print(selector_vals$startscatter)
 
     })
 
@@ -482,7 +469,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     shiny::observeEvent({
         selector_vals$xvar
-        selector_vals$xvar
+        selector_vals$yvar
         selector_vals$zvar
     }, {
     # shiny::observeEvent({

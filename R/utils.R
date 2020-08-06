@@ -398,7 +398,7 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                         x = add_points[ , as.character(selectors$xvar), drop = TRUE],
                         y = add_points[ , as.character(selectors$yvar), drop = TRUE],
                         size = z,
-                        type = "scatter",
+                        type = "scattergl",
                         mode = "markers",
                         name = "outlier",
                         customdata = add_points[ , ".dcrkey", drop = TRUE],

@@ -40,18 +40,25 @@ module_server_group_selector_table <- function(input, output, session, df, df_la
 
 
 
-        group_table <- dplyr::group_data(df()) %>%
-            dplyr::mutate(n_obs = sapply(.rows, length),
-                   .rows = NULL)
+        # group_table <- dplyr::group_data(df()) %>%
+        #     dplyr::mutate(n_obs = sapply(.rows, length),
+        #            .rows = NULL)
+
+
+    group_table <- dplyr::summarise(df(),
+                                    `Group` = as.character(unique(.dcrindex)),
+                                    `n obs.` = dplyr::n()) %>%
+        dplyr::relocate(Group)
 
         if(identical(dim(dplyr::group_data(df())), as.integer(c(1,1)))){
 
-            group_table <- data.frame(dataframe = df_label,
-                                      n_obs = nrow(df()),
+            group_table <- data.frame(`Group` = df_label,
+                                      `n obs.` = nrow(df()),
                                       stringsAsFactors = FALSE)
             }
 
             output$grouptable <- DT::renderDT(group_table,
+                                              rownames = FALSE,
                                               # selection = 'multiple')
                                               selection = 'single')
 

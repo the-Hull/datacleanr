@@ -472,11 +472,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         selector_vals$yvar
         selector_vals$zvar
     }, {
-    # shiny::observeEvent({
-    #     selector_vals[[1]]()
-    #     selector_vals[[2]]()
-    #     selector_vals[[3]]()
-    # }, {
+        # shiny::observeEvent({
+        #     selector_vals[[1]]()
+        #     selector_vals[[2]]()
+        #     selector_vals[[3]]()
+        # }, {
 
         shiny::validate(shiny::need(shiny::isolate(selector_vals),
                                     label = "control vals"))
@@ -646,7 +646,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     shiny::observeEvent(
         # shiny::observeEvent({
         # plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
-        plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
+      {plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
+        input[['undo-undoselection']] }
         , {
 
 
@@ -670,6 +671,22 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
 
+    shiny::observeEvent(
+            input[['undo-clearselection']]
+        , {
+
+
+            shiny::validate(shiny::need(nrow(selected_data$df) > 0,
+                                        label = "need selected data"))
+
+                selected_data$df <- data.frame(keys = integer(0),
+                                               selection_count = integer(0),
+                                               .annotation = character(0),
+                                               stringsAsFactors = FALSE)
+
+                print("DELETED IT ALL!")
+
+        })
 
     # PLOT ADD TRACES ---------------------------------------------------------
 
@@ -732,28 +749,91 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     #                         print(traces)
     #                     })
 
-    shiny::observeEvent(plotly::event_data(c("plotly_deselect"),
-                                           source = "scatterselect",
-                                           priority = "event"),
-                        {
-                            shiny::validate(shiny::need(input[["plot-tracemap"]],
-                                                        label = "need tracepam"))
-
-                            traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
-                            indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+    # PLOT DELETE TRACES ---------------------------------------------------------
 
 
-                            if(length(indices)>0){
-                                plotly::plotlyProxy("plot-scatterselect", session) %>%
-                                    plotly::plotlyProxyInvoke(
-                                        "deleteTraces",
-                                        max(indices)
-                                    )
-                                print("removed trace!!")
-                            }
-                            old_keys(NULL)
-                        })
+    # undo buttons
+    shiny::observe({
 
+        shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
+
+        shiny::callModule(module_server_deleteselection_btn,
+                          id = "undo")
+
+    })
+
+
+    # undo last selection with button
+    shiny::observeEvent({
+        input$`undo-undoselection`},
+        {
+
+            input$`plot-undoselection`
+            shiny::validate(shiny::need(input[["plot-tracemap"]],
+                                        label = "need tracepam"))
+
+            traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
+            indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+
+            if(length(indices)>0){
+                plotly::plotlyProxy("plot-scatterselect", session) %>%
+                    plotly::plotlyProxyInvoke(
+                        "deleteTraces",
+                        max(indices)
+                    )
+                print("removed trace!!")
+            }
+            old_keys(NULL)
+        })
+
+    # undo last selection with click
+    shiny::observeEvent({
+        plotly::event_data(c("plotly_deselect"),
+                           source = "scatterselect",
+                           priority = "event")},
+    {
+
+        shiny::validate(shiny::need(input[["plot-tracemap"]],
+                                    label = "need tracepam"))
+
+        traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
+        indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+        print(traces)
+
+
+        if(length(indices)>0){
+            plotly::plotlyProxy("plot-scatterselect", session) %>%
+                plotly::plotlyProxyInvoke(
+                    "deleteTraces",
+                    max(indices)
+                )
+            print("removed trace!!")
+        }
+        old_keys(NULL)
+    })
+
+
+    # delete entire selection with button
+    shiny::observeEvent({
+        input$`undo-clearselection`},
+        {
+
+            shiny::validate(shiny::need(input[["plot-tracemap"]],
+                                        label = "need tracepam"))
+
+            traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
+            indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+
+            if(length(indices)>0){
+                plotly::plotlyProxy("plot-scatterselect", session) %>%
+                    plotly::plotlyProxyInvoke(
+                        "deleteTraces",
+                        indices
+                    )
+                print("removed trace!!")
+            }
+            old_keys(NULL)
+        })
 
     # // ----------------------------------------------------------------------
 
@@ -921,6 +1001,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     })
 
-}
+    }
 
 

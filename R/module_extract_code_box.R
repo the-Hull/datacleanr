@@ -47,9 +47,7 @@ module_ui_extract_code <- function(id) {
     shiny::verbatimTextOutput(ns("codeprint"))
     # shiny::uiOutput(ns("codeprint")))
     )
-
 }
-
 #------------------------------------------------------------------------------#
 # MODULE SERVER ----
 
@@ -69,15 +67,13 @@ module_server_extract_code  <-
              filter_strings,
              sel_points,
              overwrite) {
+
         ns = session$ns
-
-
-
-
 
         setup_string <-  base::switch(
             input$paradigm,
-            base =  glue::glue('{df_label}$.dcrkey <- seq_len(nrow({df_label}))'),
+            base =  glue::glue('{df_label}$.dcrkey <- seq_len(nrow({df_label}))'
+            ),
             dplyr = glue::glue(
                 '
                 library(dplyr)\n
@@ -99,26 +95,15 @@ module_server_extract_code  <-
             text_out <- setup_string
 
 
-
-
         } else {
             text_out <- "## data has not been cleaned yet"
         }
 
-        # text_out(setup_string)
-
-
 
         # Filtering ---------------------------------------------------------------
-
-
-
-
         subset_strings <- shiny::reactiveValues(base = NULL,
                                                 dplyr = NULL,
                                                 dt = NULL)
-
-
         if (!is.null(filter_strings())) {
             if (!overwrite) {
                 df_label_filtered <- paste0(df_label, "_filtered")
@@ -156,12 +141,7 @@ module_server_extract_code  <-
 
 
         }
-
-
         # Outlier selection -------------------------------------------------------
-
-
-
         sel_points_strings <-
             shiny::reactiveValues(
                 code_make_outlier_var = NULL,
@@ -172,9 +152,7 @@ module_server_extract_code  <-
         if (nrow(sel_points$df) > 0) {
             if (!is.null(filter_strings())) {
                 df_label <- df_label_filtered
-
             }
-
 
             # extra string as comment
 
@@ -194,14 +172,8 @@ module_server_extract_code  <-
                 df_label_outlier <- df_label
             }
 
-
             sepo <- sel_points$df %>%
                 dplyr::rename(.dcrkey = keys)
-
-
-            # sepo$.annotation[which(nchar(sepo$.annotation) == 0)] <-
-            #     NA
-
 
             sel_points_str <-
                 paste(capture.output(dput(sepo[, colnames(sepo) %nin% "selection_count"])),
@@ -273,11 +245,7 @@ module_server_extract_code  <-
         }
 
 
-
         # Rendering ---------------------------------------------------------------
-
-
-        # text_out <- paste(capture.output(styler::style_text(as.character(text_out),
 
         text_out <-
             paste(
@@ -290,20 +258,9 @@ module_server_extract_code  <-
             )
 
 
-        output$codeprint <- shiny::renderText(text_out)
-        # output$codeprint <- renderUI({
-        #     htmltools::tagList(
-        #     rCodeContainer(id = ns("codefilter"), text_out))
-        # })
-
-
-
-        # print(text_out)
+        output$codeprint <- shiny::renderUI(text_out)
 
         return(text_out)
-
-# Copy/Send Code ----------------------------------------------------------
-
 
 
     }

@@ -384,7 +384,7 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
             zvar_toggle <- nchar(selectors$zvar)>0
             if(zvar_toggle){
-                z <- add_points[ , as.character(selectors$zvar()), drop = TRUE]
+                z <- add_points[ , as.character(selectors$zvar), drop = TRUE]
             } else {
                 z <- NULL
                 # print("no zvar")
@@ -403,7 +403,7 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                         name = "outlier",
                         customdata = add_points[ , ".dcrkey", drop = TRUE],
                         text = add_points[ , ".dcrkey", drop = TRUE],
-                        # legendgroup = "out",
+                        legendgroup = "out",
                         marker = list(
                             color = "darkgray",
                             line = list(color = "red",
@@ -437,7 +437,5 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
 
 `%nin%` <-  Negate(`%in%`)
-
-
 
 

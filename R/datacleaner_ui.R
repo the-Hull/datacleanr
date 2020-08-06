@@ -197,6 +197,7 @@ datacleanr_ui <- function(id, dataset){
                                          value = ns("visu"),
                                          icon = shiny::icon("chart-area"),
                                          shiny::sidebarLayout(
+
                                              sidebarPanel = shiny::sidebarPanel(width = 4,
                                                                                 shiny::h4(shiny::tags$strong("Data Overview")),
                                                                                 shiny::br(),
@@ -211,12 +212,14 @@ datacleanr_ui <- function(id, dataset){
                                                                                                   icon = shiny::icon("question-circle")),
                                                                                 shiny::br(),
                                                                                 module_ui_text_annotator(ns("annotator"))),
+
                                              mainPanel = shiny::mainPanel(width = 8,
                                                                           module_ui_plot_selectorcontrols(ns("selectors")),
                                                                           shiny::actionLink(ns("help-plot"),
                                                                                             "Click for Help",
                                                                                             icon = shiny::icon("question-circle")),
                                                                           module_ui_plot_selectable(ns("plot")),
+                                                                          module_ui_plot_selectorcontrols(ns("undo")),
                                                                           module_ui_plot_annotation_table(ns("dt")))
                                          ) #/sidebarLayout
                          ) #/tabPanel

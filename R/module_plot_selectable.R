@@ -39,6 +39,14 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   jsfull <- "function(el, x, data){
   var id = el.getAttribute('id');
   var d3 = Plotly.d3;
+   el.on('plotly_afterplot', function(event) {
+      var out = [];
+      d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
+        var trace = d3.select(this)[0][0].__data__[0].trace;
+        out.push([name=trace.name, index=trace.index]);
+      });
+      Shiny.setInputValue(data.ns + data.x, out);
+  });
   el.on('plotly_click', function(event) {
       var out = [];
       d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
@@ -143,6 +151,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                            modeBarButtonsToRemove = list("hoverCompareCartesian")) %>%
 
             # plotly::event_register(event = "plotly_doubleclick") %>%
+            plotly::event_register(event = "plotly_afterplot") %>%
             plotly::event_register(event = "plotly_deselect") %>%
             plotly::event_register(event = "plotly_click") %>%
             plotly::event_register(event = "plotly_selected") %>%

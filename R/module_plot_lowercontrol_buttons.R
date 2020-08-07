@@ -40,8 +40,8 @@ module_server_lowercontrol_btn  <-
 
         is_spatial_plot <-
             identical(c(
-                as.character(selector_inputs$xvar),
-                as.character(selector_inputs$yvar)
+                as.character(shiny::isolate(selector_inputs$xvar)),
+                as.character(shiny::isolate(selector_inputs$yvar))
             ),
             c("lon", "lat"))
 

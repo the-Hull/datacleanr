@@ -112,9 +112,18 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     opac <- 1
 
 
-    geo_def <-  list(style = ifelse(is.null(mapstyle), "open-street-map", mapstyle))
+    geo_def <-  list(style = ifelse(is.null(mapstyle),
+                                    "open-street-map",
+                                    mapstyle),
+                     zoom = 2,
+                     center = list(
+                       lon = ~ mean(plot_data[ , as.character(shiny::isolate(selector_inputs$xvar)), drop = TRUE]),
+                       lat = ~ mean(plot_data[ , as.character(shiny::isolate(selector_inputs$yvar)), drop = TRUE])
+                     ))
 
-    print(mapstyle)
+    print(as.character(shiny::isolate(selector_inputs$xvar)))
+    print(head(plot_data[ , as.character(shiny::isolate(selector_inputs$xvar))]))
+
 
   } else {
     geo_def <- list()

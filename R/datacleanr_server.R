@@ -193,9 +193,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                           df_label = df_name)
 
 
-        # clean-up
-
-
 
 
     })
@@ -501,6 +498,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
                             shiny::validate(shiny::need(datareactive, label = "datareactive"))
                             shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
+                            shiny::validate(shiny::need(action_tracking$plot_start, label = "plot_start actiontracking"))
 
                             shiny::callModule(module_server_plot_selectable,
                                               id = "plot",
@@ -779,11 +777,15 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     shiny::observe({
     # shiny::observeEvent(input[["selectors-startscatter"]], {
 
-        shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
+        # shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
 
+      if(shiny::req(action_tracking$plot_start)){
         shiny::callModule(module_server_lowercontrol_btn,
                           id = "lwrcontrol",
-                          selector_inputs = selector_vals)
+                          selector_inputs = shiny::isolate(selector_vals))
+
+      }
+
 
     })
 

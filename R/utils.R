@@ -444,6 +444,8 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                                 name = "outlier",
                                 marker = list(
                                     color = "red",
+                                    line = list(color = "red",
+                                                width = 2),
                                     opacity = 1),
                                 unselected = list(marker = list(opacity = 1)),
                                 showlegend = list(TRUE)

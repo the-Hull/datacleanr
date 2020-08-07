@@ -30,7 +30,7 @@ module_ui_extract_code <- function(id) {
                 inputId = ns("codebtn"),
                 label = "Send to RStudio",
                 class = "btn-info",
-                icon = shiny::icon("check-double")
+                icon = shiny::icon("share-square")
             )
         ),
         shiny::column(
@@ -40,7 +40,7 @@ module_ui_extract_code <- function(id) {
                 inputId = ns("copybtn"),
                 label = "Copy to clipboard",
                 class = "btn-info",
-                icon = shiny::icon("check-double")
+                icon = shiny::icon("copy")
             )
     )),
 

@@ -642,13 +642,34 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     #
     # })
     #
+    # undo on button
+    shiny::observeEvent(
+        input[['undo-undoselection']]
+      , {
+
+
+        shiny::validate(shiny::need(nrow(selected_data$df) > 0,
+                                    label = "need selected data"))
+        print("data cleared on dbl click")
+
+        drop_ind <- which(selected_data$df$selection_count == max(selected_data$df$selection_count, na.rm = TRUE))
+
+        if(length(drop_ind) == nrow(selected_data$df)){
+
+          selected_data$df <- data.frame(keys = integer(0),
+                                         selection_count = integer(0),
+                                         .annotation = character(0),
+                                         stringsAsFactors = FALSE)
+
+          print("it's this case, really")
+        }
+        selected_data$df <- selected_data$df[ -drop_ind, ]
+      })
+
+
     # clear on dbl click
     shiny::observeEvent(
-        # shiny::observeEvent({
-        # plotly::event_data("plotly_doubleclick", source = "scatterselect", priority = "event")
-      {plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
-        input[['undo-undoselection']]
-        1}
+      plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
         , {
 
 
@@ -754,9 +775,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
     # undo buttons
-    shiny::observe({
+    shiny::observeEvent(input[["selectors-startscatter"]], {
 
-        shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
+        # shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
 
         shiny::callModule(module_server_deleteselection_btn,
                           id = "undo")
@@ -769,7 +790,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         input$`undo-undoselection`},
         {
 
-            input$`plot-undoselection`
             shiny::validate(shiny::need(input[["plot-tracemap"]],
                                         label = "need tracepam"))
 

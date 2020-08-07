@@ -221,7 +221,7 @@ extend_palette <- function(n){
     else if(n >= 3 & n <= 8){
         cols <- RColorBrewer::brewer.pal(n, "Set2")
     } else {
-        cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(n)
+        cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Accent"))(n)
 
     }
 
@@ -359,6 +359,38 @@ col2plotlyrgb <- function(colorname){
 handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect", session){
 
 
+    is_spatial_plot <- identical(c(as.character(selectors$xvar),
+                                   as.character(selectors$yvar)),
+                                 c("lon", "lat"))
+
+
+    if(is_spatial_plot){
+
+        print("-------- IT IS A MAP ! ----------")
+        # geo_def <- list(
+        #   # scope = 'usa',
+        #   # projection = list(type = 'albers usa'),
+        #   projection = list(type = 'mercator'),
+        #   showland = TRUE,
+        #   landcolor = plotly::toRGB("gray95"),
+        #   subunitcolor = plotly::toRGB("gray85"),
+        #   countrycolor = plotly::toRGB("gray85"),
+        #   countrywidth = 0.5,
+        #   subunitwidth = 0.5,
+        #   showocean=TRUE,
+        #   oceancolor="steelblue1",
+        #   showlakes=TRUE,
+        #   lakecolor="darkblue",
+        #   showrivers=TRUE,
+        #   rivercolor="darkblue"
+        # )
+        geo_def <-  list(style = "light")
+    } else {
+        geo_def <- list()
+    }
+
+
+
 
     if(length(sp$df$keys) > 0){
 
@@ -391,15 +423,74 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
             }
 
 
+
+            if(is_spatial_plot){
+
+
+                print("hallo")
+                # plotly::plotlyProxy(source, session) %>%
+                #     plotly::plotlyProxyInvoke(
+                # "restyle",
+                # list(
+                #     lon = list(add_points[ , as.character(selectors$xvar), drop = TRUE]),
+                #     lat = list(add_points[ , as.character(selectors$yvar), drop = TRUE]),
+                #     marker.color = "#FF0000"
+                # ),
+                # list(0)
+                #
+                #     )
+
+                    plotlyProxy(source, session) %>%
+                        plotlyProxyInvoke(
+                            "addTraces",
+                            list(
+                                # lon = list(add_points[ , as.character(selectors$xvar), drop = TRUE]),
+                                # lat = list(add_points[ , as.character(selectors$yvar), drop = TRUE]),
+                                lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
+                                lat = add_points[ , as.character(selectors$yvar), drop = TRUE],
+                                legendgroup = "out",
+                                size = list(z),
+                                sizes = c(20,45),
+                                type = "scattermapbox",
+                                mode = "markers",
+                                name = "outlier",
+                                customdata = list(add_points[ , ".dcrkey", drop = TRUE]),
+                                text = list(add_points[ , ".dcrkey", drop = TRUE]),
+                                marker = list(
+                                    symbol = "circle",
+                                    color = "red",
+                                    opacity = 1),
+                                unselected = list(marker = list(opacity = 1)),
+                                showlegend = list(TRUE)
+                            )
+                        )
+
+                # plotly::plotlyProxy(source, session) %>%
+                #     plotly::plotlyProxyInvoke(
+                #         "addTraces",
+                #         list(
+                #             lon = list(add_points[ , as.character(selectors$xvar), drop = TRUE]),
+                #             lat = list(add_points[ , as.character(selectors$yvar), drop = TRUE]),
+                #             marker.color = "#FF0000"
+                #         )
+
+                    # )
+
+            } else {
+
+
             plotly::plotlyProxy(source, session) %>%
                 plotly::plotlyProxyInvoke(
                     "addTraces",
                     list(
+                        # mapbox = geo_def,
                         x = add_points[ , as.character(selectors$xvar), drop = TRUE],
                         y = add_points[ , as.character(selectors$yvar), drop = TRUE],
                         size = z,
-                        type = "scattergl",
+                        # type = "scattergl",
+                        # type = ifelse(is_spatial_plot,"scattermapbox", "scattergl"),
                         mode = "markers",
+                        # mode = ifelse(is_spatial_plot,"scattermapbox", "markers"),
                         name = "outlier",
                         customdata = add_points[ , ".dcrkey", drop = TRUE],
                         text = add_points[ , ".dcrkey", drop = TRUE],
@@ -410,9 +501,10 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                                         width = 2),
                             opacity = 1),
                         unselected = list(marker = list(opacity = 1)),
-                        showlegend = TRUE)
+                        showlegend = TRUE
+                    )
                 )
-
+            }
             # update the old keys
             ok(sp$df$keys)
 

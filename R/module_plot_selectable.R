@@ -70,13 +70,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   plot_data <- df()
 
 
-  # n_groups <- length(unique(dplyr::group_indices(plot_data)))
   n_groups <- dplyr::n_groups(plot_data)
   n_groups_original <- max(plot_data$.dcrindex)
-
-
-  # identifier to cross-ref with grouping table
-  # plot_data$.dcrindex <- dplyr::group_indices(plot_data)
 
 
   # prepare named value-vector for plotly scale
@@ -103,9 +98,38 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     size_expression <- rlang::quo_squash(NULL)
     # print("zvar empty")
   }
+  is_spatial_plot <- identical(c(as.character(selector_inputs$xvar),
+                                 as.character(selector_inputs$yvar)),
+                               c("lon", "lat"))
 
+  opac <- 0.7
 
+   if(is_spatial_plot){
 
+    opac <- 1
+
+    print("-------- IT IS A MAP ! ----------")
+    # geo_def <- list(
+    #   # scope = 'usa',
+    #   # projection = list(type = 'albers usa'),
+    #   projection = list(type = 'mercator'),
+    #   showland = TRUE,
+    #   landcolor = plotly::toRGB("gray95"),
+    #   subunitcolor = plotly::toRGB("gray85"),
+    #   countrycolor = plotly::toRGB("gray85"),
+    #   countrywidth = 0.5,
+    #   subunitwidth = 0.5,
+    #   showocean=TRUE,
+    #   oceancolor="steelblue1",
+    #   showlakes=TRUE,
+    #   lakecolor="darkblue",
+    #   showrivers=TRUE,
+    #   rivercolor="darkblue"
+    # )
+    geo_def <-  list(style = "stamen-terrain")
+  } else {
+    geo_def <- list()
+  }
 
   # handle "Plot!" click
   # shiny::observeEvent(selector_inputs$abutton, {
@@ -118,12 +142,23 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
           print("redrawing")
-          pnew <- plotly::plot_ly(data = plot_data,
-                                  source = "scatterselect"
-          ) %>%
+          pnew <- plot_data %>%
+            { if(is_spatial_plot){
+
+              plotly::plot_mapbox(data = .,
+                               source = "scatterselect")
+
+            } else {
+
+              plotly::plot_ly(data = .,
+                              source = "scatterselect")
+            }
+            } %>%
+
             plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar),
                                 y = ~ !!shiny::isolate(selector_inputs$yvar),
                                 size = eval(size_expression),
+                                sizes = c(10,30),
                                 color = ~as.factor(.dcrindex),
                                 name = ~as.factor(.dcrindex),
                                 colors = col_value_vector,
@@ -131,21 +166,13 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                 customdata = ~.dcrkey,
                                 text = ~.dcrkey,
                                 showlegend = TRUE,
-                                marker = list(opacity = 0.7,
-                                              line = list(color = col2plotlyrgba("gray60", 0.9),
+                                marker = list(opacity = opac,
+                                              line = list(color = plotly::toRGB("white", 0.9),
                                                           width = 1)),
-                                # marker = list(color = sapply(plot_data$.color,
-                                #                              col2plotlyrgba, 0.9,
-                                #                              USE.NAMES = FALSE),
-                                #               line = list(color = col2plotlyrgba("gray60", 0.9),
-                                #                           width = 1)),
-                                unselected = list(marker = list(opacity = 0.7))) %>%
-            # ,
-            # unselected = list(marker = list(opacity = 0.9))) %>%
-            # opacity = ~.opacity) %>%
+                                unselected = list(marker = list(opacity = opac))) %>%
             plotly::layout(showlegend = TRUE,
-                           # dragmode =  FALSE
-                           dragmode = "lasso"
+                           dragmode = "lasso",
+                           mapbox = geo_def
             )  %>%
             plotly::config(displaylogo = FALSE,
                            modeBarButtonsToRemove = list("hoverCompareCartesian")) %>%
@@ -171,7 +198,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
       add_data <- dplyr::left_join(shiny::isolate(sel_points$df),
                                    plot_data,
-                                   by = c('keys' = '.dcrkey'))
+                                   by = c('keys' = '.dcrkey')) %>%
+        rename(.dcrkey = keys)
 
       # print(head(add_data))
       print("READDING traces---------------\\\\")
@@ -190,14 +218,29 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                                 name = "outlier",
                                                 type = "scatter",
                                                 mode = "markers",
-                                                marker = list(
-                                                  color = "darkgray",
-                                                  line = list(color = "red",
-                                                              width = 2),
-                                                  opacity = 1),
+                                                legendgroup = "out",
+                                                customdata = ~.dcrkey,
+                                                text = ~.dcrkey,
+                                                showlegend = TRUE,
+                                                marker =
+                                                  if(is_spatial_plot){
+                                                    list(color = "red",
+                                                         opacity = 1)
+                                                  } else {
+                                                    list(color = "darkgray",
+                                                         opacity = 1,
+                                                         line = list(color = "red",
+                                                                     width = 2))
+                                                  },
+                              # }
+                          # ,
+
+
                                                 unselected = list(marker = list(opacity = 1)))},
                             .init = shiny::isolate(p)
       )
+
+
 
           })
         )
@@ -205,23 +248,6 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
     } # /if
 
-
-
-
-    #   # handle when input selector changes
-
-
-    # shiny::observeEvent(selector_inputs$startscatter(),{
-    # shiny::observeEvent(plotchange_observer(),{
-
-      # shiny::validate(need(plotchange_observer,
-      #                      label = "reactive for tracking plot inputs"))
-
-
-
-
-
-                          # }) #/observeevent
 
 
 

@@ -506,7 +506,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                               id = "plot",
                                               df = datareactive,
                                               selector_inputs = shiny::isolate(selector_vals),
-                                              sel_points = shiny::isolate(selected_data))
+                                              sel_points = shiny::isolate(selected_data),
+                                              mapstyle = input[['lwrcontrol-mapstyle']])
 
                         }) #/observe
 
@@ -644,7 +645,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     #
     # undo on button
     shiny::observeEvent(
-        input[['undo-undoselection']]
+        input[['lwrcontrol-undoselection']]
       , {
 
 
@@ -694,7 +695,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
     shiny::observeEvent(
-            input[['undo-clearselection']]
+            input[['lwrcontrol-clearselection']]
         , {
 
 
@@ -775,19 +776,21 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
     # undo buttons
-    shiny::observeEvent(input[["selectors-startscatter"]], {
+    shiny::observe({
+    # shiny::observeEvent(input[["selectors-startscatter"]], {
 
-        # shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
+        shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
 
-        shiny::callModule(module_server_deleteselection_btn,
-                          id = "undo")
+        shiny::callModule(module_server_lowercontrol_btn,
+                          id = "lwrcontrol",
+                          selector_inputs = selector_vals)
 
     })
 
 
     # undo last selection with button
     shiny::observeEvent({
-        input$`undo-undoselection`},
+        input$`lwrcontrol-undoselection`},
         {
 
             shiny::validate(shiny::need(input[["plot-tracemap"]],
@@ -836,7 +839,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     # delete entire selection with button
     shiny::observeEvent({
-        input$`undo-clearselection`},
+        input$`lwrcontrol-clearselection`},
         {
 
             shiny::validate(shiny::need(input[["plot-tracemap"]],

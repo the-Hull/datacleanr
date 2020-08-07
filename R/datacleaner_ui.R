@@ -219,7 +219,7 @@ datacleanr_ui <- function(id, dataset){
                                                                                             "Click for Help",
                                                                                             icon = shiny::icon("question-circle")),
                                                                           module_ui_plot_selectable(ns("plot")),
-                                                                          module_ui_plot_selectorcontrols(ns("undo")),
+                                                                          module_ui_lowercontrol_btn(ns("lwrcontrol")),
                                                                           module_ui_plot_annotation_table(ns("dt")))
                                          ) #/sidebarLayout
                          ) #/tabPanel

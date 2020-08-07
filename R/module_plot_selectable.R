@@ -22,9 +22,10 @@ module_ui_plot_selectable <- function(id) {
 #' @param df reactive df
 #' @param selector_inputs reactive, output from module_plot_selectorcontrols
 #' @param sel_points reactive, provides .dcrkey of selected points
+#' @param mapstyle reactive, selected mapstyle from below-plot controls
 #'
 #' @details provides plot, note, that data set needs a column .dcrkey, added in initial processing step
-module_server_plot_selectable <- function(input, output, session, selector_inputs, df, sel_points){
+module_server_plot_selectable <- function(input, output, session, selector_inputs, df, sel_points, mapstyle){
   ns = session$ns
   sessionval <- session$ns("")
 
@@ -75,8 +76,6 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
   # prepare named value-vector for plotly scale
-  #
-
   col_value_vector <- extend_palette(
     n_groups_original
   )
@@ -98,67 +97,50 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     size_expression <- rlang::quo_squash(NULL)
     # print("zvar empty")
   }
+
+
+
   is_spatial_plot <- identical(c(as.character(selector_inputs$xvar),
                                  as.character(selector_inputs$yvar)),
                                c("lon", "lat"))
 
+
+
   opac <- 0.7
 
    if(is_spatial_plot){
-
     opac <- 1
 
-    print("-------- IT IS A MAP ! ----------")
-    # geo_def <- list(
-    #   # scope = 'usa',
-    #   # projection = list(type = 'albers usa'),
-    #   projection = list(type = 'mercator'),
-    #   showland = TRUE,
-    #   landcolor = plotly::toRGB("gray95"),
-    #   subunitcolor = plotly::toRGB("gray85"),
-    #   countrycolor = plotly::toRGB("gray85"),
-    #   countrywidth = 0.5,
-    #   subunitwidth = 0.5,
-    #   showocean=TRUE,
-    #   oceancolor="steelblue1",
-    #   showlakes=TRUE,
-    #   lakecolor="darkblue",
-    #   showrivers=TRUE,
-    #   rivercolor="darkblue"
-    # )
-    geo_def <-  list(style = "stamen-terrain")
+
+    geo_def <-  list(style = ifelse(is.null(mapstyle), "open-street-map", mapstyle))
+
+    print(mapstyle)
+
   } else {
     geo_def <- list()
   }
-
   # handle "Plot!" click
   # shiny::observeEvent(selector_inputs$abutton, {
   output$scatterselect <- plotly::renderPlotly({
-
 
     p <-  rlang::eval_tidy(
       rlang::quo_squash(
         rlang::quo({
 
-
           print("redrawing")
           pnew <- plot_data %>%
             { if(is_spatial_plot){
-
               plotly::plot_mapbox(data = .,
                                source = "scatterselect")
-
             } else {
-
               plotly::plot_ly(data = .,
                               source = "scatterselect")
             }
             } %>%
-
             plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar),
                                 y = ~ !!shiny::isolate(selector_inputs$yvar),
                                 size = eval(size_expression),
-                                sizes = c(10,30),
+                                sizes = c(15,40),
                                 color = ~as.factor(.dcrindex),
                                 name = ~as.factor(.dcrindex),
                                 colors = col_value_vector,
@@ -168,7 +150,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                 showlegend = TRUE,
                                 marker = list(opacity = opac,
                                               line = list(color = plotly::toRGB("white", 0.9),
-                                                          width = 1)),
+                                                          width = 2)),
                                 unselected = list(marker = list(opacity = opac))) %>%
             plotly::layout(showlegend = TRUE,
                            dragmode = "lasso",
@@ -188,13 +170,9 @@ module_server_plot_selectable <- function(input, output, session, selector_input
         })
       )
     ) #\ eval_tidy
-    # plotly::plotly_build(p)
 
-
-
-
+    # re-add outlier traces on "Plot!" click
     if(length(shiny::isolate(sel_points$df$keys)) > 0){
-
 
       add_data <- dplyr::left_join(shiny::isolate(sel_points$df),
                                    plot_data,
@@ -234,32 +212,16 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                                   },
                               # }
                           # ,
-
-
                                                 unselected = list(marker = list(opacity = 1)))},
                             .init = shiny::isolate(p)
       )
-
-
-
           })
         )
       ) #\ eval_tidy
-
     } # /if
-
-
-
-
-
-
     return(p)
 
   }) # / renderPlotly
-  # })
-
-
-#
 #   # Handle add traces -------------------------------------------------------
 #
 #

@@ -108,7 +108,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
   opac <- 0.7
 
-   if(is_spatial_plot){
+  if(is_spatial_plot){
     opac <- 1
 
 
@@ -140,7 +140,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
           pnew <- plot_data %>%
             { if(is_spatial_plot){
               plotly::plot_mapbox(data = .,
-                               source = "scatterselect")
+                                  source = "scatterselect")
             } else {
               plotly::plot_ly(data = .,
                               source = "scatterselect")
@@ -149,7 +149,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
             plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar),
                                 y = ~ !!shiny::isolate(selector_inputs$yvar),
                                 size = eval(size_expression),
-                                sizes = c(15,40),
+                                sizes = c(25,100),
                                 color = ~as.factor(.dcrindex),
                                 name = ~as.factor(.dcrindex),
                                 colors = col_value_vector,
@@ -158,8 +158,9 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                 text = ~.dcrkey,
                                 showlegend = TRUE,
                                 marker = list(opacity = opac,
-                                              line = list(color = plotly::toRGB("white", 0.9),
-                                                          width = 2)),
+                                              # size = 7,
+                                              line = list(color = plotly::toRGB("white", opac),
+                                                          width = 1)),
                                 unselected = list(marker = list(opacity = opac))) %>%
             plotly::layout(showlegend = TRUE,
                            dragmode = "lasso",
@@ -186,7 +187,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
       add_data <- dplyr::left_join(shiny::isolate(sel_points$df),
                                    plot_data,
                                    by = c('keys' = '.dcrkey')) %>%
-        rename(.dcrkey = keys)
+        dplyr::rename(.dcrkey = keys)
 
       # print(head(add_data))
       print("READDING traces---------------\\\\")
@@ -203,7 +204,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                                 y = ~ !!shiny::isolate(selector_inputs$yvar),
                                                 size = eval(size_expression),
                                                 name = "outlier",
-                                                type = "scatter",
+                                                type = "scattergl",
                                                 mode = "markers",
                                                 legendgroup = "out",
                                                 customdata = ~.dcrkey,

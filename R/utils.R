@@ -217,9 +217,9 @@ rCodeContainer <- function(...) {
 extend_palette <- function(n){
 
     if(n < 3){
-        cols <- RColorBrewer::brewer.pal(3, "Set2")[1:n]}
+        cols <- RColorBrewer::brewer.pal(3, "Accent")[1:n]}
     else if(n >= 3 & n <= 8){
-        cols <- RColorBrewer::brewer.pal(n, "Set2")
+        cols <- RColorBrewer::brewer.pal(n, "Accent")
     } else {
         cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Accent"))(n)
 
@@ -426,8 +426,8 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
             if(is_spatial_plot){
 
-                    plotlyProxy(source, session) %>%
-                        plotlyProxyInvoke(
+                    plotly::plotlyProxy(source, session) %>%
+                    plotly::plotlyProxyInvoke(
                             "addTraces",
                             list(
                                 # lon = list(add_points[ , as.character(selectors$xvar), drop = TRUE]),
@@ -459,7 +459,6 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                 plotly::plotlyProxyInvoke(
                     "addTraces",
                     list(
-                        # mapbox = geo_def,
                         x = add_points[ , as.character(selectors$xvar), drop = TRUE],
                         y = add_points[ , as.character(selectors$yvar), drop = TRUE],
                         size = z,
@@ -506,4 +505,7 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
 `%nin%` <-  Negate(`%in%`)
 
-
+# drop null or empty values from a list
+drop_empty <- function(l){
+    l[vapply(l, shiny::isTruthy, logical(1))]
+}

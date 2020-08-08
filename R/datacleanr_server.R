@@ -770,7 +770,10 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     #                         print(traces)
     #                     })
 
-    # PLOT DELETE TRACES ---------------------------------------------------------
+
+
+# PLOT DELETE / MAP CHOICE Control ----------------------------------------
+
 
 
     # undo buttons
@@ -790,6 +793,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     })
 
 
+    # PLOT DELETE TRACES ---------------------------------------------------------
     # undo last selection with button
     shiny::observeEvent({
         input$`lwrcontrol-undoselection`},
@@ -862,6 +866,27 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         })
 
     # // ----------------------------------------------------------------------
+
+
+
+
+# PLOT HISTOGRAMS ---------------------------------------------------------
+
+    shiny::observe({
+
+      if(shiny::req(action_tracking$plot_start)){
+        shiny::callModule(id = "plotvars",
+                          module = module_server_histograms,
+                          dframe = datareactive,
+                          selector_inputs = selector_vals,
+                          sel_points = selected_data)
+      }
+
+    })
+
+
+# // ----------------------------------------------------------------------
+
 
 
     # ANNOTATION ADDING --------------------------------------------------------

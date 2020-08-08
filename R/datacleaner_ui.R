@@ -211,7 +211,11 @@ datacleanr_ui <- function(id, dataset){
                                                                                                   "Click for Help",
                                                                                                   icon = shiny::icon("question-circle")),
                                                                                 shiny::br(),
-                                                                                module_ui_text_annotator(ns("annotator"))),
+                                                                                module_ui_text_annotator(ns("annotator")),
+
+                                                                                shiny::br(),
+                                                                                module_ui_histograms(ns("plotvars"))
+                                                                                ),
 
                                              mainPanel = shiny::mainPanel(width = 8,
                                                                           module_ui_plot_selectorcontrols(ns("selectors")),

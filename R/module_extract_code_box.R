@@ -42,10 +42,10 @@ module_ui_extract_code <- function(id) {
                 class = "btn-info",
                 icon = shiny::icon("copy")
             )
-    )),
+        )),
 
-    shiny::verbatimTextOutput(ns("codeprint"))
-    # shiny::uiOutput(ns("codeprint")))
+        shiny::verbatimTextOutput(ns("codeprint"))
+        # shiny::uiOutput(ns("codeprint")))
     )
 }
 #------------------------------------------------------------------------------#

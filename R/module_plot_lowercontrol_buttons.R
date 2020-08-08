@@ -1,13 +1,3 @@
-# shiny::actionButton(ns("undoselection"),
-#                     label = "Undo last selection",
-#                     icon = shiny::icon("undo"),
-#                     class = "btn-warning"),
-# shiny::actionButton(ns("clearselection"),
-#                     label = "Clear all",
-#                     icon = shiny::icon("exclamation-triangle"),
-#                     class = "btn-danger"),
-#
-
 
 #------------------------------------------------------------------------------#
 # MODULE UI ----

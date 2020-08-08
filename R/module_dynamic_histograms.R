@@ -50,8 +50,7 @@ module_server_histograms  <-
                     data = dfull,
                     x = as.formula(paste0("~", var)),
                     color = I("#31b0d5"),
-                    name = I("Original"),
-                    showlegend = TRUE
+                    name = I("Original")
                 ) %>%
                 plotly::add_histogram(
                     data = dfilt,
@@ -106,7 +105,9 @@ module_server_histograms  <-
                     titleX = TRUE,
                     titleY = TRUE,
                     which_layout = "merge"
-                )
+                ) %>%
+                plotly::config(displaylogo = FALSE,
+                               modeBarButtonsToRemove = list("hoverCompareCartesian"))
 
         })
 

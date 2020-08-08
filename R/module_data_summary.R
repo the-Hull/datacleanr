@@ -35,8 +35,7 @@ module_server_summary <- function(input,
 #
         # shiny::req(need(df(), message = "Click on Start!"))
 
-        dfs <- summarytools::dfSummary(df)
-
+        dfs <- summarytools::dfSummary(df[, !grepl("[.]dcr", colnames(df))])
 
         if(all(class(dfs) == "stby")){
 

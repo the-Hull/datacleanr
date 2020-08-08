@@ -786,10 +786,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         shiny::callModule(module_server_lowercontrol_btn,
                           id = "lwrcontrol",
                           selector_inputs = shiny::isolate(selector_vals))
-
       }
-
-
     })
 
 

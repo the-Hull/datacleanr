@@ -31,7 +31,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                       "are:"),
         shiny::tags$ol(
             shiny::tags$li(shiny::tags$small("Species == 'setosa'")),
-            shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')"))),
+            shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')")),
+            shiny::tags$li(shiny::tags$small("Sepal.Width > quantile(Sepal.Width, 0.05)"))
+            ),
 
         shiny::br(),
         shiny::p("Click",

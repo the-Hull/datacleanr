@@ -121,10 +121,6 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                        lat = ~ mean(plot_data[ , as.character(shiny::isolate(selector_inputs$yvar)), drop = TRUE])
                      ))
 
-    print(as.character(shiny::isolate(selector_inputs$xvar)))
-    print(head(plot_data[ , as.character(shiny::isolate(selector_inputs$xvar))]))
-
-
   } else {
     geo_def <- list()
   }

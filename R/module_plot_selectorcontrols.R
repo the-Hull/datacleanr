@@ -1,10 +1,6 @@
-
-# alternative -------------------------------------------------------------
-
-
 #------------------------------------------------------------------------------#
 # MODULE UI ----
-#' UI Module: plotly plot
+#' UI Module: selector controls
 #'
 #' @param id Character string
 #'
@@ -29,7 +25,7 @@ module_ui_plot_selectorcontrols <- function(id) {
 #' Server Module: box for str filter condition
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
-#' @param df reactive df, with df as element
+#' @param df df (not reactive - prevent re-execution of observer)
 #'
 #' @details provides UI text box element
 #'
@@ -40,14 +36,24 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
 
     output$scatterselectControl <- shiny::renderUI({
         shiny::fluidRow(
-            column(4, shiny::varSelectInput(ns('xvar'),
+            column(3, shiny::varSelectInput(ns('xvar'),
                                             label = "X Var",
-                                            data = df$df$data[ , colnames(df$df$data)!=".dcrkey"])),
-            column(4,
+                                            data = df[ , !grepl("[.]dcr", colnames(df))])),
+            column(3,
                    shiny::varSelectInput(ns('yvar'),
                                          label = "Y Var",
-                                         data = df$df$data[ , colnames(df$df$data)!=".dcrkey"])),
-            column(1,
+                                         data = df[ ,!grepl("[.]dcr", colnames(df))])),
+            # column(3,
+            #        shiny::varSelectInput(ns('zvar'),
+            #                              label = "Z Var",
+            #                              data = df[ , colnames(df)!=".dcrkey"])),
+            column(3,
+                   shiny::selectInput(ns('zvar'),
+                                      label = "Z Var",
+                                      choices = c("", colnames(df)[!grepl("[.]dcr", colnames(df))]),
+                                      selected = NULL)),
+            column(3,
+                   align = "right",
                    style = "margin-top: 25px;",
                    shiny::actionButton(ns('startscatter'),
                                        label = "Plot!",
@@ -74,19 +80,20 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
     # })
 
 
-   inputs_to_monitor <- shiny::reactiveValues(xvar = NULL,
-                                              yvar= NULL,
-                                              abutton= NULL)
-
-   shiny::observe({
-       inputs_to_monitor$xvar <- input$xvar
-       inputs_to_monitor$yvar <- input$yvar
-       inputs_to_monitor$abutton <- input$startscatter
-   })
-
-
-
-   return(inputs_to_monitor)
+    # inputs_to_monitor <- shiny::reactiveValues(xvar = NULL,
+    #                                            yvar= NULL,
+    #                                            abutton= NULL)
+    #
+    # shiny::observe({
+    #     inputs_to_monitor$xvar <- shiny::reactive({input$xvar})
+    #     inputs_to_monitor$yvar <- shiny::reactive({input$yvar})
+    #     inputs_to_monitor$zvar <- shiny::reactive({input$zvar})
+    #     inputs_to_monitor$abutton <- shiny::reactive({input$startscatter})
+    # })
+    #
+    #
+    #
+    # return(inputs_to_monitor)
 
 
 

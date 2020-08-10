@@ -4,14 +4,14 @@
 \alias{module_server_plot_annotation_table}
 \title{Server Module: DT for annotation}
 \usage{
-module_server_plot_annotation_table(input, output, session, df, sel_points)
+module_server_plot_annotation_table(input, output, session, dframe, sel_points)
 }
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
-\item{df}{df used for plotting}
+\item{dframe}{df used for plotting}
 
-\item{sel_points}{numeric, vector of .dcrkeys selected in plot}
+\item{sel_point}{numeric, vector of .dcrkeys selected in plot}
 }
 \value{
 df with .dcrkeys and annotations

@@ -2,4 +2,5 @@
 
 export("%>%")
 export(datacleanr)
+export(datacleanr_module)
 importFrom(magrittr,"%>%")

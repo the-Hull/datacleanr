@@ -14,8 +14,7 @@ module_ui_group_selector_table <- function(id) {
 
 
     shiny::tagList(
-        DT::DTOutput(ns('grouptable')),
-        shiny::textOutput(ns('selected_row'))
+        DT::DTOutput(ns('grouptable'))
     )
 
 }
@@ -41,18 +40,25 @@ module_server_group_selector_table <- function(input, output, session, df, df_la
 
 
 
-        group_table <- dplyr::group_data(df$df$data) %>%
-            dplyr::mutate(n_obs = sapply(.rows, length),
-                   .rows = NULL)
+        # group_table <- dplyr::group_data(df()) %>%
+        #     dplyr::mutate(n_obs = sapply(.rows, length),
+        #            .rows = NULL)
 
-        if(identical(dim(dplyr::group_data(df$df$data)), as.integer(c(1,1)))){
 
-            group_table <- data.frame(dataframe = df_label,
-                                      n_obs = nrow(df$df$data),
+    group_table <- dplyr::summarise(df(),
+                                    `Group` = as.character(unique(.dcrindex)),
+                                    `n obs.` = dplyr::n()) %>%
+        dplyr::relocate(Group)
+
+        if(identical(dim(dplyr::group_data(df())), as.integer(c(1,1)))){
+
+            group_table <- data.frame(`Group` = df_label,
+                                      `n obs.` = nrow(df()),
                                       stringsAsFactors = FALSE)
             }
 
             output$grouptable <- DT::renderDT(group_table,
+                                              rownames = FALSE,
                                               # selection = 'multiple')
                                               selection = 'single')
 
@@ -66,17 +72,17 @@ module_server_group_selector_table <- function(input, output, session, df, df_la
 
 
 
-        output$selected_row <- shiny::renderText({
-
-            dt_selected_row <- input$grouptable_rows_selected
-
-            # if(req(dt_selected_row)){
-            paste0("Selected Row is: ", dt_selected_row)
-            # } else {
-            #
-            # NULL
-            # }
-        })
+        # output$selected_row <- shiny::renderText({
+        #
+        #     dt_selected_row <- input$grouptable_rows_selected
+        #
+        #     # if(req(dt_selected_row)){
+        #     paste0("Selected Row is: ", dt_selected_row)
+        #     # } else {
+        #     #
+        #     # NULL
+        #     # }
+        # })
 
         # return(reactive(input$grouptable_rows_selected))
 

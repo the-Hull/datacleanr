@@ -2,7 +2,7 @@
 % Please edit documentation in R/module_plot_selectorcontrols.R
 \name{module_ui_plot_selectorcontrols}
 \alias{module_ui_plot_selectorcontrols}
-\title{UI Module: plotly plot}
+\title{UI Module: selector controls}
 \usage{
 module_ui_plot_selectorcontrols(id)
 }
@@ -10,5 +10,5 @@ module_ui_plot_selectorcontrols(id)
 \item{id}{Character string}
 }
 \description{
-UI Module: plotly plot
+UI Module: selector controls
 }

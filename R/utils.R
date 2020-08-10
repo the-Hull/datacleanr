@@ -85,7 +85,7 @@ check_individual_statement <- function(df, statement){
 #' Filter a data frame with series of statements
 #'
 #' @param df data frame / tibble to be filtered
-#' @param statement character vector of individual conditional statements; need not evaluate successfully individually
+#' @param statements character vector of individual conditional statements; need not evaluate successfully individually
 #'
 #' @return list, logical vector of success and failures, and
 #'
@@ -106,7 +106,8 @@ checked_filter <- function(df, statements){
                                     eval(str2expression(cond_string_full)))
 
         return(list(succeeded = checks,
-                    filtered_df = filtered_df))
+                    filtered_df = filtered_df,
+                    statement_strings = statements[checks]))
     } else {
 
         return(list(succeeded = checks))
@@ -130,6 +131,22 @@ checked_filter <- function(df, statements){
 #
 #     # extract filter numbers
 #     filter_numbers <- gsub(pattern = "[^0-9]",
+
+
+
+
+
+
+
+#' Tag to display code
+#'
+#' @param ... Character strings
+#'
+#' @noRd
+rCodeContainer <- function(...) {
+    code <- htmltools::HTML(as.character(tags$code(class = "language-r", ...)))
+    htmltools::tags$div(htmltools::tags$pre(code))
+}
 #                            replacement = "",
 #                            x = all_filters)
 #
@@ -200,11 +217,11 @@ checked_filter <- function(df, statements){
 extend_palette <- function(n){
 
     if(n < 3){
-        cols <- RColorBrewer::brewer.pal(3, "Set2")[1:n]}
+        cols <- RColorBrewer::brewer.pal(3, "Accent")[1:n]}
     else if(n >= 3 & n <= 8){
-        cols <- RColorBrewer::brewer.pal(n, "Set2")
+        cols <- RColorBrewer::brewer.pal(n, "Accent")
     } else {
-        cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(n)
+        cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Accent"))(n)
 
     }
 
@@ -252,6 +269,47 @@ handle_selection <- function(old, new){
 
 
 
+
+#' Handle selections/clicks of outliers
+#'
+#' @param sel_data_old \code{data.frame}, which must have columns \code{keys}, \code{selection_count} and \code{.annotation}
+#' @param sel_data_new \code{data.frame}, from \code{plotly::event_data}, with column \code{customData} as \code{.dcrkey}
+#'
+#' @return \code{data.frame}, to update the input of \code{sel_data_old}.
+#'
+handle_outlier_selection <- function(sel_data_old, sel_data_new){
+
+
+
+    if(length(sel_data_new)>0){
+
+        if(nrow(sel_data_old) > 0 & nrow(sel_data_new) > 0){
+            new <- data.frame(keys = as.integer(sel_data_new$customdata),
+                              selection_count = max(sel_data_old$selection_count) + 1,
+                              .annotation = "",
+                              stringsAsFactors = FALSE)
+
+            if(any(new$keys %in% sel_data_old$keys)){
+                new <- new[!{new$keys %in% sel_data_old$keys}, ]
+            }
+
+            sel_data_old <- rbind(sel_data_old, new)
+
+        } else {
+            new <- data.frame(keys = as.integer(sel_data_new$customdata),
+                              selection_count = 1,
+                              .annotation = "",
+                              stringsAsFactors = FALSE)
+            sel_data_old <- new
+        }
+
+    }
+
+    return(sel_data_old)
+}
+
+
+
 #' Color conversion for plotly with alpha
 #'
 #' @param colorname string, hex value or R color name
@@ -292,21 +350,50 @@ col2plotlyrgb <- function(colorname){
 #' Handle Add traces
 #'
 #' @param sp selected points
-#' @param pd plot data
+#' @param dframe plot data
 #' @param ok reactive, old keys
 #' @param selectors reactive input selectors
 #' @param source plotly source
 #' @param session active session
 #'
-handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", session){
+handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect", session){
+
+
+    is_spatial_plot <- identical(c(as.character(selectors$xvar),
+                                   as.character(selectors$yvar)),
+                                 c("lon", "lat"))
+
+
+    if(is_spatial_plot){
+
+        print("-------- IT IS A MAP ! ----------")
+        # geo_def <- list(
+        #   # scope = 'usa',
+        #   # projection = list(type = 'albers usa'),
+        #   projection = list(type = 'mercator'),
+        #   showland = TRUE,
+        #   landcolor = plotly::toRGB("gray95"),
+        #   subunitcolor = plotly::toRGB("gray85"),
+        #   countrycolor = plotly::toRGB("gray85"),
+        #   countrywidth = 0.5,
+        #   subunitwidth = 0.5,
+        #   showocean=TRUE,
+        #   oceancolor="steelblue1",
+        #   showlakes=TRUE,
+        #   lakecolor="darkblue",
+        #   showrivers=TRUE,
+        #   rivercolor="darkblue"
+        # )
+        geo_def <-  list(style = "light")
+    } else {
+        geo_def <- list()
+    }
+
+
 
 
     if(length(sp$df$keys) > 0){
 
-        print(paste("selection is identical:", identical(ok(),
-                                                   sp$df$keys)))
-
-        print(paste("ok is", ok()))
 
 
         # check if selection is new
@@ -317,7 +404,7 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
 
             last_sel_keys <- as.integer(sp$df$keys[sp$df$selection_count == max_sel_count])
             # grab points
-            add_points <- pd[pd$.dcrkey %in% last_sel_keys, ]
+            add_points <- dframe()[dframe()$.dcrkey %in% last_sel_keys, ]
             # handle plotly - only adds trace for array > 2L
             if(nrow(add_points) == 1){
                 add_points <- rbind(add_points, add_points)
@@ -325,27 +412,74 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
 
             print("---- adding traces -----")
 
+
+
+            zvar_toggle <- nchar(selectors$zvar)>0
+            if(zvar_toggle){
+                z <- add_points[ , as.character(selectors$zvar), drop = TRUE]
+            } else {
+                z <- NULL
+                # print("no zvar")
+            }
+
+
+
+            if(is_spatial_plot){
+
+                    plotly::plotlyProxy(source, session) %>%
+                    plotly::plotlyProxyInvoke(
+                            "addTraces",
+                            list(
+                                # lon = list(add_points[ , as.character(selectors$xvar), drop = TRUE]),
+                                # lat = list(add_points[ , as.character(selectors$yvar), drop = TRUE]),
+                                lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
+                                lat = add_points[ , as.character(selectors$yvar), drop = TRUE],
+                                customdata = add_points[ , ".dcrkey", drop = TRUE],
+                                text = add_points[ , ".dcrkey", drop = TRUE],
+                                legendgroup = "out",
+                                size = z,
+                                # sizes = c(20,45),
+                                type = "scattermapbox",
+                                mode = "markers",
+                                name = "outlier",
+                                marker = list(
+                                    color = "red",
+                                    line = list(color = "red",
+                                                width = 2),
+                                    opacity = 1),
+                                unselected = list(marker = list(opacity = 1)),
+                                showlegend = list(TRUE)
+                            )
+                        )
+
+            } else {
+
+
             plotly::plotlyProxy(source, session) %>%
                 plotly::plotlyProxyInvoke(
                     "addTraces",
                     list(
                         x = add_points[ , as.character(selectors$xvar), drop = TRUE],
                         y = add_points[ , as.character(selectors$yvar), drop = TRUE],
-                        type = "scatter",
+                        size = z,
+                        # type = "scattergl",
+                        # type = ifelse(is_spatial_plot,"scattermapbox", "scattergl"),
                         mode = "markers",
+                        # mode = ifelse(is_spatial_plot,"scattermapbox", "markers"),
                         name = "outlier",
                         customdata = add_points[ , ".dcrkey", drop = TRUE],
                         text = add_points[ , ".dcrkey", drop = TRUE],
-                        # legendgroup = "out",
+                        legendgroup = "out",
                         marker = list(
                             color = "darkgray",
                             line = list(color = "red",
                                         width = 2),
                             opacity = 1),
                         unselected = list(marker = list(opacity = 1)),
-                        showlegend = TRUE)
+                        showlegend = TRUE
+                    )
                 )
-
+            }
             # update the old keys
             ok(sp$df$keys)
 
@@ -362,6 +496,7 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
 
     return(ok)
 
+
 }
 
 
@@ -370,6 +505,7 @@ handle_add_traces <- function(sp, pd, ok, selectors, source = "scatterselect", s
 
 `%nin%` <-  Negate(`%in%`)
 
-
-
-
+# drop null or empty values from a list
+drop_empty <- function(l){
+    l[vapply(l, shiny::isTruthy, logical(1))]
+}

@@ -11,12 +11,12 @@ module_ui_box_str_filter <- function(id, actionbtn){
 
 
     shiny::tagList(shiny::h4(paste("Filter condition", actionbtn)),
-        shiny::textInput(inputId = ns("strfilter"),
-                         label = NULL,
-                         # label = paste("Filter condition", actionbtn),
-                         value = NULL,
-                         width = "100%",
-                         placeholder = NULL)
+                   shiny::textInput(inputId = ns("strfilter"),
+                                    label = NULL,
+                                    # label = paste("Filter condition", actionbtn),
+                                    value = NULL,
+                                    width = "100%",
+                                    placeholder = NULL)
     )
 }
 
@@ -38,7 +38,7 @@ module_server_box_str_filter <- function(input,
         where = "beforeEnd",
         ui = shiny::tags$div(id = paste0("div-filter", actionbtn),
 
-                      module_ui_box_str_filter(paste0("filter", actionbtn), actionbtn),
+                             module_ui_box_str_filter(paste0("filter", actionbtn), actionbtn),
         )
     )
 
@@ -60,10 +60,10 @@ module_ui_filter_str <- function(id) {
     ns <- shiny::NS(id)
 
     shiny::tags$div(
-        id=paste0("filt", id),
+        id=paste0(id, "-filt"),
         shiny::fluidRow(
 
-                shiny::uiOutput(ns('filter'))
+            shiny::uiOutput(ns('filter'))
 
         )
     )
@@ -83,7 +83,10 @@ module_server_filter_str <- function(input, output, session){
     output$filter <- shiny::renderUI({
         shiny::textInput(
             inputId = ns("filter"),
-            label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
+            # label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
+            label = paste0("Filter ", substr(x = ns(""),
+                                             regexpr("[0-9]", ns("")),
+                                             regexpr("[0-9]", ns("")))),
             value = NULL,
             width = "100%",
             placeholder = NULL

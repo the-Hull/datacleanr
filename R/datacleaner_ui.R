@@ -110,8 +110,7 @@ datacleanr_ui <- function(id, dataset){
 
                                              sidebarPanel = shiny::sidebarPanel(
                                                  text_grouping_side_panel,
-                                                 module_ui_group_select(df = dataset,
-                                                                        id = ns("group")),
+                                                 module_ui_group_select(id = ns("group")),
                                                  module_ui_checkbox(id = ns("grouptick"),
                                                                     cond_id = "dcr-group-groupvar"),
                                                  shiny::br(),
@@ -236,7 +235,13 @@ datacleanr_ui <- function(id, dataset){
                                          icon = shiny::icon("file-export"),
                                          shiny::sidebarLayout(
 
+
+
                                              sidebarPanel = shiny::sidebarPanel(width = 4,
+                                                                                shiny::h4(shiny::tags$strong("Reproducible Recipe")),
+                                                                                shiny::br(),
+                                                                                shiny::p("All commands and operations in previous tabs are translated to code on the right, ensuring reproducibility"),
+                                                                                shiny::br(""),
                                                                                 shiny::checkboxInput(ns("overwrite"),
                                                                                                      label = "Concise code?",
                                                                                                      value = FALSE)),
@@ -246,13 +251,26 @@ datacleanr_ui <- function(id, dataset){
                          ), #/tabPanel
 
 
-                         inputs = list(miniUI::miniTitleBarButton(ns("done"),
-                                                                  "Done",
-                                                                  primary = TRUE),
+                         inputs = list(shiny::actionButton(ns("done"),
+                                                           "Done",
+                                                           icon = shiny::icon("check-circle"),
+                                                           class = "btn-success"),
+                                       shiny::actionButton(ns("cancel"),
+                                                           "Cancel",
+                                                           icon = shiny::icon("window-close"),
+                                                           class = "btn-secondary")
+                                       # shiny::bookmarkButton(ns("bookmark"),
+                                       #                       label = "Save")
 
-                                       miniUI::miniTitleBarCancelButton(inputId = ns("cancel"),
-                                                                        label = "Cancel",
-                                                                        primary = FALSE)), #inputs
+                             # miniUI::miniTitleBarButton(ns("done"),
+                             #                                      "Done",
+                             #                                      primary = TRUE),
+                             #
+                             #           miniUI::miniTitleBarCancelButton(inputId = ns("cancel"),
+                             #                                            label = "Cancel",
+                             #                                            primary = FALSE)
+                             #
+                             ), #inputs
 
 
 

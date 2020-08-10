@@ -366,7 +366,6 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
     if(is_spatial_plot){
 
-        print("-------- IT IS A MAP ! ----------")
         # geo_def <- list(
         #   # scope = 'usa',
         #   # projection = list(type = 'albers usa'),

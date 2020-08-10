@@ -67,11 +67,11 @@ module_server_lowercontrol_btn  <-
 
             } else {
                 shiny::fluidRow(
-                    style = "margin-bottom: 15px;",
+                    # style = "margin-bottom: 15px;",
                     shiny::column(
                         4,
-                        stlye = "margin-top: 55px;",
                         align = "left",
+                        style="margin-top: 25px;",
                         shiny::actionButton(
                             ns("undoselection"),
                             label = "Undo last selection",
@@ -97,8 +97,8 @@ module_server_lowercontrol_btn  <-
                                   )),
                     shiny::column(
                         4,
-                        stlye = "margin-top: 55px;",
                         align = "right",
+                        style="margin-top: 25px;",
                         shiny::actionButton(
                             ns("clearselection"),
                             label = "Clear all",

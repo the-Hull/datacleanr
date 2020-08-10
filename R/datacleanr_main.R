@@ -31,6 +31,7 @@ datacleanr_module <- function(dframe, viewer = "browser"){
 
 
 
+    # shiny::runGadget(app     = datacleanr_ui(id = "dcr",
     shiny::runGadget(app     = datacleanr_ui(id = "dcr",
                                              dataset = dframe),
                      server = function(input, output, session){

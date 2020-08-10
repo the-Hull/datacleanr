@@ -31,7 +31,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                       "are:"),
         shiny::tags$ol(
             shiny::tags$li(shiny::tags$small("Species == 'setosa'")),
-            shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')"))),
+            shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')")),
+            shiny::tags$li(shiny::tags$small("Sepal.Width > quantile(Sepal.Width, 0.05)"))
+            ),
 
         shiny::br(),
         shiny::p("Click",
@@ -153,7 +155,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     # get grouping
     gvar <- shiny::callModule(module_server_group_select,
-                              id = "group")
+                              id = "group",
+                              dframe = dataset)
     output$gvar <- shiny::reactive({gvar()})
     # check-box for grouping
     shiny::callModule(module = module_server_checkbox,
@@ -169,11 +172,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
         # handle actions
 
-        df <- apply_data_set_up(df = dataset, gvar())
-        df$.dcrindex <- dplyr::group_indices(df)
+        dframe <- apply_data_set_up(df = dataset, gvar())
+        dframe$.dcrindex <- dplyr::group_indices(dframe)
 
-        datareactive(df)
-        recover_data(df)
+        datareactive(dframe)
+        recover_data(dframe)
 
         print(paste("Is DF Grouped??", dplyr::is.grouped_df(datareactive())))
 
@@ -786,10 +789,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         shiny::callModule(module_server_lowercontrol_btn,
                           id = "lwrcontrol",
                           selector_inputs = shiny::isolate(selector_vals))
-
       }
-
-
     })
 
 

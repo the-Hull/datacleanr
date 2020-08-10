@@ -545,40 +545,16 @@ datacleanr <- function(dataset){
 
 
         ## PLOTTING -----------------
-        # shiny::observe(
-            # {input[["selectors-startscatter"]]
-                # selector_vals
-                # input[["dtgrouprow-grouptable_rows_selected"]]
-                # 1
-            # }
         shiny::observeEvent(
-            input[["selectors-startscatter"]],
-        # shiny::observeEvent(
-        #     {input[["selectors-startscatter"]]
-        #         selector_vals
-        #         # input[["dtgrouprow-grouptable_rows_selected"]]
-        #         1},
-        {
+            input[["selectors-startscatter"]],{
             req(input$gobutton)
             req(input[["selectors-startscatter"]])
-                # shiny::isolate(start_scatter(input[["selectors-startscatter"]]))
-                # req(start_scatter)
-
-                # if(!is.null(plot_df$df$data)){
 
                 shiny::callModule(module_server_plot_selectable,
                                   id = "plot",
                                   df = plot_df,
-                                  selector_inputs = selector_vals,
-                                  # sel_points = selected_data)
+                                  selector_inputs = shiny::isolate(selector_vals),
                                   sel_points = selected_data)
-
-
-
-                # }
-
-                # print(paste(start_scatter(), "started"))
-
             })
 
 

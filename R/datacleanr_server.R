@@ -155,7 +155,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     # get grouping
     gvar <- shiny::callModule(module_server_group_select,
-                              id = "group")
+                              id = "group",
+                              dframe = dataset)
     output$gvar <- shiny::reactive({gvar()})
     # check-box for grouping
     shiny::callModule(module = module_server_checkbox,
@@ -171,11 +172,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
         # handle actions
 
-        df <- apply_data_set_up(df = dataset, gvar())
-        df$.dcrindex <- dplyr::group_indices(df)
+        dframe <- apply_data_set_up(df = dataset, gvar())
+        dframe$.dcrindex <- dplyr::group_indices(dframe)
 
-        datareactive(df)
-        recover_data(df)
+        datareactive(dframe)
+        recover_data(dframe)
 
         print(paste("Is DF Grouped??", dplyr::is.grouped_df(datareactive())))
 

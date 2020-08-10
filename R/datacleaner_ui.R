@@ -110,8 +110,7 @@ datacleanr_ui <- function(id, dataset){
 
                                              sidebarPanel = shiny::sidebarPanel(
                                                  text_grouping_side_panel,
-                                                 module_ui_group_select(df = dataset,
-                                                                        id = ns("group")),
+                                                 module_ui_group_select(id = ns("group")),
                                                  module_ui_checkbox(id = ns("grouptick"),
                                                                     cond_id = "dcr-group-groupvar"),
                                                  shiny::br(),

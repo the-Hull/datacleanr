@@ -32,23 +32,23 @@ module_server_summary <- function(input,
 
 
 
-#
-        # shiny::req(need(df(), message = "Click on Start!"))
+    #
+    # shiny::req(need(df(), message = "Click on Start!"))
 
-        dfs <- summarytools::dfSummary(df[, !grepl("[.]dcr", colnames(df))])
+    dfs <- summarytools::dfSummary(df[, !grepl("[.]dcr", colnames(df))])
 
-        if(all(class(dfs) == "stby")){
+    if(all(class(dfs) == "stby")){
 
-            invisible(lapply(seq_along(dfs), function(x) {
+        invisible(lapply(seq_along(dfs), function(x) {
 
-                attr(dfs[[x]], "data_info")$Data.frame <<- df_label
+            attr(dfs[[x]], "data_info")$Data.frame <<- df_label
 
-            }))
+        }))
 
 
-        } else if(class(dfs)[1] == "summarytools"){
+    } else if(class(dfs)[1] == "summarytools"){
 
-            attr(dfs, "data_info")$Data.frame <- df_label
+        attr(dfs, "data_info")$Data.frame <- df_label
 
 
 

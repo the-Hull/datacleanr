@@ -9,7 +9,7 @@ module_server_plot_selectorcontrols(input, output, session, df)
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
-\item{df}{reactive df}
+\item{df}{df (not reactive - prevent re-execution of observer)}
 }
 \value{
 reactive values with input xvar, yvar and actionbutton counter

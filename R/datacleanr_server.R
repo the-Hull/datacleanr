@@ -903,7 +903,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
         selected_data$df <- shiny::callModule(module_server_text_annotator,
                                               "annotator",
-                                              sel_data = isolate(selected_data))
+                                              sel_data = shiny::isolate(selected_data))
         # shiny::validate(need(selected_data,
         # label = "make selection first"))
 
@@ -948,7 +948,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     shiny::observe({
 
-        req(datareactive())
+       shiny::req(datareactive())
 
         code_out(
             shiny::callModule(module_server_extract_code,
@@ -962,7 +962,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     })
 
 
-    observeEvent(input$`extract-codebtn`, {
+   shiny::observeEvent(input$`extract-codebtn`, {
 
 
         context <- rstudioapi::getSourceEditorContext()
@@ -970,7 +970,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                id = context$id)
     })
 
-    observeEvent(input$`extract-copybtn`, {
+   shiny::observeEvent(input$`extract-copybtn`, {
 
 
         clipr::write_clip(content = code_out(),
@@ -1041,16 +1041,16 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
     # END ---------------------------
-    observeEvent(input$done, {
+   shiny::observeEvent(input$done, {
 
         # handle plotly TZ issue
         Sys.setenv(TZ = old_tz)
-        stopApp("Done")
+        shiny::stopApp("Done")
     })
-    observeEvent(input$cancel, {
+   shiny::observeEvent(input$cancel, {
 
         Sys.setenv(TZ = old_tz)
-        stopApp(NULL)
+     shiny::stopApp(NULL)
 
     })
 

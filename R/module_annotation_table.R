@@ -21,7 +21,7 @@ module_ui_plot_annotation_table <- function(id) {
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param dframe df used for plotting
-#' @param sel_point numeric, vector of .dcrkeys selected in plot
+#' @param sel_points numeric, vector of .dcrkeys selected in plot
 #'
 #' @return df with .dcrkeys and annotations
 #'

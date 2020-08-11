@@ -4,11 +4,9 @@
 \alias{module_ui_group_select}
 \title{UI Module: group selection}
 \usage{
-module_ui_group_select(df, id)
+module_ui_group_select(id)
 }
 \arguments{
-\item{df}{data.frame loaded into gadget; should support df, tibble, data.table}
-
 \item{id}{Character, identifier for variable selection}
 }
 \description{

@@ -58,6 +58,7 @@ module_ui_extract_code <- function(id) {
 #' @param filter_strings reactive value, individual strings from filtering
 #' @param sel_points reactive values, data frame with selected point keys, annotations, and selection count
 #' @param overwrite reacive value, TRUE/FALSE from checkbox input
+#' @importFrom rlang .data
 #'
 module_server_extract_code  <-
     function(input,
@@ -173,10 +174,10 @@ module_server_extract_code  <-
             }
 
             sepo <- sel_points$df %>%
-                dplyr::rename(.dcrkey = keys)
+                dplyr::rename(.dcrkey = .data$keys)
 
             sel_points_str <-
-                paste(capture.output(dput(sepo[, colnames(sepo) %nin% "selection_count"])),
+                paste(utils::capture.output(dput(sepo[, colnames(sepo) %nin% "selection_count"])),
                       collapse = " ")
 
 

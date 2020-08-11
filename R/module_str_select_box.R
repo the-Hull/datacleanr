@@ -2,8 +2,8 @@
 
 #' UI Module: box for str filter condition
 #'
-#' @param df data.frame loaded into gadget; should support df, tibble, data.table
 #' @param id Character, identifier for variable selection
+#' @param actionbtn reactive, action button counter
 #'
 #'
 module_ui_box_str_filter <- function(id, actionbtn){
@@ -25,8 +25,8 @@ module_ui_box_str_filter <- function(id, actionbtn){
 #' Server Module: box for str filter condition
 #'
 #' @param input,output,session standard
-#'
-#'
+#' @param selector character, html selector for placement
+#' @param actionbtn reactive, action button counter
 module_server_box_str_filter <- function(input,
                                          output,
                                          session,

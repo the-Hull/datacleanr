@@ -12,7 +12,7 @@ navbarPageWithInputs(..., inputs)
 \arguments{
 \item{...}{Regular Navbar elements, like tabPanel}
 
-\item{inputs}{}
+\item{inputs}{shiny ui inputs}
 }
 \value{
 Navbar function that allows adding inputs

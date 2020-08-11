@@ -4,10 +4,12 @@
 \alias{module_server_group_select}
 \title{Server Module: group selection}
 \usage{
-module_server_group_select(input, output, session)
+module_server_group_select(input, output, session, dframe)
 }
 \arguments{
 \item{input, output, session}{standard}
+
+\item{dframe}{data frame for filtering}
 }
 \description{
 Server Module: group selection

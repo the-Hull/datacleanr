@@ -82,7 +82,7 @@ module_server_lowercontrol_btn  <-
 
                     shiny::column(4,
                                   align = "center",
-                                  selectInput(
+                                  shiny::selectInput(
                                      inputId =  ns("mapstyle"),
                                       label = "Select map style",
                                       choices = c(

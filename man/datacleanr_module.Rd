@@ -4,12 +4,10 @@
 \alias{datacleanr_module}
 \title{Data cleanr}
 \usage{
-datacleanr_module(dframe, viewer = "browser")
+datacleanr_module(dframe)
 }
 \arguments{
 \item{dframe}{dataframe}
-
-\item{viewer}{character, "browser", "pane" for respective viewers; any other string will open the RStudio dialaogue view}
 }
 \description{
 Data cleanr

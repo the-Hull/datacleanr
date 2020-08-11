@@ -24,6 +24,8 @@ module_ui_plot_selectable <- function(id) {
 #' @param sel_points reactive, provides .dcrkey of selected points
 #' @param mapstyle reactive, selected mapstyle from below-plot controls
 #'
+#' @importFrom rlang .data
+#'
 #' @details provides plot, note, that data set needs a column .dcrkey, added in initial processing step
 module_server_plot_selectable <- function(input, output, session, selector_inputs, df, sel_points, mapstyle){
   ns = session$ns
@@ -92,7 +94,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   zvar_toggle <- nchar(shiny::isolate(selector_inputs$zvar))>0
   if(zvar_toggle){
     # print("zvar given")
-    size_expression <- as.formula(paste("~", shiny::isolate(selector_inputs$zvar)))
+    size_expression <- stats::as.formula(paste("~", shiny::isolate(selector_inputs$zvar)))
   } else {
     size_expression <- rlang::quo_squash(NULL)
     # print("zvar empty")
@@ -135,10 +137,10 @@ module_server_plot_selectable <- function(input, output, session, selector_input
           print("redrawing")
           pnew <- plot_data %>%
             { if(is_spatial_plot){
-              plotly::plot_mapbox(data = .,
+              plotly::plot_mapbox(data = .data$.,
                                   source = "scatterselect")
             } else {
-              plotly::plot_ly(data = .,
+              plotly::plot_ly(data = .data$.,
                               source = "scatterselect")
             }
             } %>%
@@ -183,7 +185,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
       add_data <- dplyr::left_join(shiny::isolate(sel_points$df),
                                    plot_data,
                                    by = c('keys' = '.dcrkey')) %>%
-        dplyr::rename(.dcrkey = keys)
+        dplyr::rename(.dcrkey = .data$keys)
 
       # print(head(add_data))
       print("READDING traces---------------\\\\")

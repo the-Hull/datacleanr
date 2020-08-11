@@ -38,7 +38,7 @@ module_server_df_filter <- function(input, output, session, df, statements){
     out <- try({checked_filter(df,statements)})
     states <- out$succeeded
 
-    if(hasName(out, "filtered_df")){
+    if(utils::hasName(out, "filtered_df")){
         percent_filtered <- round(100 * (1 - ( nrow(out$filtered_df) /
                                                    nrow(df))),0)
     } else {

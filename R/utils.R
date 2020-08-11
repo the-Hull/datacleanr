@@ -20,7 +20,7 @@ get_factor_cols_idx <- function(x){
 #'
 #'
 #' @param ... Regular Navbar elements, like tabPanel
-#' @param inputs
+#' @param inputs shiny ui inputs
 #'
 #' @return Navbar function that allows adding inputs
 #'
@@ -144,7 +144,7 @@ checked_filter <- function(df, statements){
 #'
 #' @noRd
 rCodeContainer <- function(...) {
-    code <- htmltools::HTML(as.character(tags$code(class = "language-r", ...)))
+    code <- htmltools::HTML(as.character(htmltools::tags$code(class = "language-r", ...)))
     htmltools::tags$div(htmltools::tags$pre(code))
 }
 #                            replacement = "",
@@ -160,13 +160,13 @@ rCodeContainer <- function(...) {
 #
 # }
 
-#' check if filtering statement is successfull
-#'
-#' @param df dataframe to be filtered
-#' @param statements character, vector with individual statements for filtering
-#'
-#' @return logical vector of fails and successes
-#'
+# #' check if filtering statement is successfull
+# #'
+# #' @param df dataframe to be filtered
+# #' @param statements character, vector with individual statements for filtering
+# #'
+# #' @return logical vector of fails and successes
+# #'
 # check_filter <- function(df, statements){
 #
 #

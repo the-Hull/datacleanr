@@ -34,4 +34,6 @@ Imports:
     glue,
     formatR,
     RColorBrewer,
-    clipr
+    clipr,
+    rstudioapi,
+    utils

@@ -48,13 +48,13 @@ module_server_histograms  <-
             plotly::plot_ly(legendgroup = I("compare")) %>%
                 plotly::add_histogram(
                     data = dfull,
-                    x = as.formula(paste0("~", var)),
+                    x = stats::as.formula(paste0("~", var)),
                     color = I("#31b0d5"),
                     name = I("Original")
                 ) %>%
                 plotly::add_histogram(
                     data = dfilt,
-                    x = as.formula(paste0("~", var)),
+                    x = stats::as.formula(paste0("~", var)),
                     color = I("#ec971f"),
                     name = I("Filtered")
                 ) %>%
@@ -96,7 +96,7 @@ module_server_histograms  <-
                 lapply(one_plot,
                        dfull = dframe(),
                        dfilt = dframe()[dframe()$.dcrkey %nin% sel_points$df$keys,]) %>%
-                setNames(rep("histoplot", NROW(vars_to_plot))) %>%
+                stats::setNames(rep("histoplot", NROW(vars_to_plot))) %>%
                 # arrange
                 plotly::subplot(
                     nrows = NROW(vars_to_plot),

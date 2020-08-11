@@ -5,7 +5,6 @@
 
 #' UI Module: group selection
 #'
-#' @param df data.frame loaded into gadget; should support df, tibble, data.table
 #' @param id Character, identifier for variable selection
 #'
 #'
@@ -45,7 +44,6 @@ module_server_group_select <- function(input, output, session, dframe){
 
     output$checkbox <- shiny::renderUI({
 
-        print(head(dframe))
 
         vars <- colnames(dframe)[get_factor_cols_idx(dframe)]
 
@@ -60,11 +58,11 @@ module_server_group_select <- function(input, output, session, dframe){
 
     })
 
-    if(is.null(reactive({input$groupvar}))) {
-        return(reactive({NULL}))
+    if(is.null(shiny::reactive({input$groupvar}))) {
+        return(shiny::reactive({NULL}))
 
     } else {
-        return(reactive({input$groupvar}))
+        return(shiny::reactive({input$groupvar}))
     }
 
 

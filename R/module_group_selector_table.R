@@ -27,6 +27,7 @@ module_ui_group_selector_table <- function(id) {
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param df data frame (either from overview or filtering tab)
 #' @param df_label character, original input data frame
+#' @importFrom rlang .data
 #'
 #' @details provides UI text box element
 module_server_group_selector_table <- function(input, output, session, df, df_label){
@@ -46,9 +47,9 @@ module_server_group_selector_table <- function(input, output, session, df, df_la
 
 
     group_table <- dplyr::summarise(df(),
-                                    `Group` = as.character(unique(.dcrindex)),
+                                    `Group` = as.character(unique(.data$.dcrindex)),
                                     `n obs.` = dplyr::n()) %>%
-        dplyr::relocate(Group)
+        dplyr::relocate(.data$Group)
 
         if(identical(dim(dplyr::group_data(df())), as.integer(c(1,1)))){
 

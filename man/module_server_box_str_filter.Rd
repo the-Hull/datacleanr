@@ -8,6 +8,10 @@ module_server_box_str_filter(input, output, session, selector, actionbtn)
 }
 \arguments{
 \item{input, output, session}{standard}
+
+\item{selector}{character, html selector for placement}
+
+\item{actionbtn}{reactive, action button counter}
 }
 \description{
 Server Module: box for str filter condition

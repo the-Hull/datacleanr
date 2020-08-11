@@ -36,10 +36,10 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
 
     output$scatterselectControl <- shiny::renderUI({
         shiny::fluidRow(
-            column(3, shiny::varSelectInput(ns('xvar'),
+            shiny::column(3, shiny::varSelectInput(ns('xvar'),
                                             label = "X Var",
                                             data = df[ , !grepl("[.]dcr", colnames(df))])),
-            column(3,
+            shiny::column(3,
                    shiny::varSelectInput(ns('yvar'),
                                          label = "Y Var",
                                          data = df[ ,!grepl("[.]dcr", colnames(df))])),
@@ -47,12 +47,12 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
             #        shiny::varSelectInput(ns('zvar'),
             #                              label = "Z Var",
             #                              data = df[ , colnames(df)!=".dcrkey"])),
-            column(3,
+            shiny::column(3,
                    shiny::selectInput(ns('zvar'),
                                       label = "Z Var",
                                       choices = c("", colnames(df)[!grepl("[.]dcr", colnames(df))]),
                                       selected = NULL)),
-            column(3,
+            shiny::column(3,
                    align = "right",
                    style = "margin-top: 25px;",
                    shiny::actionButton(ns('startscatter'),

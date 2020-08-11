@@ -8,8 +8,6 @@ module_ui_apply_reset(id)
 }
 \arguments{
 \item{id}{Character, identifier for variable selection}
-
-\item{df}{data.frame loaded into gadget; should support df, tibble, data.table}
 }
 \description{
 UI Module: Apply/Reset Filtering

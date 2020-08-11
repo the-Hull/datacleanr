@@ -1,7 +1,6 @@
 # UI ----------------------------------------------------------------------
 #' UI Module: Apply/Reset Filtering
 #'
-#' @param df data.frame loaded into gadget; should support df, tibble, data.table
 #' @param id Character, identifier for variable selection
 #'
 #'
@@ -23,8 +22,9 @@ module_ui_apply_reset <- function(id){
 #' Server Module: apply / reset filter
 #'
 #' @param input,output,session standard
-#'
-#'
+
+#' @param df_filtered reactive, filtered df
+#' @param df_original reactive, original df
 module_server_apply_reset <- function(input, output, session, df_filtered, df_original){
 
     ns <- session$ns

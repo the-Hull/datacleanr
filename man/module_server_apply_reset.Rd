@@ -8,6 +8,10 @@ module_server_apply_reset(input, output, session, df_filtered, df_original)
 }
 \arguments{
 \item{input, output, session}{standard}
+
+\item{df_filtered}{reactive, filtered df}
+
+\item{df_original}{reactive, original df}
 }
 \description{
 Server Module: apply / reset filter

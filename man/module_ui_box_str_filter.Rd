@@ -9,7 +9,7 @@ module_ui_box_str_filter(id, actionbtn)
 \arguments{
 \item{id}{Character, identifier for variable selection}
 
-\item{df}{data.frame loaded into gadget; should support df, tibble, data.table}
+\item{actionbtn}{reactive, action button counter}
 }
 \description{
 UI Module: box for str filter condition

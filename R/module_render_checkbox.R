@@ -41,7 +41,7 @@ module_ui_checkbox <- function(id, cond_id) {
 #' @param text Character, appears next to checkbox (or coerced)
 module_server_checkbox <- function(input, output, session, text) {
 
-    output$checkbox <- renderUI({
+    output$checkbox <- shiny::renderUI({
 
         ns <- session$ns
 

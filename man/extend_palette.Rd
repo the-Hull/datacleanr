@@ -2,24 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{extend_palette}
 \alias{extend_palette}
-\title{check if filtering statement is successfull}
+\title{extend brewer palette}
 \usage{
 extend_palette(n)
 }
 \arguments{
 \item{n}{numeric, number of colors}
-
-\item{df}{dataframe to be filtered}
-
-\item{statements}{character, vector with individual statements for filtering}
 }
 \value{
-logical vector of fails and successes
-
-extend brewer palette
-
 color vector of length n
 }
 \description{
-check if filtering statement is successfull
+extend brewer palette
 }

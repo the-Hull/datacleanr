@@ -10,7 +10,8 @@ module_server_plot_selectable(
   session,
   selector_inputs,
   df,
-  sel_points
+  sel_points,
+  mapstyle
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ module_server_plot_selectable(
 \item{df}{reactive df}
 
 \item{sel_points}{reactive, provides .dcrkey of selected points}
+
+\item{mapstyle}{reactive, selected mapstyle from below-plot controls}
 }
 \description{
 Server Module: box for str filter condition

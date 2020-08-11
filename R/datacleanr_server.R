@@ -170,7 +170,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # handle summary operations when go button is hit
     shiny::observeEvent(input$gobutton, {
 
-      shiny::req(grouping_check())
+      # shiny::req(grouping_check())
 
         # handle actions
 
@@ -243,9 +243,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
             # INSERT MODULE UI
             shiny::insertUI(
-                selector = paste0("#", ns("placeholder")),
+                selector = paste0("#", "placeholder"),
                 where = "beforeEnd",
-                ui = module_ui_filter_str(ns(btn.tmp))
+                ui = module_ui_filter_str(btn.tmp)
             )
 
 
@@ -267,11 +267,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
             # print(str(add.filter$df))
 
 
-            print(paste0(ns(btn$value), "-filt"))
+            print(paste0(btn$value, "-filt"))
             # REMOVE LAST LINE MODULE UI
             shiny::removeUI(
                 ## pass in appropriate div id
-                selector = paste0("#", ns(btn$value), "-filt"))
+                selector = paste0("#", btn$value, "-filt"))
 
             # SUBTRACT 1 FROM BUTTON VALUE
             if(btn$value > 1){
@@ -373,7 +373,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                function(i){
                    shiny::removeUI(
                        ## pass in appropriate div id
-                       selector = paste0("#", ns(i), "-filt"))
+                       selector = paste0("#", i, "-filt"))
                }
         )
 
@@ -730,7 +730,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                                     dframe = datareactive,
                                                     ok = old_keys,
                                                     selectors = selector_vals,
-                                                    source = ns("plot-scatterselect"),
+                                                    source = "plot-scatterselect",
                                                     session = session)
                             old_keys(ok())
                         })
@@ -744,7 +744,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                                     dframe = datareactive,
                                                     ok = old_keys,
                                                     selectors = selector_vals,
-                                                    source = ns("plot-scatterselect"),
+                                                    source = "plot-scatterselect",
                                                     session = session)
                             old_keys(ok())
                         })

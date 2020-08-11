@@ -52,6 +52,19 @@ module_server_checkbox <- function(input, output, session, text) {
 
     })
 
+    check_val <- shiny::reactiveVal()
+
+    shiny::observe({
+        if(!is.null(input$checkbox)){
+            check_val(input$checkbox)
+        } else {
+            check_val(FALSE)
+        }
+    })
+
+
+    return(check_val)
+
 
 }
 

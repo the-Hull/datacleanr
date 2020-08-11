@@ -159,7 +159,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                               dframe = dataset)
     output$gvar <- shiny::reactive({gvar()})
     # check-box for grouping
-    shiny::callModule(module = module_server_checkbox,
+    grouping_check <- shiny::callModule(module = module_server_checkbox,
                       "grouptick",
                       text = "Use grouping for summary")
 
@@ -169,6 +169,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     # handle summary operations when go button is hit
     shiny::observeEvent(input$gobutton, {
+
+      shiny::req(grouping_check())
 
         # handle actions
 

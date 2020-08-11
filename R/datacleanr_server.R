@@ -186,12 +186,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                           "summary",
 
                           df =  {if(!is.null(datareactive()) &&
-                                    !input$`grouptick-checkbox`){
+                                    !grouping_check()){
 
                               dplyr::ungroup(datareactive())
 
                           } else if(!is.null(datareactive()) &&
-                                    input$`grouptick-checkbox`){
+                                    grouping_check()){
 
                               datareactive()
                           }},

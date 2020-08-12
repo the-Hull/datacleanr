@@ -99,17 +99,17 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     # DIAGNOSTICS ----------------------
 
-    AllInputs <- shiny::reactive({
-        x <- unlist(shiny::reactiveValuesToList(input))
-        paste(names(x),
-              x)
-
-
-    })
-
-    output$show_inputs <- shiny::renderText({
-        AllInputs()
-    })
+    # AllInputs <- shiny::reactive({
+    #     x <- unlist(shiny::reactiveValuesToList(input))
+    #     paste(names(x),
+    #           x)
+    #
+    #
+    # })
+    #
+    # output$show_inputs <- shiny::renderText({
+    #     AllInputs()
+    # })
 
 
 
@@ -281,9 +281,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
             }
         })
         # OUTPUT DATAFRAME
-        output$outDF <- shiny::renderPrint({
-            print(add.filter$df)
-        })
+        # output$outDF <- shiny::renderPrint({
+        #     print(add.filter$df)
+        # })
 
 
     })

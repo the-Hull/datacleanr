@@ -1,3 +1,25 @@
+#' Initial checks for data set
+#'
+#' @param dframe dframe supplied to \code{dcr_app}
+#'
+#' @return Nothing - just check!
+dcr_checks <- function(dframe){
+
+    if(!rlang::inherits_any(dframe, c("tbl", "data.frame", "data.table"))){
+
+        stop("Please provide a data.frame, tibble, or data.table")
+    }
+
+    if(nrow(dframe) > 10000){
+
+        warning(paste("Data set has over", nrow(dframe), "observations. Consider breaking it up into smaller chunks."))
+
+    }
+
+
+}
+
+
 #' Identify columns carrying non-numeric values
 #'
 #' @param x data.frame
@@ -43,6 +65,11 @@ navbarPageWithInputs <- function(..., inputs) {
 #' @return returns df either grouped or not
 #'
 apply_data_set_up <- function(df, group){
+
+    if(!is.null(group) & !is.character(group)){
+
+        stop("group must be NULL or supplied as a string.")
+    }
 
     if(is.null(group)){
         return(df)

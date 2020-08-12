@@ -135,12 +135,12 @@ module_server_plot_selectable <- function(input, output, session, selector_input
         rlang::quo({
 
           print("redrawing")
-          pnew <- plot_data %>%
-            { if(is_spatial_plot){
-              plotly::plot_mapbox(data = .data$.,
+          # pnew <- plot_data %>%
+          pnew <- { if(is_spatial_plot){
+              plotly::plot_mapbox(data = plot_data,
                                   source = "scatterselect")
             } else {
-              plotly::plot_ly(data = .data$.,
+              plotly::plot_ly(data = plot_data,
                               source = "scatterselect")
             }
             } %>%

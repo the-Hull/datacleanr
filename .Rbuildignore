@@ -7,3 +7,4 @@
 
 ^_setup\.R$
 ^\.travis\.yml$
+^\.circleci$

@@ -97,7 +97,10 @@ datacleanr_ui <- function(request){
     #              "and can be annotated with the tool to the left."))
 
 
-    navbarPageWithInputs("datacleanr",
+    navbarPageWithInputs(
+                         theme = "sandstone.min.css",
+                         # theme = shinythemes::shinytheme("sandstone"),
+        "datacleanr",
                          id = "nav",
 
                          # TAB GROUPING ------------
@@ -281,6 +284,7 @@ datacleanr_ui <- function(request){
 
                          shiny::tags$style(type = "text/css", "body {padding-top: 70px;}"),
                          position = "fixed-top"
+
 
 
     ) #/navbarPageWithInputs

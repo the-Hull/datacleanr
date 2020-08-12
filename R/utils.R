@@ -29,7 +29,7 @@ dcr_checks <- function(dframe){
 get_factor_cols_idx <- function(x){
 
     if(ncol(x) < 1){
-        stop("Error: Elements of your input vector do not have the same length!")
+        stop("Error: supply data set with multiple columns (data.frame, tbl, data.table)!")
     }
     return(!unname(unlist(lapply(x, is.numeric))))
 }

@@ -58,7 +58,8 @@ module_server_summary <- function(input,
 
         html_summary <- shiny::renderUI(summarytools::view(
             dfs,
-            method = "render"))
+            method = "render",
+            bootstrap.css = FALSE))
 
         output$summary <- html_summary
 

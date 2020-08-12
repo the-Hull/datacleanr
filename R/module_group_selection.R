@@ -21,7 +21,7 @@ module_ui_group_select <- function(id){
     #                                   selectize = TRUE)
     # )
 
-    shiny::uiOutput(ns("checkbox"))
+    shiny::uiOutput(ns("groupvar"))
 
 
 }
@@ -42,7 +42,7 @@ module_server_group_select <- function(input, output, session, dframe){
     ns <- session$ns
 
 
-    output$checkbox <- shiny::renderUI({
+    output$groupvar <- shiny::renderUI({
 
 
         vars <- colnames(dframe)[get_factor_cols_idx(dframe)]

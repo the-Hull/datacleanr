@@ -6,3 +6,4 @@
 ^\.github$
 
 ^_setup\.R$
+^\.travis\.yml$

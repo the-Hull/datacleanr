@@ -113,10 +113,11 @@ check_individual_statement <- function(df, statement){
 #'
 #' @param df data frame / tibble to be filtered
 #' @param statements character vector of individual conditional statements; need not evaluate successfully individually
+#' @param apply_grouped logical, should filter be applied to each group?
 #'
 #' @return list, logical vector of success and failures, and
 #'
-checked_filter <- function(df, statements){
+checked_filter <- function(df, statements, apply_grouped){
 
     is.error <- function(x) inherits(x, "try-error")
 
@@ -125,16 +126,75 @@ checked_filter <- function(df, statements){
                          check_individual_statement(df = df,
                                                     statement = x))
 
+    print(paste("CHECKED FILTER - GROUPED DF?", dplyr::is.grouped_df(df)))
+
     if(any(checks)){
 
-        cond_string_full <- paste(statements[checks],
-                                  collapse = " & ")
-        filtered_df <- base::subset(df,
-                                    eval(str2expression(cond_string_full)))
+
+
+
+
+        grouped_checks <- checks
+        grouped_checks[which(!apply_grouped)] <- FALSE
+        ungrouped_checks <- checks
+        ungrouped_checks[which(apply_grouped)] <- FALSE
+
+
+        # generate strings for grouped and ungrouped checks
+
+        if(any(grouped_checks)){
+
+
+            cond_string_full <- paste(statements[grouped_checks],
+                                      collapse = " & ")
+            # filtered_df <- dplyr::filter(df,
+            #                             eval(str2expression(cond_string_full)))
+
+
+            filtered_df <- do.call(rbind,
+                                   by(df,
+                                      as.factor(dplyr::group_indices(df)),
+                                      function(x) base::subset(x,
+                                                               eval(str2expression(cond_string_full)))
+                                   )
+            )
+
+        }
+
+        if(any(ungrouped_checks)) {
+
+            if(all(!grouped_checks)){
+                filtered_df <- df
+            }
+
+            cond_string_full <- paste(statements[ungrouped_checks],
+                                      collapse = " & ")
+#
+#             filtered_df <- do.call(rbind,
+#                     by(filtered_df,
+#                        as.factor(dplyr::groups(filtered_df)),
+#                        function(x) base::subset(filtered_df,
+#                                                 eval(str2expression(cond_string_full)))
+#                        )
+#                     )
+
+            filtered_df <- dplyr::filter(dplyr::ungroup(filtered_df),
+                                        eval(str2expression(cond_string_full)))
+
+
+        }
+
+
+
+
+
 
         return(list(succeeded = checks,
                     filtered_df = filtered_df,
-                    statement_strings = statements[checks]))
+                    statement_strings = statements[checks],
+                    statement_strings_grouped = statements[grouped_checks],
+                    statement_strings_ungrouped = statements[ungrouped_checks]
+                    ))
     } else {
 
         return(list(succeeded = checks))

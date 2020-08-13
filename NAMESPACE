@@ -2,6 +2,5 @@
 
 export("%>%")
 export(dcr_app)
-export(dcr_launch)
 importFrom(magrittr,"%>%")
 importFrom(rlang,.data)

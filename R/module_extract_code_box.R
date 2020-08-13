@@ -91,7 +91,7 @@ module_server_extract_code  <-
 
 
 
-        if (!is.null(filter_strings()) |
+        if (!is.null(filter_strings$statement_strings) |
             nrow(sel_points$df) > 0) {
             text_out <- setup_string
 
@@ -105,7 +105,7 @@ module_server_extract_code  <-
         subset_strings <- shiny::reactiveValues(base = NULL,
                                                 dplyr = NULL,
                                                 dt = NULL)
-        if (!is.null(filter_strings())) {
+        if (!is.null(filter_strings$statement_strings)) {
             if (!overwrite) {
                 df_label_filtered <- paste0(df_label, "_filtered")
             } else {
@@ -114,18 +114,18 @@ module_server_extract_code  <-
 
             subset_strings$base <- glue::glue('
                     subset({df_label},
-                       {paste0(filter_strings(), collapse = ", ")})
+                       {paste0(filter_strings$statement_strings, collapse = ", ")})
                                   ')
 
 
             subset_strings$dplyr <- glue::glue('
                     dplyr::filter({df_label},
-                       {paste0(filter_strings(), collapse = ", ")})
+                       {paste0(filter_strings$statement_strings, collapse = ", ")})
                                   ')
 
             subset_strings$dt <- glue::glue('
                     subset({df_label},
-                       {paste0(filter_strings(), collapse = ", ")})
+                       {paste0(filter_strings$statement_strings, collapse = ", ")})
                                   ')
 
 
@@ -151,7 +151,7 @@ module_server_extract_code  <-
             )
 
         if (nrow(sel_points$df) > 0) {
-            if (!is.null(filter_strings())) {
+            if (!is.null(filter_strings$statement_strings)) {
                 df_label <- df_label_filtered
             }
 

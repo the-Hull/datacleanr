@@ -81,15 +81,27 @@ module_server_filter_str <- function(input, output, session){
     ns = session$ns
 
     output$filter <- shiny::renderUI({
-        shiny::textInput(
-            inputId = ns("filter"),
-            # label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
-            label = paste0("Filter ", substr(x = ns(""),
-                                             regexpr("[0-9]", ns("")),
-                                             regexpr("[0-9]", ns("")))),
-            value = NULL,
-            width = "100%",
-            placeholder = NULL
+        shiny::fluidRow(
+            shiny::column(width = 10,
+                          shiny::textInput(
+                              inputId = ns("filter"),
+                              # label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
+                              label = paste0("Filter ", substr(x = ns(""),
+                                                               regexpr("[0-9]", ns("")),
+                                                               regexpr("[0-9]", ns("")))),
+                              value = NULL,
+                              width = "100%",
+                              placeholder = NULL
+                          )),
+            shiny::column(width = 2,
+                          align = "center",
+                          style="margin-top: 20px;",
+                          shiny::checkboxInput(
+                              inputId = ns("filtercheckbox"),
+                              label = "Grouped?",
+                              value = FALSE
+                          ))
         )
+
     })
 }

@@ -186,8 +186,8 @@ datacleanr_ui <- function(request){
 
                                              mainPanel = shiny::mainPanel(
                                                  # Diagnostics
-                                                 # shiny::textOutput('show_inputs'),###
-                                                 # shiny::verbatimTextOutput("outDF"),
+                                                 shiny::textOutput('show_inputs'),###
+                                                 shiny::verbatimTextOutput("outDF"),
                                                  # shiny::h2("Filtering statements"),
                                                  module_ui_filter_str(1),
                                                  shiny::tags$div(id = 'placeholder')

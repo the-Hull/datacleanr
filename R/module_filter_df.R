@@ -28,14 +28,15 @@ module_ui_df_filter <- function(id){
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param df data frame/tibble for filtering
 #' @param statements character, lengths >= 0, with (valid) statements for \code{base::subset}
+#' @param apply_grouped logical, lengths >= 0, indicating if statements for \code{base::subset} should be applied grouped
 #'
 #' @return df, either filtered or original, based on validity of \code{statements}
 #'
-module_server_df_filter <- function(input, output, session, df, statements){
+module_server_df_filter <- function(input, output, session, df, statements, apply_grouped){
 
     ns  <-  session$ns
 
-    out <- try({checked_filter(df,statements)})
+    out <- try({checked_filter(df,statements, apply_grouped)})
     states <- out$succeeded
 
     if(utils::hasName(out, "filtered_df")){

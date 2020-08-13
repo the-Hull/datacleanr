@@ -99,7 +99,7 @@ datacleanr_ui <- function(request){
 
     navbarPageWithInputs(
                          theme = "sandstone.min.css",
-                         # theme = shinythemes::shinytheme("sandstone"),
+                                 # theme = shinythemes::shinytheme("sandstone"),
         "datacleanr",
                          id = "nav",
 

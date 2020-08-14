@@ -126,7 +126,6 @@ checked_filter <- function(df, statements, apply_grouped){
                          check_individual_statement(df = df,
                                                     statement = x))
 
-    print(paste("CHECKED FILTER - GROUPED DF?", dplyr::is.grouped_df(df)))
 
     if(any(checks)){
 

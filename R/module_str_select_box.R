@@ -75,10 +75,13 @@ module_ui_filter_str <- function(id) {
 #' Server Module: box for str filter condition
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
+#' @param reactive, data frame passed into dcr app
 #'
 #' @details provides UI text box element
-module_server_filter_str <- function(input, output, session){
+module_server_filter_str <- function(input, output, session, dframe){
     ns = session$ns
+
+
 
     output$filter <- shiny::renderUI({
         shiny::fluidRow(
@@ -93,6 +96,8 @@ module_server_filter_str <- function(input, output, session){
                               width = "100%",
                               placeholder = NULL
                           )),
+
+
             shiny::column(width = 2,
                           align = "center",
                           style="margin-top: 20px;",

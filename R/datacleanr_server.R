@@ -334,37 +334,37 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
       shiny::validate(shiny::need(add.filter,
                                   label = "add filter"))
-        shiny::validate(shiny::need(input$gobutton,
-                                    label = "StartButton"))
+      shiny::validate(shiny::need(input$gobutton,
+                                  label = "StartButton"))
 
-        df <- try({checked_filter(df = recover_data(),
-                                  statements = add.filter$df$filter,
-                                  apply_grouped = add.filter$df$is_grouped)})
+      df <- try({checked_filter(df = recover_data(),
+                                statements = add.filter$df$filter,
+                                apply_grouped = add.filter$df$is_grouped)})
 
-        if(any(df$succeeded)){
-            datareactive(df$filtered_df)
-            filter_strings$statement_strings <- df$statement_strings
-            filter_strings$statement_strings_grouped <- df$statement_strings_grouped
-            filter_strings$statement_strings_ungrouped <- df$statement_strings_grouped
+      if(any(df$succeeded)){
+        datareactive(df$filtered_df)
+        filter_strings$statement_strings <- df$statement_strings
+        filter_strings$statement_strings_grouped <- df$statement_strings_grouped
+        filter_strings$statement_strings_ungrouped <- df$statement_strings_grouped
+      }
+      rm(df)
+
+      ## Logic to handle removal of selected data in plotly
+      # id points in selection now missing in data
+      if(nrow(selected_data$df) > 0){
+
+        absent_selection <- selected_data$df$keys %nin% datareactive()$.dcrkey
+
+        if(!is.null(selected_data_recovery())){
+          selected_data_recovery(rbind(selected_data$df[absent_selection, ], selected_data_recovery()))
+        } else {
+          selected_data_recovery(selected_data$df[absent_selection, ])
         }
-        rm(df)
 
-        ## Logic to handle removal of selected data in plotly
-        # id points in selection now missing in data
-        if(nrow(selected_data$df) > 0){
+        # adjust selection
+        selected_data$df <- selected_data$df[!absent_selection, ]
 
-            absent_selection <- selected_data$df$keys %nin% datareactive()$.dcrkey
-
-            if(!is.null(selected_data_recovery())){
-                selected_data_recovery(rbind(selected_data$df[absent_selection, ], selected_data_recovery()))
-            } else {
-                selected_data_recovery(selected_data$df[absent_selection, ])
-            }
-
-            # adjust selection
-            selected_data$df <- selected_data$df[!absent_selection, ]
-
-        }
+      }
         if(!is.null(selector_vals$startscatter)){
 
             selector_vals$startscatter <- selector_vals$startscatter + 1

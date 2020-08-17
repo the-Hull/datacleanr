@@ -222,7 +222,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     shiny::observe({
 
-      shiny::callModule(module_server_filter_str, id = 1)
+      shiny::callModule(module_server_filter_str, id = 1, dframe = datareactive())
 
       ## SAVE INPUTS FROM 1 INTO DATAFRAME
       shiny::observeEvent({
@@ -246,7 +246,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         btn.tmp <- btn$value
 
         # CALL MODULE NUMBER params$btn
-        shiny::callModule(module_server_filter_str, btn.tmp)
+        shiny::callModule(module_server_filter_str, btn.tmp, dframe = datareactive())
 
         # INSERT MODULE UI
         shiny::insertUI(

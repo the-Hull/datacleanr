@@ -85,7 +85,7 @@ module_server_filter_str <- function(input, output, session, dframe){
 
     output$filter <- shiny::renderUI({
         shiny::fluidRow(
-            shiny::column(width = 10,
+            shiny::column(width = 8,
                           shiny::textInput(
                               inputId = ns("filter"),
                               # label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
@@ -98,14 +98,22 @@ module_server_filter_str <- function(input, output, session, dframe){
                           )),
 
 
-            shiny::column(width = 2,
+            shiny::column(width = 4,
                           align = "center",
-                          style="margin-top: 20px;",
-                          shiny::checkboxInput(
-                              inputId = ns("filtercheckbox"),
-                              label = "Grouped?",
-                              value = FALSE
-                          ))
+                          # style="margin-top: 20px;",
+
+
+                          shinyWidgets::pickerInput(
+                              inputId = ns("group"),
+                              label = "Select/deselect Groups",
+                              choices = unique(dplyr::group_indices(dframe)),
+                              options = list(
+                                  `actions-box` = TRUE),
+                              multiple = TRUE
+                          )
+
+
+                          )
         )
 
     })

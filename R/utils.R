@@ -219,7 +219,97 @@ checked_filter <- function(df, statements, apply_grouped){
 #     filter_numbers <- gsub(pattern = "[^0-9]",
 
 
+split_groups <- function(dframe){
 
+    outlist <- base::split(
+        dframe,
+        f = as.factor(dplyr::group_indices(dframe))
+    )
+
+    return(outlist)
+
+}
+
+
+#' Apply filter based on a statement, scoped to groups
+#'
+#' @param dframe data.frame/tbl, grouped or ungrouped
+#' @param statement character, statement for filtering (valid AND invalid)
+#' @param scope_at numeric, group indices to apply filter statements to
+#'
+#' @return List, containing logical item stating \code{success}, and if \code{TRUE}
+#' additional items \coce{filtered_df} and the respective \code{expression_string} (character) for generating
+#' the data.frame \ tibble
+#' @export
+filter_scoped <- function(dframe, statement, scope_at){
+
+
+
+    n_groups <- dplyr::n_groups(dframe)
+
+    statement_check <- check_individual_statement(df = dframe,
+                                                  statement = statement)
+
+    print(statement_check)
+
+
+    if(isFALSE(statement_check)){
+
+
+        return(list(succeeded = statement_check
+                    # ,
+                    # filtered_df = NULL,
+                    # statement_strings = NULL,
+                    # statement_strings_grouped = NULL,
+                    # statement_strings_ungrouped = NULL
+        ))
+
+
+    } else if(isTRUE(statement_check)){
+
+        message("statement passed")
+
+        if(rlang::is_missing(scope_at)){
+            scope_at <- NULL
+        }
+
+        if(is.null(scope_at) | n_groups == 1){
+            filt_expr <- paste0('dplyr::filter(dplyr::ungroup(dframe),',
+                                statement,
+                                ')')
+            filtered_df <- eval(parse(text = filt_expr))
+        } else if(length(scope_at) == n_groups){
+            filt_expr <- paste0('dplyr::filter(dframe,',
+                                statement,
+                                ')')
+            filtered_df <- eval(parse(text = filt_expr))
+        } else if(n_groups > 1 &
+                  length(scope_at) >= 1 &
+                  length(scope_at) != n_groups){
+
+            filt_expr <- glue::glue(
+                "dplyr::bind_rows(purrr::map_at(
+                    .x = split_groups(dframe),
+                    .at = {{deparse(scope_at)}},
+                    .f = function(x){
+                        dplyr::filter(
+                            x,
+                            {{statement}})
+                    }
+                ))",
+                .open = "{{",
+                .close = "}}"
+            )
+            filtered_df <- eval(str2expression(filt_expr))
+        } else {
+            print("don't know how we got here")
+        }
+        return(list(succeeded = statement_check,
+                    filtered_df = filtered_df,
+                    expression_string = filt_expr))
+    }
+
+}
 
 
 

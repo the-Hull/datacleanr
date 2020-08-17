@@ -8,3 +8,4 @@
 ^_setup\.R$
 ^\.travis\.yml$
 ^\.circleci$
+^R/_dev\.R$

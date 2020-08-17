@@ -19,28 +19,28 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # Help Texts --------------------------------------------------------------
 
     text_filtering_side_panel <- shiny::tagList(
-        # shiny::p(
-        # shiny::tags$b("Add/Remove"),
-        # "text boxes and add unquoted filter statements."),
-        shiny::p(shiny::tags$b("Add/Remove"),
-                 "filter statements as necessary. These are passed to",
-                 shiny::tags$b("base::subset()"), "."),
-        shiny::p("Use", shiny::tags$b("single quotes"), "for values of character/factor variables."),
-        shiny::tags$p("For example, valid statements for filtering",
-                      shiny::tags$b("iris"),
-                      "are:"),
-        shiny::tags$ol(
-          shiny::tags$li(shiny::tags$small("Species == 'setosa'")),
-          shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')")),
-          shiny::tags$li(shiny::tags$small("Sepal.Width > quantile(Sepal.Width, 0.05)"))
-        ),
+      # shiny::p(
+      # shiny::tags$b("Add/Remove"),
+      # "text boxes and add unquoted filter statements."),
+      shiny::p(shiny::tags$b("Add/Remove"),
+               "filter statements as necessary. These are passed to",
+               shiny::tags$b("base::subset()"), "."),
+      shiny::p("Use", shiny::tags$b("single quotes"), "for values of character/factor variables."),
+      shiny::tags$p("For example, valid statements for filtering",
+                    shiny::tags$b("iris"),
+                    "are:"),
+      shiny::tags$ol(
+        shiny::tags$li(shiny::tags$small("Species == 'setosa'")),
+        shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')")),
+        shiny::tags$li(shiny::tags$small("Sepal.Width > quantile(Sepal.Width, 0.05)"))
+      ),
 
-        shiny::br(),
-        shiny::p("Click",
-                 shiny::tags$b("'Apply'"),
-                 "when you're ready, and",
-                 shiny::tags$b("'Reset'"),
-                 "to start from scratch."))
+      shiny::br(),
+      shiny::p("Click",
+               shiny::tags$b("'Apply'"),
+               "when you're ready, and",
+               shiny::tags$b("'Reset'"),
+               "to start from scratch."))
 
 
     text_annotate_side_panel <- shiny::tagList(

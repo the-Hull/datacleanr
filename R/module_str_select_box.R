@@ -89,9 +89,9 @@ module_server_filter_str <- function(input, output, session, dframe){
                           shiny::textInput(
                               inputId = ns("filter"),
                               # label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
-                              label = paste0("Filter ", substr(x = ns(""),
-                                                               regexpr("[0-9]", ns("")),
-                                                               regexpr("[0-9]", ns("")))),
+                              label = paste0("Filter ", gsub(pattern = "[^0-9]",
+                                                             replacement = "",
+                                                             x = ns(""))),
                               value = NULL,
                               width = "100%",
                               placeholder = NULL

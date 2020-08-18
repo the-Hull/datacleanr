@@ -212,26 +212,28 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # CREATE EMPTY DATAFRAME
     add.filter <- shiny::reactiveValues()
 
-    add.filter$df <- data.frame(
-      "filter" = character(0),
-      is_grouped = logical(0),
-      stringsAsFactors = FALSE)
+    add.filter$df <- dplyr::tibble(
+      filter = character(0),
+      grouping = list())
 
     btn <- shiny::reactiveValues(value = 1)
 
 
     shiny::observe({
 
-      shiny::callModule(module_server_filter_str, id = 1, dframe = datareactive())
+      print('observer filtering stuff')
+      shiny::callModule(module_server_filter_str,
+                        id = 1,
+                        dframe = datareactive())
 
       ## SAVE INPUTS FROM 1 INTO DATAFRAME
       shiny::observeEvent({
+        input[[shiny::NS(1, "groupdropdown")]]
         input[[shiny::NS(1, "filter")]]
-        input[[shiny::NS(1, "filtercheckbox")]]
 
       }, {
         add.filter$df[1, 1] <- input[[shiny::NS(1, "filter")]]
-        add.filter$df[1, 2] <- input[[shiny::NS(1, "filtercheckbox")]]
+        add.filter$df[1, "grouping"][[1]] <- list(input[[shiny::NS(1, "groupdropdown")]])
       })
 
       # ADD VARIABLES
@@ -246,7 +248,10 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         btn.tmp <- btn$value
 
         # CALL MODULE NUMBER params$btn
-        shiny::callModule(module_server_filter_str, btn.tmp, dframe = datareactive())
+        # isolate prevents 'apply filter' from re-firing
+        shiny::callModule(module_server_filter_str,
+                          btn.tmp,
+                          dframe = datareactive())
 
         # INSERT MODULE UI
         shiny::insertUI(
@@ -258,13 +263,13 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
         ## SAVE INPUTS FROM NUMBER COUNTER BTN INTO DATAFRAME
         shiny::observeEvent({
+          input[[shiny::NS(btn.tmp, "groupdropdown")]]
           input[[shiny::NS(btn.tmp, "filter")]]
-          input[[shiny::NS(btn.tmp, "filtercheckbox")]]
         }
 
         , {
           add.filter$df[btn.tmp, 1] <- input[[shiny::NS(btn.tmp, "filter")]]
-          add.filter$df[btn.tmp, 2] <- input[[shiny::NS(btn.tmp, "filtercheckbox")]]
+          add.filter$df[btn.tmp, "grouping"][[1]] <- list(input[[shiny::NS(btn.tmp, "groupdropdown")]])
         })
 
 
@@ -306,6 +311,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     # FILTER PREVIEW STRING ---------------------------------------------------
 
+#
+    tmp_filter <- shiny::reactiveVal()
 
     shiny::observe({
 
@@ -314,11 +321,15 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
       shiny::validate(shiny::need(input$gobutton,
                                   label = "StartButton"))
 
-      shiny::callModule(module = module_server_df_filter,
+
+
+      df <- shiny::callModule(module = module_server_df_filter,
                         id = "check",
-                        df = shiny::isolate(recover_data()),
-                        statements = add.filter$df$filter,
-                        apply_grouped = add.filter$df$is_grouped)
+                        dframe = shiny::isolate(recover_data()),
+                        condition_df = add.filter$df)
+
+    shiny::isolate(tmp_filter(df))
+
     })
 
     # FILTER Apply/Undo  -------------------------------------------------------
@@ -337,17 +348,19 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
       shiny::validate(shiny::need(input$gobutton,
                                   label = "StartButton"))
 
-      df <- try({checked_filter(df = recover_data(),
-                                statements = add.filter$df$filter,
-                                apply_grouped = add.filter$df$is_grouped)})
+      datareactive(shiny::isolate(tmp_filter()))
 
-      if(any(df$succeeded)){
-        datareactive(df$filtered_df)
-        filter_strings$statement_strings <- df$statement_strings
-        filter_strings$statement_strings_grouped <- df$statement_strings_grouped
-        filter_strings$statement_strings_ungrouped <- df$statement_strings_grouped
-      }
-      rm(df)
+      # df <- try({checked_filter(df = recover_data(),
+      #                           statements = add.filter$df$filter,
+      #                           grouping_indices = add.filter$df$grouping)})
+
+      # if(any(df$succeeded)){
+      #   datareactive(df$filtered_df)
+      #   filter_strings$statement_strings <- df$statement_strings
+      #   filter_strings$statement_strings_grouped <- df$statement_strings_grouped
+      #   filter_strings$statement_strings_ungrouped <- df$statement_strings_grouped
+      # }
+      # rm(df)
 
       ## Logic to handle removal of selected data in plotly
       # id points in selection now missing in data
@@ -967,14 +980,14 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
        shiny::req(datareactive())
 
-        code_out(
-            shiny::callModule(module_server_extract_code,
-                              id = "extract",
-                              df_label = df_name,
-                              filter_strings = filter_strings,
-                              sel_points = selected_data,
-                              overwrite = input$overwrite)
-        )
+        # code_out(
+        #     shiny::callModule(module_server_extract_code,
+        #                       id = "extract",
+        #                       df_label = df_name,
+        #                       filter_strings = filter_strings,
+        #                       sel_points = selected_data,
+        #                       overwrite = input$overwrite)
+        # )
 
     })
 

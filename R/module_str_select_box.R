@@ -104,7 +104,7 @@ module_server_filter_str <- function(input, output, session, dframe){
 
 
                           shinyWidgets::pickerInput(
-                              inputId = ns("group"),
+                              inputId = ns("groupdropdown"),
                               label = "Select/deselect Groups",
                               choices = unique(dplyr::group_indices(dframe)),
                               options = list(

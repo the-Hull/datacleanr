@@ -244,13 +244,14 @@ split_groups <- function(dframe){
 filter_scoped <- function(dframe, statement, scope_at){
 
 
+    scope_at <- unlist(scope_at)
+
 
     n_groups <- dplyr::n_groups(dframe)
 
     statement_check <- check_individual_statement(df = dframe,
                                                   statement = statement)
 
-    print(statement_check)
 
 
     if(isFALSE(statement_check)){
@@ -311,6 +312,44 @@ filter_scoped <- function(dframe, statement, scope_at){
 
 }
 
+
+
+filter_scoped_iterate <- function(dframe, condition_df){
+
+    checks <- sapply(condition_df[ , 1, drop = TRUE],
+                     function(x)
+                         check_individual_statement(df = dframe,
+                                                    statement = x))
+
+    print(checks)
+
+    if(any(checks)){
+
+        keep_checks <- which(checks)
+        for(j in seq_along(keep_checks)){
+
+            keep_idx <- keep_checks[j]
+            if(j == 1){
+
+                tmp <- filter_scoped(dframe = dframe,
+                                     statement = condition_df[keep_idx, 1, drop = TRUE],
+                                     scope_at = condition_df[keep_idx, 2, drop = TRUE])$filtered_df
+
+            } else {
+
+                tmp <- filter_scoped(dframe = tmp,
+                                     statement = condition_df[keep_idx, 1, drop = TRUE],
+                                     scope_at = condition_df[keep_idx, 2, drop = TRUE])$filtered_df
+            }
+
+        }
+        return(tmp)
+
+    }
+    return(NULL)
+
+
+}
 
 
 

@@ -7,7 +7,8 @@
 module_ui_plot_selectable <- function(id) {
   ns <- shiny::NS(id)
 
-  plotly::plotlyOutput(ns('scatterselect'))
+  plotly::plotlyOutput(ns('scatterselect'),
+                       height = "500px")
 
 }
 

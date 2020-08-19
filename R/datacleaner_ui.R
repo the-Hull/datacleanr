@@ -258,7 +258,7 @@ datacleanr_ui <- function(request){
 
                          # HANDLER BUTTONS TOP ------------------
                          inputs = list(shiny::actionButton("done",
-                                                           "Done",
+                                                           "Finish",
                                                            icon = shiny::icon("check-circle"),
                                                            class = "btn-success"),
                                        shiny::actionButton("cancel",

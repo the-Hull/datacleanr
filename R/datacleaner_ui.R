@@ -189,7 +189,7 @@ datacleanr_ui <- function(request){
                                                  shiny::textOutput('show_inputs'),###
                                                  shiny::verbatimTextOutput("outDF"),
                                                  # shiny::h2("Filtering statements"),
-                                                 module_ui_filter_str(1),
+                                                 # module_ui_filter_str(1),
                                                  shiny::tags$div(id = 'placeholder')
                                              ) #/mainPanel
                                          ) #/sidebarLayout

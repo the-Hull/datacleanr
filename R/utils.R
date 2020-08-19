@@ -248,6 +248,7 @@ filter_scoped <- function(dframe, statement, scope_at){
 
 
     n_groups <- dplyr::n_groups(dframe)
+    var_groups <- rlang::syms(dplyr::group_vars(dframe))
 
     statement_check <- check_individual_statement(df = dframe,
                                                   statement = statement)
@@ -275,10 +276,13 @@ filter_scoped <- function(dframe, statement, scope_at){
         }
 
         if(is.null(scope_at) | n_groups == 1){
-            filt_expr <- paste0('dplyr::filter(dplyr::ungroup(dframe),',
+
+
+            filt_expr <- paste0('dplyr::group_by(dplyr::filter(dplyr::ungroup(dframe),',
                                 statement,
-                                ')')
+                                '), !!! var_groups)')
             filtered_df <- eval(parse(text = filt_expr))
+
         } else if(length(scope_at) == n_groups){
             filt_expr <- paste0('dplyr::filter(dframe,',
                                 statement,

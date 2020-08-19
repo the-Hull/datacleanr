@@ -201,7 +201,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
 
-    })
+    }, priority = 100)
 
 
     # // ----------------------------------------------------------------------
@@ -216,25 +216,26 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
       filter = character(0),
       grouping = list())
 
-    btn <- shiny::reactiveValues(value = 1)
+    # btn <- shiny::reactiveValues(value = 1)
+    btn <- shiny::reactiveValues(value = 0)
 
 
-    shiny::observe({
+    # shiny::observe({
 
-      print('observer filtering stuff')
-      shiny::callModule(module_server_filter_str,
-                        id = 1,
-                        dframe = datareactive())
-
-      ## SAVE INPUTS FROM 1 INTO DATAFRAME
-      shiny::observeEvent({
-        input[[shiny::NS(1, "groupdropdown")]]
-        input[[shiny::NS(1, "filter")]]
-
-      }, {
-        add.filter$df[1, 1] <- input[[shiny::NS(1, "filter")]]
-        add.filter$df[1, "grouping"][[1]] <- list(input[[shiny::NS(1, "groupdropdown")]])
-      })
+      # print('observer filtering stuff')
+      # shiny::callModule(module_server_filter_str,
+      #                   id = 1,
+      #                   dframe = datareactive())
+      #
+      # ## SAVE INPUTS FROM 1 INTO DATAFRAME
+      # shiny::observeEvent({
+      #   input[[shiny::NS(1, "groupdropdown")]]
+      #   input[[shiny::NS(1, "filter")]]
+      #
+      # }, {
+      #   add.filter$df[1, 1] <- input[[shiny::NS(1, "filter")]]
+      #   add.filter$df[1, "grouping"][[1]] <- list(input[[shiny::NS(1, "groupdropdown")]])
+      # })
 
       # ADD VARIABLES
 
@@ -251,7 +252,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         # isolate prevents 'apply filter' from re-firing
         shiny::callModule(module_server_filter_str,
                           btn.tmp,
-                          dframe = datareactive())
+                          dframe = shiny::isolate(datareactive()))
 
         # INSERT MODULE UI
         shiny::insertUI(
@@ -274,7 +275,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
 
-      })
+      # })
 
       # REMOVE VARIABLES
 
@@ -318,8 +319,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
       shiny::validate(shiny::need(add.filter,
                                   label = "add filter"))
-      shiny::validate(shiny::need(input$gobutton,
-                                  label = "StartButton"))
+      # shiny::validate(shiny::need(input$gobutton,
+      #                             label = "StartButton"))
 
 
 
@@ -378,6 +379,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         selected_data$df <- selected_data$df[!absent_selection, ]
 
       }
+
+      # force replotting of data
         if(!is.null(selector_vals$startscatter)){
 
             selector_vals$startscatter <- selector_vals$startscatter + 1
@@ -387,7 +390,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
     # reset filtering
-    shiny::observeEvent(input$reset_filter, {
+    shiny::observeEvent(
+      {input$reset_filter}, {
         shiny::validate(shiny::need(add.filter,
                                     label = "add filter"))
         shiny::validate(shiny::need(input$gobutton,
@@ -420,6 +424,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
         ## Logic to handle removal of selected data in plotly
         selected_data_recovery(NULL)
 
+        # force replotting of data
         if(!is.null(selector_vals$startscatter)){
 
             selector_vals$startscatter <- selector_vals$startscatter + 1
@@ -430,6 +435,30 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     })
 
 
+
+    # FILTER UPDATE GROUP SELECTION -------------------------------------------
+
+    shiny::observeEvent(input$gobutton,
+                        {
+
+                          if(btn$value > 0){
+
+                          sapply(seq_len(btn$value),
+                                 function(i){
+
+                                   print(paste("btn val incr", i))
+                                   print(paste("groups are", unique(dplyr::group_indices(datareactive()))))
+
+                                   shinyWidgets::updatePickerInput(session = session,
+                                     inputId = shiny::NS(i, "groupdropdown"),
+                                     choices = unique(dplyr::group_indices(datareactive()))
+                                   )}
+                          )
+
+                          }
+
+                        },
+                        priority = 0)
 
 
     # // ----------------------------------------------------------------------

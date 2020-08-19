@@ -20,8 +20,8 @@ test_that("filter identifies incorrect statement", {
                                      FALSE))$succeeded
 
 
-  expect_equivalent(checks,
-                   c(TRUE, TRUE, FALSE))
+    expect_equivalent(checks,
+                      c(TRUE, TRUE, FALSE))
 })
 
 
@@ -31,16 +31,16 @@ test_that("grouped filtering gives same result as dplyr::filter on grouped df", 
 
 
 
-    fdf <- checked_filter(dplyr::group_by(iris, Species),
-                             "Sepal.Width > quantile(Sepal.Width, 0.2)",
-                          apply_grouped = TRUE)$filtered_df
+  fdf <- checked_filter(dplyr::group_by(iris, Species),
+                        "Sepal.Width > quantile(Sepal.Width, 0.2)",
+                        apply_grouped = TRUE)$filtered_df
 
-    dplyr_fdf <- dplyr::group_by(iris, Species) %>%
-        dplyr::filter(Sepal.Width > quantile(Sepal.Width, 0.2))
+  dplyr_fdf <- dplyr::group_by(iris, Species) %>%
+    dplyr::filter(Sepal.Width > quantile(Sepal.Width, 0.2))
 
 
 
-    expect_equivalent(fdf,dplyr_fdf)
+  expect_equivalent(fdf,dplyr_fdf)
 })
 
 

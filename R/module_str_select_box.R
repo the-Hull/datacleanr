@@ -113,7 +113,7 @@ module_server_filter_str <- function(input, output, session, dframe){
                           )
 
 
-                          )
+            )
         )
 
     })

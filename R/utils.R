@@ -727,3 +727,70 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 drop_empty <- function(l){
     l[vapply(l, shiny::isTruthy, logical(1))]
 }
+
+
+
+#' Make grouping overview table
+#'
+#' @param dframe
+#' @importFrom rlang .data
+#'
+#' @return tibble with one row per group
+make_group_table <- function(dframe){
+    group_table <- dplyr::summarise(dframe,
+                                    `Group` = dplyr::cur_group_id(),
+                                    `n obs.` = dplyr::n())
+        group_table <- dplyr::relocate(group_table, .data$Group)
+
+
+}
+
+
+#' Return x and y limits of "group-subsetted" dframe
+#'
+#' @param dframe dataframe/tibble, grouped/ungrouped
+#' @param group_index numeric, group indices for which to return lims
+#' @param xvar character, name of x var for plot (must exist in dframe)
+#' @param yvar character, name of y var for plot (must exist in dframe)
+#' @param scaling numeric, 1 +/- \code{scaling} times limits
+#'
+#' @return list with xlim and ylim
+calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.02){
+
+
+    if(is.null(group_index)){
+
+        group_index <- seq_len(dplyr::n_groups(dframe))
+    }
+
+    if(!rlang::inherits_any(dframe, c("data.frame", "tibble"))){
+        stop("need data.frame or tibble to proceed")
+    }
+
+    if(dplyr::n_groups(dframe) == 1 &
+       length(group_index) == 1){
+
+        if(group_index > 1){
+        warning("supplied group index outside of group stack, setting to 1")
+        group_index <- 1
+        }
+
+    }
+
+    if(any(c(xvar, yvar) %nin% names(dframe))){
+        stop("xvar or yvar not in dframe, please try again")
+    }
+
+    group_rows <- unlist(
+        dplyr::group_data(
+            dframe)$.rows[group_index])
+
+
+    xlim <- range(dframe[group_rows, xvar]) * c(1 - scaling, 1 + scaling)
+    ylim <- range(dframe[group_rows, yvar]) * c(1 - scaling, 1 + scaling)
+
+    return(list(xlim = xlim, ylim = ylim))
+
+}
+
+

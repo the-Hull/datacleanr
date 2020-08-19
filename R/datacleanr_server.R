@@ -486,6 +486,30 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
 
+# GROUPTABLE PLOT LIMITS --------------------------------------------------
+
+    selected_table_rows <- reactive({!is.null(input$`df-grouptable_rows_selected`)})
+
+    observeEvent(selected_table_rows(), {
+
+      shiny::validate(shiny::need(datareactive, label = "datareactive"))
+      shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
+      shiny::validate(shiny::need(action_tracking$plot_start, label = "plot_start actiontracking"))
+
+
+      lims <- calc_limits_per_groups(datareactive(),
+                                     group_index = input$`df-grouptable_rows_selected`,
+                                     xvar = as.character(selector_vals$xvar),
+                                     yvar = as.character(selector_vals$yvar),
+                                     scaling = 0.05)
+
+      plotlyProxy("plot-scatterselect", session) %>%
+        plotlyProxyInvoke("relayout", list(yaxis = list(range = lims$ylim),
+                                           xaxis = list(range = lims$xlim)))
+
+    })
+
+
 
 
     # // ----------------------------------------------------------------------

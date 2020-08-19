@@ -472,12 +472,14 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
             shiny::callModule(module_server_group_selector_table,
                               id = "df-filter-tab",
                               df = datareactive,
-                              df_label = df_name)
+                              df_label = df_name,
+                              selection = 'none')
             # on viz tab
             shiny::callModule(module_server_group_selector_table,
                               id = "df",
                               df = datareactive,
-                              df_label = df_name)
+                              df_label = df_name,
+                              selection = 'multiple')
         }
 
     })

@@ -27,10 +27,11 @@ module_ui_group_selector_table <- function(id) {
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param df data frame (either from overview or filtering tab)
 #' @param df_label character, original input data frame
+#' @param ... arguments passed to \code{datatable()}
 #' @importFrom rlang .data
 #'
 #' @details provides UI text box element
-module_server_group_selector_table <- function(input, output, session, df, df_label){
+module_server_group_selector_table <- function(input, output, session, df, df_label, ...){
     ns = session$ns
 
     # print(df)
@@ -60,8 +61,10 @@ module_server_group_selector_table <- function(input, output, session, df, df_la
 
             output$grouptable <- DT::renderDT(group_table,
                                               rownames = FALSE,
+                                              ...
                                               # selection = 'multiple')
-                                              selection = 'single')
+                                              # selection = 'single'
+                                              )
 
 
 

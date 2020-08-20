@@ -32,6 +32,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   ns = session$ns
   sessionval <- session$ns("")
 
+  print("Plot came first")
 
 
   # JavaScript to add a vector of trace#, traceName;
@@ -231,7 +232,6 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     return(p)
 
   }) # / renderPlotly
-#   # Handle add traces -------------------------------------------------------
 #
 #
 #

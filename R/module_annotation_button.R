@@ -15,6 +15,7 @@ module_ui_text_annotator <- function(id) {
             # shiny::textOutput(ns('df_descriptor')),
             shiny::column(8,
                           shiny::textInput(inputId = ns('textinput'),
+                                           value = "outlier",
                                            label = NULL)),
             shiny::column(4,
                           shiny::actionButton(inputId = ns('annotate_button'),

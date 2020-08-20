@@ -529,6 +529,113 @@ handle_outlier_selection <- function(sel_data_old, sel_data_new){
 
 
 
+#' Provide traces ids to set to invisible
+#'
+#' @param max_groups numeric, number of groups in grouptable
+#' @param selected_groups groups highlighted in grouptable
+#'
+#' @details Provides the indices (JS notation, starting at 0) for indices
+#' that are set to \code{visible = 'legendonly'} through \code{plotly.restyle}
+#'
+#' @return
+#' @export
+#'
+#' @examples
+hide_trace_idx <- function(max_groups, selected_groups){
+
+    all_row_ids <- seq_len(max_groups)
+
+    if(is.null(selected_groups)){
+        deselect_ids <- NULL
+    } else if(length(selected_groups) < max_groups){
+        deselect_ids <- all_row_ids[all_row_ids %nin% selected_groups] - 1
+    } else if(length(selected_groups) == max_groups){
+        deselect_ids <- NULL
+    }
+
+    return(deselect_ids)
+
+}
+
+
+#' Wrapper for adjusting axis lims and hiding traces
+#'
+#' @param source_id character, plotly source id
+#' @param session session object
+#' @param dframe data frame/tibble (grouped/ungrouped)
+#' @param scaling numeric, 1 +/- scaling applied to x lims for xvar and yvar
+#' @param xvar character, name of xvar, must be in dframe
+#' @param yvar character, name of yvar, must be in dframe
+#' @param max_id_group_trace numeric, max id of plotly trace from original data (not outlier traces)
+#' @param input_sel_rows numeric, input from DT grouptable
+#' @param flush character, \code{plotlyProxy} settings
+#'
+#' @return Used for it's side effect - no return
+handle_restyle_traces <- function(source_id,
+                                  session,
+                                  dframe,
+                                  scaling = 0.075,
+                                  xvar,
+                                  yvar,
+                                  max_id_group_trace,
+                                  input_sel_rows,
+                                  flush = TRUE){
+
+    if(any(c(xvar, yvar) %nin% names(dframe))){
+        stop("xvar or yvar not in dframe, please try again")
+    }
+
+
+    print("proxy came first")
+
+    lims <- calc_limits_per_groups(dframe,
+                                   group_index = input_sel_rows,
+                                   xvar = xvar,
+                                   yvar = yvar,
+                                   scaling = scaling)
+
+
+
+    pproxy <- plotly::plotlyProxy(source_id, session,
+                                  deferUntilFlush = flush)
+
+
+    plotly::plotlyProxyInvoke(pproxy,
+                              "relayout",
+                              list(yaxis = list(range = lims$ylim),
+                                   xaxis = list(range = lims$xlim)))
+
+
+
+    deselect_trace_id <- hide_trace_idx(
+        max_groups = max_id_group_trace + 1,
+        selected_groups = input_sel_rows)
+
+
+    if(!is.null(deselect_trace_id)){
+
+        print(as.list(deselect_trace_id))
+
+        plotly::plotlyProxyInvoke(pproxy,
+                                  "restyle",
+                                  list(visible = TRUE))
+
+        plotly::plotlyProxyInvoke(pproxy,
+                                  "restyle",
+                                  list(visible = 'legendonly'),
+                                  # deselect_trace_id)
+                                  as.list(deselect_trace_id))
+
+
+
+    } else {
+        plotly::plotlyProxyInvoke(pproxy,
+                                  "restyle",
+                                  list(visible = TRUE))
+    }
+
+}
+
 #' Color conversion for plotly with alpha
 #'
 #' @param colorname string, hex value or R color name
@@ -644,37 +751,37 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
             if(is_spatial_plot){
 
-                    plotly::plotlyProxy(source, session) %>%
+                plotly::plotlyProxy(source, session) %>%
                     plotly::plotlyProxyInvoke(
-                            "addTraces",
-                            list(
-                                # lon = list(add_points[ , as.character(selectors$xvar), drop = TRUE]),
-                                # lat = list(add_points[ , as.character(selectors$yvar), drop = TRUE]),
-                                lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
-                                lat = add_points[ , as.character(selectors$yvar), drop = TRUE],
-                                customdata = add_points[ , ".dcrkey", drop = TRUE],
-                                text = add_points[ , ".dcrkey", drop = TRUE],
-                                legendgroup = "out",
-                                size = z,
-                                # sizes = c(20,45),
-                                type = "scattermapbox",
-                                mode = "markers",
-                                name = "outlier",
-                                marker = list(
-                                    color = "red",
-                                    line = list(color = "red",
-                                                width = 2),
-                                    opacity = 1),
-                                unselected = list(marker = list(opacity = 1)),
-                                showlegend = list(TRUE)
-                            )
+                        "addTraces",
+                        list(
+                            # lon = list(add_points[ , as.character(selectors$xvar), drop = TRUE]),
+                            # lat = list(add_points[ , as.character(selectors$yvar), drop = TRUE]),
+                            lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
+                            lat = add_points[ , as.character(selectors$yvar), drop = TRUE],
+                            customdata = add_points[ , ".dcrkey", drop = TRUE],
+                            text = add_points[ , ".dcrkey", drop = TRUE],
+                            legendgroup = "out",
+                            size = z,
+                            # sizes = c(20,45),
+                            type = "scattermapbox",
+                            mode = "markers",
+                            name = "outlier",
+                            marker = list(
+                                color = "red",
+                                line = list(color = "red",
+                                            width = 2),
+                                opacity = 1),
+                            unselected = list(marker = list(opacity = 1)),
+                            showlegend = list(TRUE)
                         )
+                    )
 
             } else {
 
 
-            plotly::plotlyProxy(source, session) %>%
-                plotly::plotlyProxyInvoke(
+                plotly::plotlyProxy(source, session) %>%
+                    plotly::plotlyProxyInvoke(
                     "addTraces",
                     list(
                         x = add_points[ , as.character(selectors$xvar), drop = TRUE],

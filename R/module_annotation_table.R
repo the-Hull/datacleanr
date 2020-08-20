@@ -46,7 +46,10 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
     # str(df$df$data)
     # str(table_dat)
 
-    table_dat <- dframe()[dframe()$.dcrkey %in% sel_points$df$keys, ]
+    # table_dat <- dframe()[dframe()$.dcrkey %in% sel_points$df$keys, ]
+
+    # use index to subset data from original df!
+    table_dat <- dframe()[sel_points$df$keys, ]
 
     # table_dat$.annotation <-
 

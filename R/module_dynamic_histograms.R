@@ -25,7 +25,8 @@ module_ui_histograms <- function(id) {
 #' str filter condition
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
-#' @param dframe reactive df
+#' @param dframe df
+#' @param dframe_recover df, unfiltered df (faster subsetting via dcrkeys)
 #' @param selector_inputs reactive vals from above-plot controls,
 #' @param sel_points reactive, provides .dcrkey of selected points
 #'
@@ -37,6 +38,7 @@ module_server_histograms  <-
              output,
              session,
              dframe,
+             dframe_recover,
              selector_inputs,
              sel_points) {
         ns = session$ns
@@ -85,7 +87,7 @@ module_server_histograms  <-
 
         # check which vars are not numeric
         non_numeric_columns <-
-            colnames(dframe())[!vapply(dframe(),
+            colnames(dframe)[!vapply(dframe,
                                        FUN = rlang::inherits_any,
                                        FUN.VALUE = logical(1),
                                        c("numeric", "integer", "POSIXt", "POSIXct"))]
@@ -114,8 +116,9 @@ module_server_histograms  <-
 
             vars_to_plot %>%
                 lapply(one_plot,
-                       dfull = dframe(),
-                       dfilt = dframe()[dframe()$.dcrkey %nin% sel_points$df$keys,]) %>%
+                       dfull = dframe,
+                       # dfilt = dframe[dframe$.dcrkey %nin% sel_points$keys,]) %>%
+                       dfilt = dframe_recover[-sel_points$keys, ]) %>%
                 stats::setNames(rep("histoplot", NROW(vars_to_plot))) %>%
                 # arrange
                 plotly::subplot(
@@ -128,12 +131,14 @@ module_server_histograms  <-
                 ) %>%
                 plotly::config(displaylogo = FALSE,
                                modeBarButtonsToRemove = list("hoverCompareCartesian"))
+            # no webgl barplot -> slow rendering atm
+            # %>%
+                # plotly::toWebGL()
 
         })
 
         output$histmodule <- shiny::renderUI({
             shiny::tagList(
-                shiny::h4(shiny::tags$strong("Impact on distribution")),
                 plotly::plotlyOutput(ns("histogram"),
                                      height = paste0(NROW(
                                          vars_to_plot

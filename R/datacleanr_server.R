@@ -8,8 +8,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
   ns <- session$ns
 
-  old_tz <- Sys.getenv("TZ")
-  Sys.setenv(TZ = "UTC")
+  # old_tz <- Sys.getenv("TZ")
+  # Sys.setenv(TZ = "UTC")
 
 
   # suppress plotly warnings, etc.
@@ -119,6 +119,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
   # handle initialization
   dataset$.dcrkey <- seq_len(nrow(dataset))
+  dataset <- dplyr::mutate_if(dataset,
+                              .predicate = ~rlang::inherits_any(.x, "POSIXt"),
+                              .funs = ~lubridate::force_tz(.x, "UTC"))
 
 
 
@@ -177,7 +180,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     # handle actions
 
-    dframe <- apply_data_set_up(df = dataset, gvar())
+    dframe <- apply_data_set_up(df = dplyr::ungroup(dataset), gvar())
     dframe$.dcrindex <- dplyr::group_indices(dframe)
 
     print(gvar())
@@ -829,6 +832,16 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   # PLOT ADD TRACES ---------------------------------------------------------
 
 
+  max_trace <- shiny::reactive({
+    shiny::validate(shiny::need(input[["plot-tracemap"]],
+                                label = "need tracepam"))
+
+    mt <- max(as.numeric(matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)[,2]))
+
+    return(mt)
+
+  })
+
 
 
   old_keys <- shiny::reactiveVal()
@@ -838,10 +851,15 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                          source = "scatterselect",
                                          priority = "event"),
                       {
+
+
+
+
                         ok <- handle_add_traces(sp = selected_data,
-                                                dframe = datareactive,
+                                                dframe = recover_data,
                                                 ok = old_keys,
                                                 selectors = selector_vals,
+                                                max_trace = shiny::isolate(max_trace()),
                                                 source = "plot-scatterselect",
                                                 session = session)
                         old_keys(ok())
@@ -852,11 +870,14 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                          source = "scatterselect",
                                          priority = "event"),
                       {
+
+
                         ok <- handle_add_traces(sp = selected_data,
-                                                dframe = datareactive,
+                                                dframe = recover_data,
                                                 ok = old_keys,
                                                 selectors = selector_vals,
                                                 source = "plot-scatterselect",
+                                                max_trace = shiny::isolate(max_trace()),
                                                 session = session)
                         old_keys(ok())
                       })
@@ -986,17 +1007,35 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
   # PLOT HISTOGRAMS ---------------------------------------------------------
 
-  shiny::observe({
+
+  output$histogramupdatebutton <- shiny::renderUI({
+
+    # shiny::observeEvent(selected_data, {
+    shiny::validate(shiny::need(input[["selectors-startscatter"]],
+                                label = "",
+                                message = ""))
+
+    shiny::tagList(shiny::actionButton(inputId = "histogramupdate",
+                        label = "Update",
+                        icon = shiny::icon("sync-alt"),
+                        class = "btn-info"))
+
+  })
+
+  shiny::observeEvent(input$histogramupdate, {
+  # shiny::observe({
 
     if(shiny::req(action_tracking$plot_start)){
       shiny::callModule(id = "plotvars",
                         module = module_server_histograms,
-                        dframe = datareactive,
-                        selector_inputs = selector_vals,
-                        sel_points = selected_data)
+                        dframe = shiny::isolate(datareactive()),
+                        dframe_recover = recover_data(),
+                        selector_inputs = shiny::isolate(selector_vals),
+                        sel_points = shiny::isolate(selected_data$df))
     }
 
-  })
+  },
+  priority = 0)
 
 
   # // ----------------------------------------------------------------------
@@ -1041,10 +1080,10 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # annotations <-
     shiny::callModule(module_server_plot_annotation_table,
                       "dt",
-                      df = recover_data,
+                      df = recover_data(),
                       sel_points = selected_data)
 
-  })
+  }, priority = 150)
 
   # // ---------------------------------------------------------------------
 
@@ -1154,12 +1193,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   shiny::observeEvent(input$done, {
 
     # handle plotly TZ issue
-    Sys.setenv(TZ = old_tz)
+    # Sys.setenv(TZ = old_tz)
     shiny::stopApp("Done")
   })
   shiny::observeEvent(input$cancel, {
 
-    Sys.setenv(TZ = old_tz)
+    # Sys.setenv(TZ = old_tz)
     shiny::stopApp(NULL)
 
   })

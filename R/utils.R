@@ -584,25 +584,11 @@ handle_restyle_traces <- function(source_id,
     }
 
 
-
-    lims <- calc_limits_per_groups(dframe,
-                                   group_index = input_sel_rows,
-                                   xvar = xvar,
-                                   yvar = yvar,
-                                   scaling = scaling)
-
-
-
     pproxy <- plotly::plotlyProxy(source_id, session,
                                   deferUntilFlush = flush)
 
 
-    plotly::plotlyProxyInvoke(pproxy,
-                              "relayout",
-                              list(yaxis = list(range = lims$ylim),
-                                   xaxis = list(range = lims$xlim)))
-
-
+    # hide/show traces
 
     deselect_trace_id <- hide_trace_idx(
         max_groups = max_id_group_trace + 1,
@@ -629,6 +615,26 @@ handle_restyle_traces <- function(source_id,
                                   "restyle",
                                   list(visible = TRUE))
     }
+
+
+    # reset limits
+
+    lims <- calc_limits_per_groups(dframe,
+                                   group_index = input_sel_rows,
+                                   xvar = xvar,
+                                   yvar = yvar,
+                                   scaling = scaling)
+
+
+
+
+
+
+    plotly::plotlyProxyInvoke(pproxy,
+                              "relayout",
+                              list(yaxis = list(range = lims$ylim),
+                                   xaxis = list(range = lims$xlim)))
+
 
 }
 
@@ -675,10 +681,11 @@ col2plotlyrgb <- function(colorname){
 #' @param dframe plot data
 #' @param ok reactive, old keys
 #' @param selectors reactive input selectors
+#' @param max_trace numeric, previous max trace id
 #' @param source plotly source
 #' @param session active session
 #'
-handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect", session){
+handle_add_traces <- function(sp, dframe, ok, selectors, max_trace, source = "scatterselect", session){
 
 
     is_spatial_plot <- identical(c(as.character(selectors$xvar),
@@ -725,7 +732,8 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
 
             last_sel_keys <- as.integer(sp$df$keys[sp$df$selection_count == max_sel_count])
             # grab points
-            add_points <- dframe()[dframe()$.dcrkey %in% last_sel_keys, ]
+            # add_points <- dframe()[dframe()$.dcrkey %in% last_sel_keys, ]
+            add_points <- dframe()[last_sel_keys, ]
             # handle plotly - only adds trace for array > 2L
             if(nrow(add_points) == 1){
                 add_points <- rbind(add_points, add_points)
@@ -763,10 +771,9 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                             type = "scattermapbox",
                             mode = "markers",
                             name = "outlier",
+                            opacity = 1,
                             marker = list(
                                 color = "red",
-                                line = list(color = "red",
-                                            width = 2),
                                 opacity = 1),
                             unselected = list(marker = list(opacity = 1)),
                             showlegend = list(TRUE)
@@ -785,6 +792,7 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                         size = z,
                         # type = "scattergl",
                         # type = ifelse(is_spatial_plot,"scattermapbox", "scattergl"),
+                        type = "scattergl",
                         mode = "markers",
                         # mode = ifelse(is_spatial_plot,"scattermapbox", "markers"),
                         name = "outlier",
@@ -792,13 +800,13 @@ handle_add_traces <- function(sp, dframe, ok, selectors, source = "scatterselect
                         text = add_points[ , ".dcrkey", drop = TRUE],
                         legendgroup = "out",
                         marker = list(
-                            color = "darkgray",
-                            line = list(color = "red",
-                                        width = 2),
+                            color = "red",
                             opacity = 1),
                         unselected = list(marker = list(opacity = 1)),
+                        selected = list(marker = list(opacity = 1)),
                         showlegend = TRUE
-                    )
+                    ),
+                max_trace+1
                 )
             }
             # update the old keys

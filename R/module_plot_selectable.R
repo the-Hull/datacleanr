@@ -139,13 +139,13 @@ module_server_plot_selectable <- function(input, output, session, selector_input
           print("redrawing")
           # pnew <- plot_data %>%
           pnew <- { if(is_spatial_plot){
-              plotly::plot_mapbox(data = plot_data,
-                                  source = "scatterselect")
-            } else {
-              plotly::plot_ly(data = plot_data,
-                              source = "scatterselect")
-            }
-            } %>%
+            plotly::plot_mapbox(data = plot_data,
+                                source = "scatterselect")
+          } else {
+            plotly::plot_ly(data = plot_data,
+                            source = "scatterselect")
+          }
+          } %>%
             plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar),
                                 y = ~ !!shiny::isolate(selector_inputs$yvar),
                                 size = eval(size_expression),
@@ -160,8 +160,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                 marker = list(opacity = opac
                                               # size = 7,
                                               # line = list(color = plotly::toRGB("white", opac),
-                                                          # width = 1)
-                                              ),
+                                              # width = 1)
+                                ),
                                 unselected = list(marker = list(opacity = opac))) %>%
             plotly::layout(showlegend = TRUE,
                            dragmode = "lasso",
@@ -174,7 +174,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                yanchor = "top",
                                pad = list('r'= 0, 't'= 10, 'b' = 10),
                                x = 0.5,
-                               y = 1.15,
+                               y = 1.2,
                                buttons = list(
 
                                  list(method = "restyle",
@@ -182,21 +182,21 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                       args2 = list("mode", "lines+markers"),
                                       label = "Toggle Lines"))
 
-                                 # list(method = "restyle",
-                                 #      args = list("mode", "lines+markers"),
-                                 #      label = "Add Lines")))
-                           ))
+                               # list(method = "restyle",
+                               #      args = list("mode", "lines+markers"),
+                               #      label = "Add Lines")))
+                             ))
             )  %>%
             plotly::config(displaylogo = FALSE,
                            modeBarButtonsToRemove = list("hoverCompareCartesian")) %>%
-
             # plotly::event_register(event = "plotly_doubleclick") %>%
             plotly::event_register(event = "plotly_afterplot") %>%
             plotly::event_register(event = "plotly_deselect") %>%
             plotly::event_register(event = "plotly_click") %>%
             plotly::event_register(event = "plotly_selected") %>%
             htmlwidgets::onRender(jsfull, data = list(x = "tracemap",
-                                                      ns = sessionval))
+                                                      ns = sessionval)) %>%
+            plotly::toWebGL()
 
         })
       )
@@ -217,11 +217,11 @@ module_server_plot_selectable <- function(input, output, session, selector_input
         rlang::quo_squash(
           rlang::quo({
             purrr::reduce(.x = split(add_data, f = add_data$selection_count),
-                            .f = function(oplot, spdf) {
+                          .f = function(oplot, spdf) {
 
-                              plotly::add_trace(oplot,
-                                                data = spdf,
-                                                x = ~ !!shiny::isolate(selector_inputs$xvar),
+                            plotly::add_trace(oplot,
+                                              data = spdf,
+                                              x = ~ !!shiny::isolate(selector_inputs$xvar),
                                                 y = ~ !!shiny::isolate(selector_inputs$yvar),
                                                 size = eval(size_expression),
                                                 name = "outlier",

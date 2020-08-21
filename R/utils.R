@@ -152,7 +152,8 @@ checked_filter <- function(df, statements, apply_grouped){
 
             filtered_df <- do.call(rbind,
                                    by(df,
-                                      as.factor(dplyr::group_indices(df)),
+                                      # as.factor(dplyr::group_indices(df)),
+                                      as.factor(df$.dcrindex),
                                       function(x) base::subset(x,
                                                                eval(str2expression(cond_string_full)))
                                    )
@@ -223,7 +224,7 @@ split_groups <- function(dframe){
 
     outlist <- base::split(
         dframe,
-        f = as.factor(dplyr::group_indices(dframe))
+        f = as.factor(dframe$.dcrindex)
     )
 
     return(outlist)
@@ -269,7 +270,6 @@ filter_scoped <- function(dframe, statement, scope_at){
 
     } else if(isTRUE(statement_check)){
 
-        message("statement passed")
 
         if(rlang::is_missing(scope_at)){
             scope_at <- NULL
@@ -307,7 +307,6 @@ filter_scoped <- function(dframe, statement, scope_at){
             )
             filtered_df <- eval(str2expression(filt_expr))
         } else {
-            print("don't know how we got here")
         }
         return(list(succeeded = statement_check,
                     filtered_df = filtered_df,
@@ -325,7 +324,6 @@ filter_scoped_iterate <- function(dframe, condition_df){
                          check_individual_statement(df = dframe,
                                                     statement = x))
 
-    print(checks)
 
     if(any(checks)){
 
@@ -586,7 +584,6 @@ handle_restyle_traces <- function(source_id,
     }
 
 
-    print("proxy came first")
 
     lims <- calc_limits_per_groups(dframe,
                                    group_index = input_sel_rows,
@@ -614,7 +611,6 @@ handle_restyle_traces <- function(source_id,
 
     if(!is.null(deselect_trace_id)){
 
-        print(as.list(deselect_trace_id))
 
         plotly::plotlyProxyInvoke(pproxy,
                                   "restyle",
@@ -893,8 +889,53 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
             dframe)$.rows[group_index])
 
 
-    xlim <- range(dframe[group_rows, xvar]) * c(1 - scaling, 1 + scaling)
-    ylim <- range(dframe[group_rows, yvar]) * c(1 - scaling, 1 + scaling)
+
+
+    if(any(rlang::inherits_any(dframe[, xvar, drop = TRUE], "POSIXct"),
+           rlang::inherits_any(dframe[, xvar, drop = TRUE], "POSIXct"))){
+
+        posix_scale <- function(timestamp){
+
+            if(scaling == 0){
+                scaling <- 0.01
+            }
+
+            total_range <-  as.numeric(range(timestamp, na.rm = TRUE))
+            # offset <- (diff(total_range)) * c(-1,1) + scaling
+            offset <- (diff(total_range) * scaling) * c(-1,1)
+
+
+            lim <- range(timestamp, na.rm = TRUE) +
+                offset
+            return(lim)
+
+        }
+
+        if(rlang::inherits_any(dframe[, xvar, drop = TRUE], "POSIXct")){
+            xlim <- posix_scale(dframe[group_rows, xvar, drop = TRUE])
+        }
+        if(rlang::inherits_any(dframe[, yvar, drop = TRUE], "POSIXct")){
+            ylim <- posix_scale(dframe[group_rows, yvar, drop = TRUE])
+        }
+
+
+
+    }
+
+    if(!exists("xlim")){
+    xlim <- range(dframe[group_rows, xvar, drop = TRUE],
+                  na.rm = TRUE) *
+        c(1 - scaling, 1 + scaling)
+    }
+
+
+    if(!exists("ylim")){
+
+
+    ylim <- range(dframe[group_rows, yvar, drop = TRUE],
+                  na.rm = TRUE) *
+        c(1 - scaling, 1 + scaling)
+    }
 
     return(list(xlim = xlim, ylim = ylim))
 

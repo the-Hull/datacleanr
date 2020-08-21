@@ -82,16 +82,36 @@ module_server_histograms  <-
             selector_inputs[grepl("var$", names(selector_inputs))]
         all_vars <- vapply(all_vars, as.character, character(1))
 
+
         # check which vars are not numeric
         non_numeric_columns <-
-            colnames(dframe())[!vapply(dframe(), is.numeric, logical(1))]
+            colnames(dframe())[!vapply(dframe(),
+                                       FUN = rlang::inherits_any,
+                                       FUN.VALUE = logical(1),
+                                       c("numeric", "integer", "POSIXt", "POSIXct"))]
 
         # drop empty var name entries and grab only
         # those representing numeric columns
         vars_to_plot <- setdiff(drop_empty(all_vars),
                                 non_numeric_columns)
 
+
+
+
+        if(length(vars_to_plot) == 0){
+
+            output$histogram <- plotly::renderPlotly({
+
+                NULL
+            })
+        } else{
+
+
+
+
         output$histogram <- plotly::renderPlotly({
+
+
             vars_to_plot %>%
                 lapply(one_plot,
                        dfull = dframe(),
@@ -123,5 +143,5 @@ module_server_histograms  <-
 
         })
 
-
+        }
     }

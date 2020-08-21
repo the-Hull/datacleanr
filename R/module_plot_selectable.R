@@ -157,14 +157,35 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                 customdata = ~.dcrkey,
                                 text = ~.dcrkey,
                                 showlegend = TRUE,
-                                marker = list(opacity = opac,
+                                marker = list(opacity = opac
                                               # size = 7,
-                                              line = list(color = plotly::toRGB("white", opac),
-                                                          width = 1)),
+                                              # line = list(color = plotly::toRGB("white", opac),
+                                                          # width = 1)
+                                              ),
                                 unselected = list(marker = list(opacity = opac))) %>%
             plotly::layout(showlegend = TRUE,
                            dragmode = "lasso",
-                           mapbox = geo_def
+                           mapbox = geo_def,
+                           updatemenus = list(
+                             list(
+                               type = "buttons",
+                               direction = "right",
+                               xanchor = 'center',
+                               yanchor = "top",
+                               pad = list('r'= 0, 't'= 10, 'b' = 10),
+                               x = 0.5,
+                               y = 1.15,
+                               buttons = list(
+
+                                 list(method = "restyle",
+                                      args = list("mode", "markers"),
+                                      args2 = list("mode", "lines+markers"),
+                                      label = "Toggle Lines"))
+
+                                 # list(method = "restyle",
+                                 #      args = list("mode", "lines+markers"),
+                                 #      label = "Add Lines")))
+                           ))
             )  %>%
             plotly::config(displaylogo = FALSE,
                            modeBarButtonsToRemove = list("hoverCompareCartesian")) %>%
@@ -215,10 +236,11 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                                     list(color = "red",
                                                          opacity = 1)
                                                   } else {
-                                                    list(color = "darkgray",
-                                                         opacity = 1,
-                                                         line = list(color = "red",
-                                                                     width = 2))
+                                                    list(color = "red"
+                                                         # opacity = 1
+                                                         # line = list(color = "red",
+                                                                     # width = 2)
+                                                    )
                                                   },
                               # }
                           # ,

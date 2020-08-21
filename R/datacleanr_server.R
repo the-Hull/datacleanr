@@ -243,6 +243,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
   shiny::observeEvent(input$addbutton, {
 
+    # shiny::req(input$gobutton > 0)
+
+    shiny::validate(shiny::need(input$gobutton > 0, label = "Press go first!"))
+
+
     # EACH TIME THE USER CLICKS, ADD 1 TO BUTTON VALUE
     btn$value <- btn$value + 1
 
@@ -282,6 +287,10 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # REMOVE VARIABLES
 
     shiny::observeEvent(input$removebutton, {
+
+      # shiny::req(input$gobutton)
+      shiny::validate(shiny::need(input$gobutton > 0, label = "Press go first!"))
+
 
       # REMOVE LAST LINE FROM DATAFRAME
       add.filter$df <- add.filter$df[-btn$value, , drop = FALSE]

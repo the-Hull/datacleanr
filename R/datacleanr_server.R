@@ -180,6 +180,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     dframe <- apply_data_set_up(df = dataset, gvar())
     dframe$.dcrindex <- dplyr::group_indices(dframe)
 
+    print(gvar())
+
     datareactive(dframe)
     recover_data(dframe)
 
@@ -259,7 +261,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # isolate prevents 'apply filter' from re-firing
     shiny::callModule(module_server_filter_str,
                       btn.tmp,
-                      dframe = shiny::isolate(datareactive()))
+                      dframe = datareactive())
 
     # INSERT MODULE UI
     shiny::insertUI(
@@ -459,10 +461,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
                                    print(paste("btn val incr", i))
                                    print(paste("groups are", unique(dplyr::group_indices(datareactive()))))
+                                   print(paste("groups are", unique(datareactive()$.dcrindex)))
 
                                    shinyWidgets::updatePickerInput(session = session,
                                                                    inputId = shiny::NS(i, "groupdropdown"),
-                                                                   choices = unique(dplyr::group_indices(datareactive()))
+                                                                   choices = unique(datareactive()$.dcrindex)
                                    )}
                           )
 

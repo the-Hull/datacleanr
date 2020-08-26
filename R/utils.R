@@ -510,19 +510,80 @@ handle_outlier_selection <- function(sel_data_old, sel_data_new){
                 new <- new[!{new$keys %in% sel_data_old$keys}, ]
             }
 
-            sel_data_old <- rbind(sel_data_old, new)
+            sel_data_out <- rbind(sel_data_old, new)
 
         } else {
             new <- data.frame(keys = as.integer(sel_data_new$customdata),
                               selection_count = 1,
                               .annotation = "",
                               stringsAsFactors = FALSE)
-            sel_data_old <- new
+            sel_data_out <- new
         }
 
     }
 
-    return(sel_data_old)
+    return(sel_data_out)
+}
+
+
+
+
+
+
+
+
+#' Handle selection of outliers (with select - unselect capacity)
+#'
+#' @param sel_old_df data.frame of selection info
+#' @param sel_new data.frame, event data from plotly, must have column \code{customdata}
+#'
+#' @return updated selection data frame
+handle_sel_outliers <- function(sel_old_df, sel_new){
+
+
+
+    if (!is.null(sel_new)){
+
+        new_df <- data.frame(keys = as.integer(sel_new$customdata),
+                             selection_count = max(sel_old_df$selection_count) + 1,
+                             .annotation = "",
+                             stringsAsFactors = FALSE)
+
+
+
+        # check which points may be duplicates in selection
+        if(nrow(sel_old_df) > 0 &&
+           NROW(intersect(sel_old_df$keys, new_df$keys)) > 0){
+
+
+            sel_out <- rbind(sel_old_df, new_df)
+
+            dup_idcs_lgl <- duplicated(sel_out[ ,"keys"]) |
+                duplicated(sel_out[ ,"keys"], fromLast = TRUE)
+
+
+            sel_out <- sel_out[!dup_idcs_lgl, ]
+
+            # no duplicates
+        } else {
+            sel_out <- rbind(sel_old_df, new_df)
+        }
+        # /    if (!is.null(sel_new))
+    } else {
+        sel_out <- sel_old_df
+    }
+
+
+    # reset selection count if necessary (i.e. if only one count remains)
+
+    if(length(unique(sel_out$selection_count)) == 1){
+
+        sel_out$selection_count <- 1
+
+    }
+
+
+    return(sel_out)
 }
 
 

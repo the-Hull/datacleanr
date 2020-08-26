@@ -4,10 +4,12 @@
 \alias{module_server_filter_str}
 \title{Server Module: box for str filter condition}
 \usage{
-module_server_filter_str(input, output, session)
+module_server_filter_str(input, output, session, dframe)
 }
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
+
+\item{reactive, }{data frame passed into dcr app}
 }
 \description{
 Server Module: box for str filter condition

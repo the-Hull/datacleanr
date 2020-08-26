@@ -4,7 +4,7 @@
 \alias{module_server_group_selector_table}
 \title{Server Module: box for str filter condition}
 \usage{
-module_server_group_selector_table(input, output, session, df, df_label)
+module_server_group_selector_table(input, output, session, df, df_label, ...)
 }
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
@@ -12,6 +12,8 @@ module_server_group_selector_table(input, output, session, df, df_label)
 \item{df}{data frame (either from overview or filtering tab)}
 
 \item{df_label}{character, original input data frame}
+
+\item{...}{arguments passed to \code{datatable()}}
 }
 \description{
 Server Module: box for str filter condition

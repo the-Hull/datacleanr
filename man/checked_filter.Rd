@@ -4,12 +4,14 @@
 \alias{checked_filter}
 \title{Filter a data frame with series of statements}
 \usage{
-checked_filter(df, statements)
+checked_filter(df, statements, apply_grouped)
 }
 \arguments{
 \item{df}{data frame / tibble to be filtered}
 
 \item{statements}{character vector of individual conditional statements; need not evaluate successfully individually}
+
+\item{apply_grouped}{logical, should filter be applied to each group?}
 }
 \value{
 list, logical vector of success and failures, and

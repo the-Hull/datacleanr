@@ -10,6 +10,7 @@ module_server_histograms(
   output,
   session,
   dframe,
+  dframe_recover,
   selector_inputs,
   sel_points
 )
@@ -17,7 +18,9 @@ module_server_histograms(
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
-\item{dframe}{reactive df}
+\item{dframe}{df}
+
+\item{dframe_recover}{df, unfiltered df (faster subsetting via dcrkeys)}
 
 \item{selector_inputs}{reactive vals from above-plot controls,}
 

@@ -656,8 +656,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                      source = "scatterselect",
                                      priority = "event")
 
-      selected_data$df <- handle_outlier_selection(sel_data_old = selected_data$df,
-                                                   sel_data_new = selected)
+
+      selected_data$df <- handle_sel_outliers(sel_old_df = selected_data$df,
+                                                   sel_new = selected)
+
+      print("Selection is:")
+      print(selected_data$df)
 
 
     })
@@ -674,8 +678,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                     source = "scatterselect",
                                     priority = "event")
 
-      selected_data$df <- handle_outlier_selection(sel_data_old = selected_data$df,
-                                                   sel_data_new = clicked)
+      selected_data$df <- handle_sel_outliers(sel_old_df = selected_data$df,
+                                                   sel_new = clicked)
 
 
     })
@@ -855,11 +859,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
 
-                        ok <- handle_add_traces(sp = selected_data,
+
+                        ok <- handle_add_outlier_trace(sp = selected_data,
                                                 dframe = recover_data,
                                                 ok = old_keys,
                                                 selectors = selector_vals,
-                                                max_trace = shiny::isolate(max_trace()),
+                                                trace_map = shiny::isolate(matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)),
                                                 source = "plot-scatterselect",
                                                 session = session)
                         old_keys(ok())
@@ -872,12 +877,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                       {
 
 
-                        ok <- handle_add_traces(sp = selected_data,
+                        ok <- handle_add_outlier_trace(sp = selected_data,
                                                 dframe = recover_data,
                                                 ok = old_keys,
                                                 selectors = selector_vals,
                                                 source = "plot-scatterselect",
-                                                max_trace = shiny::isolate(max_trace()),
+                                                trace_map = shiny::isolate(matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)),
                                                 session = session)
                         old_keys(ok())
                       })
@@ -963,7 +968,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
       traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
       indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
-      print(traces)
 
 
       if(length(indices)>0){

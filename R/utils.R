@@ -542,10 +542,17 @@ handle_sel_outliers <- function(sel_old_df, sel_new){
 
 
 
-    if (!is.null(sel_new)){
+
+
+
+
+    if (NROW(sel_new) > 0){
+
 
         new_df <- data.frame(keys = as.integer(sel_new$customdata),
-                             selection_count = max(sel_old_df$selection_count) + 1,
+                             selection_count = ifelse(nrow(sel_old_df) > 0,
+                                                      max(sel_old_df$selection_count) + 1,
+                                                      1),
                              .annotation = "",
                              stringsAsFactors = FALSE)
 
@@ -564,6 +571,14 @@ handle_sel_outliers <- function(sel_old_df, sel_new){
 
             sel_out <- sel_out[!dup_idcs_lgl, ]
 
+
+            if(length(unique(sel_out$selection_count)) == 1){
+
+                print("single selection left")
+                sel_out$selection_count <- 1
+
+            }
+
             # no duplicates
         } else {
             sel_out <- rbind(sel_old_df, new_df)
@@ -576,11 +591,8 @@ handle_sel_outliers <- function(sel_old_df, sel_new){
 
     # reset selection count if necessary (i.e. if only one count remains)
 
-    if(length(unique(sel_out$selection_count)) == 1){
 
-        sel_out$selection_count <- 1
-
-    }
+    print("COMPLETED!!!")
 
 
     return(sel_out)
@@ -888,7 +900,207 @@ handle_add_traces <- function(sp, dframe, ok, selectors, max_trace, source = "sc
 
 
 }
+#' Handle Add traces
+#'
+#' @param sp selected points
+#' @param dframe plot data
+#' @param ok reactive, old keys
+#' @param selectors reactive input selectors
+#' @param trace_map numeric, previous max trace id
+#' @param source plotly source
+#' @param session active session
+#'
+handle_add_outlier_trace <- function(sp,
+                                     dframe,
+                                     ok,
+                                     selectors,
+                                     trace_map,
+                                     source = "scatterselect",
+                                     session){
 
+
+    outidx <- as.numeric(trace_map[which(trace_map[ ,1] == "outlier"), 2])
+
+    # handle case when removing all points from current trace (i.e. going back to normal)
+    if(NROW(outidx) > 0 & nrow(sp$df)==0){
+        plotly::plotlyProxy(source, session) %>%
+            plotly::plotlyProxyInvoke(
+                "deleteTraces",
+                outidx)
+    }
+
+
+    # handle spatial config
+    is_spatial_plot <- identical(c(as.character(selectors$xvar),
+                                   as.character(selectors$yvar)),
+                                 c("lon", "lat"))
+
+    if(is_spatial_plot){
+        geo_def <-  list(style = "light")
+    } else {
+        geo_def <- list()
+    }
+
+
+
+
+
+    # handle case when points exist in selection
+    if(length(sp$df$keys) > 0){
+
+            add_points <- dframe()[sp$df$keys, ]
+            # handle plotly - only adds trace for array > 2L
+            if(nrow(add_points) == 1){
+                add_points <- rbind(add_points, add_points)
+            }
+
+            print("---- adding traces -----")
+
+            zvar_toggle <- nchar(selectors$zvar)>0
+            if(zvar_toggle){
+                z <- add_points[ , as.character(selectors$zvar), drop = TRUE]
+            } else {
+                z <- NULL
+            }
+
+            if(is_spatial_plot){
+
+
+                if(length(outidx) == 0){
+
+                    plotly::plotlyProxy(source, session) %>%
+                        plotly::plotlyProxyInvoke(
+                            "addTraces",
+                            list(
+                                lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
+                                lat = add_points[ , as.character(selectors$yvar), drop = TRUE],
+                                customdata = add_points[ , ".dcrkey", drop = TRUE],
+                                text = add_points[ , ".dcrkey", drop = TRUE],
+                                # legendgroup = "out",
+                                size = z,
+                                # sizes = c(20,45),
+                                type = "scattermapbox",
+                                mode = "markers",
+                                name = "outlier",
+                                opacity = 1,
+                                marker = list(
+                                    color = "red",
+                                    opacity = 1),
+                                unselected = list(marker = list(opacity = 1)),
+                                showlegend = list(TRUE)))
+                    } else if(length(outidx) > 0){
+
+                            plotly::plotlyProxy(source, session) %>%
+                                plotly::plotlyProxyInvoke(
+                                    "deleteTraces",
+                                    outidx
+                                )
+
+                            plotly::plotlyProxy(source, session) %>%
+                                plotly::plotlyProxyInvoke(
+                                    "addTraces",
+                                    list(
+                                        lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
+                                        lat = add_points[ , as.character(selectors$yvar), drop = TRUE],
+                                        customdata = add_points[ , ".dcrkey", drop = TRUE],
+                                        text = add_points[ , ".dcrkey", drop = TRUE],
+                                        # legendgroup = "out",
+                                        size = z,
+                                        # sizes = c(20,45),
+                                        type = "scattermapbox",
+                                        mode = "markers",
+                                        name = "outlier",
+                                        opacity = 1,
+                                        marker = list(
+                                            color = "red",
+                                            opacity = 1),
+                                        unselected = list(marker = list(opacity = 1)),
+                                        showlegend = list(TRUE)
+                                    ))
+
+
+
+                        }
+
+            } else {
+
+
+                if(length(outidx) == 0){
+
+                    print("NO OUTLIER TRACE YET")
+
+                    plotly::plotlyProxy(source, session) %>%
+                        plotly::plotlyProxyInvoke(
+                            "addTraces",
+                            list(
+                                x = add_points[ , as.character(selectors$xvar), drop = TRUE],
+                                y = add_points[ , as.character(selectors$yvar), drop = TRUE],
+                                size = z,
+                                # type = "scattergl",
+                                # type = ifelse(is_spatial_plot,"scattermapbox", "scattergl"),
+                                type = "scattergl",
+                                mode = "markers",
+                                # mode = ifelse(is_spatial_plot,"scattermapbox", "markers"),
+                                name = "outlier",
+                                customdata = add_points[ , ".dcrkey", drop = TRUE],
+                                text = add_points[ , ".dcrkey", drop = TRUE],
+                                # legendgroup = "out",
+                                marker = list(
+                                    color = "red",
+                                    opacity = 1),
+                                unselected = list(marker = list(opacity = 1)),
+                                selected = list(marker = list(opacity = 1)),
+                                showlegend = TRUE
+                            ),
+                            max(as.numeric(trace_map[ ,2]))+1
+
+
+                        )} else if(length(outidx) > 0){
+
+
+                            print("OUTLIER TRACE EXISTING")
+
+
+                            plotly::plotlyProxy(source, session) %>%
+                                plotly::plotlyProxyInvoke(
+                                    "deleteTraces",
+                                    outidx
+                                )
+
+
+                            plotly::plotlyProxy(source, session) %>%
+                                plotly::plotlyProxyInvoke(
+                                    "addTraces",
+                                    list(
+                                        x = add_points[ , as.character(selectors$xvar), drop = TRUE],
+                                        y = add_points[ , as.character(selectors$yvar), drop = TRUE],
+                                        size = z,
+                                        # type = "scattergl",
+                                        # type = ifelse(is_spatial_plot,"scattermapbox", "scattergl"),
+                                        type = "scattergl",
+                                        mode = "markers",
+                                        # mode = ifelse(is_spatial_plot,"scattermapbox", "markers"),
+                                        name = "outlier",
+                                        customdata = add_points[ , ".dcrkey", drop = TRUE],
+                                        text = add_points[ , ".dcrkey", drop = TRUE],
+                                        # legendgroup = "out",
+                                        marker = list(
+                                            color = "red",
+                                            opacity = 1),
+                                        unselected = list(marker = list(opacity = 1)),
+                                        selected = list(marker = list(opacity = 1)),
+                                        showlegend = TRUE
+                                    ),
+                                    outidx)
+                        }
+            }
+            # update the old keys
+            ok(sp$df$keys)
+
+    }
+
+    return(ok)
+}
 
 # helpers ------------
 

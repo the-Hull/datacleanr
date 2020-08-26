@@ -58,8 +58,6 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
                                       by = c(".dcrkey" = "keys"))
     } else {
 
-        print(grep("keys",
-                   colnames(sel_points$df)))
         table_dat <- cbind(dplyr::ungroup(table_dat[0, ]),
                            sel_points$df[0, -grep("keys",
                                                   colnames(sel_points$df)

@@ -74,7 +74,7 @@ test_that("recursive filter gives same result as manual, repeated filter (ungrou
       "Petal.Length > quantile(Petal.Length, 0.1)"),
     scope_at = list(NULL, NULL, NULL))
 
-    fdf <- filter_scoped_iterate(iris, condition_df = cdf)
+    fdf <- filter_scoped_df(iris, condition_df = cdf)
 
     dplyr_fdf <- dplyr::filter(iris, Sepal.Width > quantile(Sepal.Width, 0.1))
     dplyr_fdf <- dplyr::filter(dplyr_fdf, Petal.Width > quantile(Petal.Width, 0.1))
@@ -96,16 +96,16 @@ test_that("recursive filter gives same result as manual, repeated filter (groupe
       "Petal.Length > quantile(Petal.Length, 0.8)"),
     scope_at = list(NULL, NULL, c(1,2)))
 
-  fdf <- filter_scoped_iterate(dplyr::group_by(iris, Species), condition_df = cdf)
+  fdf <- filter_scoped_df(dplyr::group_by(iris, Species), condition_df = cdf)
 
   dplyr_fdf <- dplyr::filter(iris, Sepal.Width > quantile(Sepal.Width, 0.1))
   dplyr_fdf <- dplyr::filter(dplyr_fdf, Petal.Width > quantile(Petal.Width, 0.1))
 
 
   dplyr_fdf <- purrr::map_at(split_groups(dplyr::group_by(dplyr_fdf, Species)),
-                .at = c(1,2),
-                .f = ~dplyr::filter(.x, Petal.Length > quantile(Petal.Length, 0.8))) %>%
-                  dplyr::bind_rows()
+                             .at = c(1,2),
+                             .f = ~dplyr::filter(.x, Petal.Length > quantile(Petal.Length, 0.8))) %>%
+    dplyr::bind_rows()
 
 
   expect_equivalent(fdf,dplyr_fdf)

@@ -224,7 +224,8 @@ split_groups <- function(dframe){
 
     outlist <- base::split(
         dframe,
-        f = as.factor(dframe$.dcrindex)
+        # f = as.factor(dframe$.dcrindex)
+        f = as.factor(dplyr::group_indices(dframe))
     )
 
     return(outlist)
@@ -317,7 +318,7 @@ filter_scoped <- function(dframe, statement, scope_at){
 
 
 
-filter_scoped_iterate <- function(dframe, condition_df){
+filter_scoped_df <- function(dframe, condition_df){
 
     checks <- sapply(condition_df[ , 1, drop = TRUE],
                      function(x)

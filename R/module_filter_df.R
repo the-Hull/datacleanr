@@ -45,7 +45,7 @@ module_server_df_filter <- function(input, output, session, dframe, condition_df
 
 
     if(any(states) ){
-    out <- filter_scoped_iterate(dframe = dframe,
+    out <- filter_scoped_df(dframe = dframe,
                                  condition_df = condition_df)
 
 
@@ -97,12 +97,12 @@ module_server_df_filter <- function(input, output, session, dframe, condition_df
     if(any(states)){
         # print("this yeah.")
         # print(out$filtered_df)
-        return(out)
+        return(list(df = out, statements_lgl = states))
     } else if(all(!states)){
         # print("heeere")
         # print(dframe)
 
-        return(dframe)
+        return(list(df = dframe, statements_lgl = NULL))
     }
 }
 

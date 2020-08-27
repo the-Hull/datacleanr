@@ -264,7 +264,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # isolate prevents 'apply filter' from re-firing
     shiny::callModule(module_server_filter_str,
                       btn.tmp,
-                      dframe = datareactive())
+                      dframe = shiny::isolate(datareactive()))
 
     # INSERT MODULE UI
     shiny::insertUI(
@@ -340,12 +340,14 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
 
-    df <- shiny::callModule(module = module_server_df_filter,
+    filt_out <- shiny::callModule(module = module_server_df_filter,
                             id = "check",
                             dframe = shiny::isolate(recover_data()),
                             condition_df = add.filter$df)
 
-    shiny::isolate(tmp_filter(df))
+    shiny::isolate(tmp_filter(filt_out))
+
+
 
   })
 
@@ -365,7 +367,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     shiny::validate(shiny::need(input$gobutton,
                                 label = "StartButton"))
 
-    datareactive(shiny::isolate(tmp_filter()))
+    shiny::isolate(datareactive(shiny::isolate(tmp_filter()$df)))
 
     # df <- try({checked_filter(df = recover_data(),
     #                           statements = add.filter$df$filter,
@@ -1125,18 +1127,29 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
   code_out <- shiny::reactiveVal()
 
+  # shiny::observeEvent({
+    # input$apply_filter
+    # selected_data$df
+    # },
+    # {
   shiny::observe({
 
     shiny::req(datareactive())
 
-    # code_out(
-    #     shiny::callModule(module_server_extract_code,
-    #                       id = "extract",
-    #                       df_label = df_name,
-    #                       filter_strings = filter_strings,
-    #                       sel_points = selected_data,
-    #                       overwrite = input$overwrite)
-    # )
+    if(!is.null(input$apply_filter) | nrow(selected_data$df) > 0 ){
+
+
+    code_out(
+        shiny::callModule(module_server_extract_code,
+                          id = "extract",
+                          df_label = df_name,
+                          gvar = gvar(),
+                          filter_df = add.filter$df,
+                          statements = tmp_filter()$statements_lgl,
+                          sel_points = selected_data$df,
+                          overwrite = input$overwrite)
+    )
+    }
 
   })
 

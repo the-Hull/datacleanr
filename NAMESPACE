@@ -2,7 +2,5 @@
 
 export("%>%")
 export(dcr_app)
-export(filter_scoped)
-export(hide_trace_idx)
 importFrom(magrittr,"%>%")
 importFrom(rlang,.data)

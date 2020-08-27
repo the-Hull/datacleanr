@@ -9,7 +9,7 @@ module_server_filter_str(input, output, session, dframe)
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
-\item{reactive, }{data frame passed into dcr app}
+\item{dframe, }{data frame passed into dcr app}
 }
 \description{
 Server Module: box for str filter condition

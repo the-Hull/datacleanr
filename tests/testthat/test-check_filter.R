@@ -31,12 +31,14 @@ test_that("grouped filtering gives same result as dplyr::filter on grouped df", 
 
 
 
-  fdf <- checked_filter(dplyr::group_by(iris, Species),
+  fdf <- checked_filter(dplyr::group_by(iris, Species) %>%
+                          dplyr::mutate(.dcrindex = dplyr::cur_group_id()),
                         "Sepal.Width > quantile(Sepal.Width, 0.2)",
                         apply_grouped = TRUE)$filtered_df
 
   dplyr_fdf <- dplyr::group_by(iris, Species) %>%
-    dplyr::filter(Sepal.Width > quantile(Sepal.Width, 0.2))
+    dplyr::filter(Sepal.Width > quantile(Sepal.Width, 0.2)) %>%
+    dplyr::mutate(.dcrindex = dplyr::cur_group_id())
 
 
 

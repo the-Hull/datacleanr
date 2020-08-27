@@ -11,9 +11,6 @@ hide_trace_idx(max_groups, selected_groups)
 
 \item{selected_groups}{groups highlighted in grouptable}
 }
-\value{
-
-}
 \description{
 Provide traces ids to set to invisible
 }

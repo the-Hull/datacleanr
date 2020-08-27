@@ -6,12 +6,6 @@
 \usage{
 split_groups(dframe)
 }
-\arguments{
-\item{allinputs}{list of all currently active inputs}
-}
-\value{
-list with id of last filter (character), and number of last filter (numeric)
-}
 \description{
 Identify filter inputs by id and label
 }

@@ -203,9 +203,9 @@ checked_filter <- function(df, statements, apply_grouped){
 
 #' Identify filter inputs by id and label
 #'
-#' @param allinputs list of all currently active inputs
+# #' @param allinputs list of all currently active inputs
 #'
-#' @return list with id of last filter (character), and number of last filter (numeric)
+# #' @return list with id of last filter (character), and number of last filter (numeric)
 #'
 # check_active_filters <- function(allinputs){
 #
@@ -220,12 +220,17 @@ checked_filter <- function(df, statements, apply_grouped){
 #     filter_numbers <- gsub(pattern = "[^0-9]",
 
 
+#' Split data.frame/tibble based on grouping
+#'
+#' @param dframe data.frame
+#'
+#' @return list of data frames
 split_groups <- function(dframe){
 
     outlist <- base::split(
         dframe,
-        # f = as.factor(dframe$.dcrindex)
-        f = as.factor(dplyr::group_indices(dframe))
+        f = as.factor(dframe$.dcrindex)
+        # f = as.factor(dplyr::cur_group_id(dframe))
     )
 
     return(outlist)
@@ -240,9 +245,8 @@ split_groups <- function(dframe){
 #' @param scope_at numeric, group indices to apply filter statements to
 #'
 #' @return List, containing logical item stating \code{success}, and if \code{TRUE}
-#' additional items \coce{filtered_df} and the respective \code{expression_string} (character) for generating
+#' additional items \code{filtered_df} and the respective \code{expression_string} (character) for generating
 #' the data.frame \ tibble
-#' @export
 filter_scoped <- function(dframe, statement, scope_at){
 
 
@@ -606,11 +610,6 @@ handle_sel_outliers <- function(sel_old_df, sel_new){
 #'
 #' @details Provides the indices (JS notation, starting at 0) for indices
 #' that are set to \code{visible = 'legendonly'} through \code{plotly.restyle}
-#'
-#' @return
-#' @export
-#'
-#' @examples
 hide_trace_idx <- function(max_groups, selected_groups){
 
     all_row_ids <- seq_len(max_groups)
@@ -759,6 +758,7 @@ col2plotlyrgb <- function(colorname){
 #'
 handle_add_traces <- function(sp, dframe, ok, selectors, max_trace, source = "scatterselect", session){
 
+    add_color <- "black"
 
     is_spatial_plot <- identical(c(as.character(selectors$xvar),
                                    as.character(selectors$yvar)),
@@ -1142,7 +1142,7 @@ drop_empty <- function(l){
 
 #' Make grouping overview table
 #'
-#' @param dframe
+#' @param dframe data.frame
 #' @importFrom rlang .data
 #'
 #' @return tibble with one row per group

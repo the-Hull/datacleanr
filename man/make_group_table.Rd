@@ -6,6 +6,9 @@
 \usage{
 make_group_table(dframe)
 }
+\arguments{
+\item{dframe}{data.frame}
+}
 \value{
 tibble with one row per group
 }

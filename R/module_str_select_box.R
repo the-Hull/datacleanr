@@ -75,7 +75,7 @@ module_ui_filter_str <- function(id) {
 #' Server Module: box for str filter condition
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
-#' @param reactive, data frame passed into dcr app
+#' @param dframe, data frame passed into dcr app
 #'
 #' @details provides UI text box element
 module_server_filter_str <- function(input, output, session, dframe){

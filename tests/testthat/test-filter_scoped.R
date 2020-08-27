@@ -27,8 +27,9 @@ test_that("grouped filtering gives same result as dplyr::filter on grouped df", 
 
 
 
-    fdf <- filter_scoped(dplyr::group_by(iris, Species),
-                             "Sepal.Width > quantile(Sepal.Width, 0.2)",
+    fdf <- filter_scoped(dplyr::group_by(iris, Species) %>%
+                           dplyr::mutate(.dcrindex = dplyr::cur_group_id()),
+                         "Sepal.Width > quantile(Sepal.Width, 0.2)",
                          scope_at = c(1,2,3))$filtered_df
 
     dplyr_fdf <- dplyr::group_by(iris, Species) %>%
@@ -36,7 +37,7 @@ test_that("grouped filtering gives same result as dplyr::filter on grouped df", 
 
 
 
-    expect_equivalent(fdf,dplyr_fdf)
+    expect_equivalent(fdf[ ,1:5],dplyr_fdf)
 })
 
 
@@ -45,13 +46,15 @@ test_that("scoped filtering gives same result as split-combine", {
 
 
 
-  fdf <- filter_scoped(dplyr::group_by(iris, Species),
-                       "Sepal.Width > quantile(Sepal.Width, 0.2)",
-                       scope_at = c(2,3))$filtered_df
+  fdf <-  filter_scoped(dplyr::group_by(iris, Species) %>%
+                          dplyr::mutate(.dcrindex = dplyr::cur_group_id()),
+                        "Sepal.Width > quantile(Sepal.Width, 0.2)",
+                        scope_at = c(2,3))$filtered_df
 
   dplyr_fdf <- dplyr::group_by(iris, Species) %>%
+    dplyr::mutate(.dcrindex = dplyr::cur_group_id()) %>%
     split(.,
-          dplyr::group_indices(.)) %>%
+          f = .$.dcrindex) %>%
     purrr::map_at(.at = c(2,3),
           function(x){
     dplyr::filter(x, Sepal.Width > quantile(Sepal.Width, 0.2))
@@ -79,7 +82,6 @@ test_that("recursive filter gives same result as manual, repeated filter (ungrou
     dplyr_fdf <- dplyr::filter(iris, Sepal.Width > quantile(Sepal.Width, 0.1))
     dplyr_fdf <- dplyr::filter(dplyr_fdf, Petal.Width > quantile(Petal.Width, 0.1))
     dplyr_fdf <- dplyr::filter(dplyr_fdf, Petal.Length > quantile(Petal.Length, 0.1))
-
     expect_equivalent(fdf,dplyr_fdf)
 
 
@@ -96,17 +98,19 @@ test_that("recursive filter gives same result as manual, repeated filter (groupe
       "Petal.Length > quantile(Petal.Length, 0.8)"),
     scope_at = list(NULL, NULL, c(1,2)))
 
-  fdf <- filter_scoped_df(dplyr::group_by(iris, Species), condition_df = cdf)
+  fdf <- filter_scoped_df(dplyr::group_by(iris, Species) %>%
+                            dplyr::mutate(.dcrindex = dplyr::cur_group_id()),
+                          condition_df = cdf)
 
   dplyr_fdf <- dplyr::filter(iris, Sepal.Width > quantile(Sepal.Width, 0.1))
   dplyr_fdf <- dplyr::filter(dplyr_fdf, Petal.Width > quantile(Petal.Width, 0.1))
 
 
-  dplyr_fdf <- purrr::map_at(split_groups(dplyr::group_by(dplyr_fdf, Species)),
+  dplyr_fdf <- purrr::map_at(split_groups(dplyr::group_by(dplyr_fdf, Species)%>%
+                                            dplyr::mutate(.dcrindex = dplyr::cur_group_id())),
                              .at = c(1,2),
                              .f = ~dplyr::filter(.x, Petal.Length > quantile(Petal.Length, 0.8))) %>%
     dplyr::bind_rows()
-
 
   expect_equivalent(fdf,dplyr_fdf)
 

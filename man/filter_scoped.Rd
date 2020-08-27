@@ -15,7 +15,7 @@ filter_scoped(dframe, statement, scope_at)
 }
 \value{
 List, containing logical item stating \code{success}, and if \code{TRUE}
-additional items \coce{filtered_df} and the respective \code{expression_string} (character) for generating
+additional items \code{filtered_df} and the respective \code{expression_string} (character) for generating
 the data.frame \ tibble
 }
 \description{

@@ -181,7 +181,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     # handle actions
 
     dframe <- apply_data_set_up(df = dplyr::ungroup(dataset), gvar())
-    dframe$.dcrindex <- dplyr::group_indices(dframe)
+    # dframe$.dcrindex <- dplyr::group_indices(dframe)
+    dframe <- mutate(dframe,
+                               .dcrindex = dplyr::cur_group_id())
 
     print(gvar())
 
@@ -464,9 +466,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                           sapply(seq_len(btn$value),
                                  function(i){
 
-                                   print(paste("btn val incr", i))
-                                   print(paste("groups are", unique(dplyr::group_indices(datareactive()))))
-                                   print(paste("groups are", unique(datareactive()$.dcrindex)))
 
                                    shinyWidgets::updatePickerInput(session = session,
                                                                    inputId = shiny::NS(i, "groupdropdown"),
@@ -507,9 +506,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
   # GROUPTABLE PLOT LIMITS --------------------------------------------------
 
-  selected_table_rows <- reactive({!is.null(input$`df-grouptable_rows_selected`)})
+  selected_table_rows <- shiny::reactive({!is.null(input$`df-grouptable_rows_selected`)})
 
-  observeEvent({selected_table_rows()}, {
+  shiny::observeEvent({selected_table_rows()}, {
 
     shiny::validate(shiny::need(datareactive, label = "datareactive"))
     shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))

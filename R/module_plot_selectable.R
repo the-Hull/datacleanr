@@ -75,7 +75,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   plot_data <- df()
 
 
-  n_groups <- dplyr::n_groups(plot_data)
+  # n_groups <- dplyr::n_groups(plot_data)
   n_groups_original <- max(plot_data$.dcrindex)
 
 
@@ -158,6 +158,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                 text = ~.dcrkey,
                                 showlegend = TRUE,
                                 marker = list(opacity = opac
+
                                               # size = 7,
                                               # line = list(color = plotly::toRGB("white", opac),
                                               # width = 1)
@@ -178,9 +179,10 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                buttons = list(
 
                                  list(method = "restyle",
-                                      args = list("mode", "markers"),
-                                      args2 = list("mode", "lines+markers"),
-                                      label = "Toggle Lines"))
+                                      args = list("mode", "markers",  as.list(seq_len(n_groups_original)-1)),
+                                      args2 = list("mode", "lines+markers", as.list(seq_len(n_groups_original)-1)),
+                                      label = "Toggle Lines")
+                                )
 
                                # list(method = "restyle",
                                #      args = list("mode", "lines+markers"),
@@ -213,40 +215,77 @@ module_server_plot_selectable <- function(input, output, session, selector_input
       # print(head(add_data))
       print("READDING traces---------------\\\\")
 
+
+      add_color <- "black"
+
       p <- rlang::eval_tidy(
         rlang::quo_squash(
           rlang::quo({
-            purrr::reduce(.x = split(add_data, f = add_data$selection_count),
-                          .f = function(oplot, spdf) {
 
-                            plotly::add_trace(oplot,
-                                              data = spdf,
-                                              x = ~ !!shiny::isolate(selector_inputs$xvar),
-                                                y = ~ !!shiny::isolate(selector_inputs$yvar),
-                                                size = eval(size_expression),
-                                                name = "outlier",
-                                                type = "scattergl",
-                                                mode = "markers",
-                                                legendgroup = "out",
-                                                customdata = ~.dcrkey,
-                                                text = ~.dcrkey,
-                                                showlegend = TRUE,
-                                                marker =
-                                                  if(is_spatial_plot){
-                                                    list(color = "red",
-                                                         opacity = 1)
-                                                  } else {
-                                                    list(color = "red"
-                                                         # opacity = 1
-                                                         # line = list(color = "red",
-                                                                     # width = 2)
-                                                    )
-                                                  },
+
+            plotly::add_trace(p,
+                              data = add_data,
+                              x = ~ !!shiny::isolate(selector_inputs$xvar),
+                              y = ~ !!shiny::isolate(selector_inputs$yvar),
+                              # size = eval(size_expression),
+                              name = "O",
+                              type = "scattergl",
+                              mode = "markers",
+                              # legendgroup = "out",
+                              customdata = ~.dcrkey,
+                              text = ~.dcrkey,
+                              showlegend = TRUE,
+                              marker =
+                                if(is_spatial_plot){
+                                  list(color = add_color,
+                                       symbol = "x",
+                                       size = 12,
+                                       opacity = 1)
+                                } else {
+                                  list(color = add_color,
+                                       symbol = "x",
+                                       size = 12
+                                       # opacity = 1
+                                       # line = list(color = add_color,
+                                       # width = 2)
+                                  )
+                                },
                               # }
-                          # ,
-                                                unselected = list(marker = list(opacity = 1)))},
-                            .init = shiny::isolate(p)
-      )
+                              # ,
+                              unselected = list(marker = list(opacity = 1)))
+
+      #
+      #       purrr::reduce(.x = split(add_data, f = add_data$selection_count),
+      #                     .f = function(oplot, spdf) {
+      #
+      #                       plotly::add_trace(oplot,
+      #                                         data = spdf,
+      #                                         x = ~ !!shiny::isolate(selector_inputs$xvar),
+      #                                           y = ~ !!shiny::isolate(selector_inputs$yvar),
+      #                                           size = eval(size_expression),
+      #                                           name = "O",
+      #                                           type = "scattergl",
+      #                                           mode = "markers",
+      #                                           legendgroup = "out",
+      #                                           customdata = ~.dcrkey,
+      #                                           text = ~.dcrkey,
+      #                                           showlegend = TRUE,
+      #                                           marker =
+      #                                             if(is_spatial_plot){
+      #                                               list(color = add_color,
+      #                                                    opacity = 1)
+      #                                             } else {
+      #                                               list(color = add_color
+      #                                                    # opacity = 1
+      #                                                    # line = list(color = add_color,
+      #                                                                # width = 2)
+      #                                               )
+      #                                             },
+      #                         # }
+      #                     # ,
+      #                                           unselected = list(marker = list(opacity = 1)))},
+      #                       .init = shiny::isolate(p)
+      # )
           })
         )
       ) #\ eval_tidy

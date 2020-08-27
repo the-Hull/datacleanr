@@ -589,14 +589,14 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
                         if(selected_table_rows()){
 
-                        dtpr <- DT::dataTableProxy(
-                          outputId = 'df-grouptable',
-                          deferUntilFlush = TRUE
-                        )
+                          dtpr <- DT::dataTableProxy(
+                            outputId = 'df-grouptable',
+                            deferUntilFlush = TRUE
+                          )
 
-                        DT::selectRows(proxy = dtpr,
-                                       selected = NULL)
-                      }
+                          DT::selectRows(proxy = dtpr,
+                                         selected = NULL)
+                        }
 
                         shiny::callModule(module_server_plot_selectable,
                                           id = "plot",
@@ -658,10 +658,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
       selected_data$df <- handle_sel_outliers(sel_old_df = selected_data$df,
-                                                   sel_new = selected)
+                                              sel_new = selected)
 
-      print("Selection is:")
-      print(selected_data$df)
 
 
     })
@@ -679,7 +677,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                     priority = "event")
 
       selected_data$df <- handle_sel_outliers(sel_old_df = selected_data$df,
-                                                   sel_new = clicked)
+                                              sel_new = clicked)
 
 
     })
@@ -784,7 +782,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                        .annotation = character(0),
                                        stringsAsFactors = FALSE)
 
-        print("it's this case, really")
       }
       selected_data$df <- selected_data$df[ -drop_ind, ]
     })
@@ -809,7 +806,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                        .annotation = character(0),
                                        stringsAsFactors = FALSE)
 
-        print("it's this case, really")
       }
       selected_data$df <- selected_data$df[ -drop_ind, ]
     })
@@ -861,12 +857,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
                         ok <- handle_add_outlier_trace(sp = selected_data,
-                                                dframe = recover_data,
-                                                ok = old_keys,
-                                                selectors = selector_vals,
-                                                trace_map = shiny::isolate(matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)),
-                                                source = "plot-scatterselect",
-                                                session = session)
+                                                       dframe = recover_data,
+                                                       ok = old_keys,
+                                                       selectors = selector_vals,
+                                                       trace_map = shiny::isolate(matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)),
+                                                       source = "plot-scatterselect",
+                                                       session = session)
                         old_keys(ok())
                       })
 
@@ -878,12 +874,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
                         ok <- handle_add_outlier_trace(sp = selected_data,
-                                                dframe = recover_data,
-                                                ok = old_keys,
-                                                selectors = selector_vals,
-                                                source = "plot-scatterselect",
-                                                trace_map = shiny::isolate(matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)),
-                                                session = session)
+                                                       dframe = recover_data,
+                                                       ok = old_keys,
+                                                       selectors = selector_vals,
+                                                       source = "plot-scatterselect",
+                                                       trace_map = shiny::isolate(matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)),
+                                                       session = session)
                         old_keys(ok())
                       })
 
@@ -951,7 +947,37 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
             "deleteTraces",
             max(indices)
           )
-        print("removed trace!!")
+
+
+        z <- zvar_toggle(selector_vals$zvar, df = recover_data()[ selected_data$df$keys, ])
+
+
+
+        plotly::plotlyProxy("plot-scatterselect", session) %>%
+          plotly::plotlyProxyInvoke(
+            "addTraces",
+            list(
+              x = recover_data()[ selected_data$df$keys, as.character(selector_vals$xvar), drop = TRUE],
+              y = recover_data()[ selected_data$df$keys, as.character(selector_vals$yvar), drop = TRUE],
+              # size = z,
+              # sizes = c(25,100),
+              type = "scattergl",
+              mode = "markers",
+              name = "O",
+              customdata = recover_data()[selected_data$df$keys, ".dcrkey" , drop = TRUE],
+              text = recover_data()[selected_data$df$keys, ".dcrkey" , drop = TRUE],
+              marker = list(
+                symbol = "x",
+                size = 12,
+                color = "black",
+                opacity = 1),
+              unselected = list(marker = list(opacity = 1)),
+              selected = list(marker = list(opacity = 1)),
+              showlegend = TRUE
+            ))
+
+
+        print("removed points!!")
       }
       old_keys(NULL)
     })
@@ -1020,14 +1046,14 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                 message = ""))
 
     shiny::tagList(shiny::actionButton(inputId = "histogramupdate",
-                        label = "Update",
-                        icon = shiny::icon("sync-alt"),
-                        class = "btn-info"))
+                                       label = "Update",
+                                       icon = shiny::icon("sync-alt"),
+                                       class = "btn-info"))
 
   })
 
   shiny::observeEvent(input$histogramupdate, {
-  # shiny::observe({
+    # shiny::observe({
 
     if(shiny::req(action_tracking$plot_start)){
       shiny::callModule(id = "plotvars",

@@ -32,7 +32,6 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   ns = session$ns
   sessionval <- session$ns("")
 
-  print("Plot came first")
 
 
   # JavaScript to add a vector of trace#, traceName;
@@ -95,11 +94,9 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   # handler for empty zvar selection
   zvar_toggle <- nchar(shiny::isolate(selector_inputs$zvar))>0
   if(zvar_toggle){
-    # print("zvar given")
     size_expression <- stats::as.formula(paste("~", shiny::isolate(selector_inputs$zvar)))
   } else {
     size_expression <- rlang::quo_squash(NULL)
-    # print("zvar empty")
   }
 
 

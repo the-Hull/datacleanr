@@ -34,17 +34,6 @@ module_ui_group_selector_table <- function(id) {
 module_server_group_selector_table <- function(input, output, session, df, df_label, ...){
     ns = session$ns
 
-    # print(df)
-    # print(paste("this:", df$df$data))
-
-    # if(!is.null(df$df$data)){
-
-
-
-
-        # group_table <- dplyr::group_data(df()) %>%
-        #     dplyr::mutate(n_obs = sapply(.rows, length),
-        #            .rows = NULL)
 
 
     group_table <- dplyr::summarise(df(),
@@ -68,27 +57,4 @@ module_server_group_selector_table <- function(input, output, session, df, df_la
 
 
 
-        # output$grouptable <- DT::renderDT(df,
-        #                                   options = list(selection = 'single'))
-
-
-
-
-
-
-        # output$selected_row <- shiny::renderText({
-        #
-        #     dt_selected_row <- input$grouptable_rows_selected
-        #
-        #     # if(req(dt_selected_row)){
-        #     paste0("Selected Row is: ", dt_selected_row)
-        #     # } else {
-        #     #
-        #     # NULL
-        #     # }
-        # })
-
-        # return(reactive(input$grouptable_rows_selected))
-
-    # }
 }

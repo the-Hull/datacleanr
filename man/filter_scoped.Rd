@@ -9,7 +9,7 @@ filter_scoped(dframe, statement, scope_at)
 \arguments{
 \item{dframe}{data.frame/tbl, grouped or ungrouped}
 
-\item{statement}{character, statement for filtering (valid AND invalid)}
+\item{statement}{character, statement for filtering (only VALID expressions; use \code{check_individual_statement} to grab only valid.}
 
 \item{scope_at}{numeric, group indices to apply filter statements to}
 }

@@ -98,39 +98,39 @@ datacleanr_ui <- function(request){
 
 
     navbarPageWithInputs(
-                         theme = "sandstone.min.css",
-                                 # theme = shinythemes::shinytheme("sandstone"),
+        theme = "sandstone.min.css",
+        # theme = shinythemes::shinytheme("sandstone"),
         "datacleanr",
-                         id = "nav",
+        id = "nav",
 
-                         # TAB GROUPING ------------
-                         shiny::tabPanel("Overview & Set-up",
-                                         value = "grouping",
-                                         icon = shiny::icon("layer-group"),
+        # TAB GROUPING ------------
+        shiny::tabPanel("Overview & Set-up",
+                        value = "grouping",
+                        icon = shiny::icon("layer-group"),
 
-                                         # panel set-up
-                                         shiny::sidebarLayout(
+                        # panel set-up
+                        shiny::sidebarLayout(
 
-                                             sidebarPanel = shiny::sidebarPanel(
-                                                 text_grouping_side_panel,
-                                                 module_ui_group_select(id = "group"),
-                                                 module_ui_checkbox(id = "grouptick",
-                                                                    cond_id = "group-groupvar"),
-                                                 shiny::br(),
-                                                 shiny::actionButton("gobutton",
-                                                                     "Start",
-                                                                     icon = shiny::icon("rocket"),
-                                                                     class = "btn-info"),
-                                                 width = 3
-                                             ), #/sidebarPanel
+                            sidebarPanel = shiny::sidebarPanel(
+                                text_grouping_side_panel,
+                                module_ui_group_select(id = "group"),
+                                module_ui_checkbox(id = "grouptick",
+                                                   cond_id = "group-groupvar"),
+                                shiny::br(),
+                                shiny::actionButton("gobutton",
+                                                    "Start",
+                                                    icon = shiny::icon("rocket"),
+                                                    class = "btn-info"),
+                                width = 3
+                            ), #/sidebarPanel
 
-                                             mainPanel = shiny::mainPanel(
-                                                 module_ui_summary(id = "summary")
-                                             ) #/mainPanel
-                                         ) #/sidebarLayout
+                            mainPanel = shiny::mainPanel(
+                                module_ui_summary(id = "summary")
+                            ) #/mainPanel
+                        ) #/sidebarLayout
 
 
-                         ), # /tabPanel
+        ), # /tabPanel
 
         # TAB FILTERING -----------
         shiny::tabPanel("Filtering",
@@ -186,10 +186,8 @@ datacleanr_ui <- function(request){
 
                             mainPanel = shiny::mainPanel(
                                 # Diagnostics
-                                shiny::textOutput('show_inputs'),###
-                                shiny::verbatimTextOutput("outDF"),
-                                # shiny::h2("Filtering statements"),
-                                # module_ui_filter_str(1),
+                                # shiny::textOutput('show_inputs'),
+                                # shiny::verbatimTextOutput("outDF"),
                                 shiny::tags$div(id = 'placeholder')
                             ) #/mainPanel
                         ) #/sidebarLayout

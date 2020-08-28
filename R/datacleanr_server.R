@@ -99,17 +99,17 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
   # DIAGNOSTICS ----------------------
 
-  AllInputs <- shiny::reactive({
-    x <- unlist(shiny::reactiveValuesToList(input))
-    paste(names(x),
-          x)
-
-
-  })
-
-  output$show_inputs <- shiny::renderText({
-    AllInputs()
-  })
+  # AllInputs <- shiny::reactive({
+  #   x <- unlist(shiny::reactiveValuesToList(input))
+  #   paste(names(x),
+  #         x)
+  #
+  #
+  # })
+  #
+  # output$show_inputs <- shiny::renderText({
+  #   AllInputs()
+  # })
 
 
 
@@ -176,16 +176,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   # handle summary operations when go button is hit
   shiny::observeEvent(input$gobutton, {
 
-    # shiny::req(grouping_check())
-
-    # handle actions
 
     dframe <- apply_data_set_up(df = dplyr::ungroup(dataset), gvar())
-    # dframe$.dcrindex <- dplyr::group_indices(dframe)
-    dframe <- mutate(dframe,
+    dframe <- dplyr::mutate(dframe,
                                .dcrindex = dplyr::cur_group_id())
 
-    print(gvar())
 
     datareactive(dframe)
     recover_data(dframe)
@@ -225,102 +220,63 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     filter = character(0),
     grouping = list())
 
-  # btn <- shiny::reactiveValues(value = 1)
   btn <- shiny::reactiveValues(value = 0)
-
-
-  # shiny::observe({
-
-  # print('observer filtering stuff')
-  # shiny::callModule(module_server_filter_str,
-  #                   id = 1,
-  #                   dframe = datareactive())
-  #
-  # ## SAVE INPUTS FROM 1 INTO DATAFRAME
-  # shiny::observeEvent({
-  #   input[[shiny::NS(1, "groupdropdown")]]
-  #   input[[shiny::NS(1, "filter")]]
-  #
-  # }, {
-  #   add.filter$df[1, 1] <- input[[shiny::NS(1, "filter")]]
-  #   add.filter$df[1, "grouping"][[1]] <- list(input[[shiny::NS(1, "groupdropdown")]])
-  # })
 
   # ADD VARIABLES
 
   shiny::observeEvent(input$addbutton, {
 
-    # shiny::req(input$gobutton > 0)
 
     shiny::validate(shiny::need(input$gobutton > 0, label = "Press go first!"))
 
 
-    # EACH TIME THE USER CLICKS, ADD 1 TO BUTTON VALUE
     btn$value <- btn$value + 1
 
-    ## WHEN WE USE btn$value DIRECTLY WE LOSE REACTIVITY
-    ## PASSING IT TO btn.temp AND USING btn.tmp WORKS (SOMEHOW)
     btn.tmp <- btn$value
 
-    # CALL MODULE NUMBER params$btn
     # isolate prevents 'apply filter' from re-firing
     shiny::callModule(module_server_filter_str,
                       btn.tmp,
                       dframe = shiny::isolate(datareactive()))
 
-    # INSERT MODULE UI
     shiny::insertUI(
       selector = paste0("#", "placeholder"),
       where = "beforeEnd",
       ui = module_ui_filter_str(btn.tmp)
     )
-
-
-    ## SAVE INPUTS FROM NUMBER COUNTER BTN INTO DATAFRAME
+    # save data into df
     shiny::observeEvent({
       input[[shiny::NS(btn.tmp, "groupdropdown")]]
-      input[[shiny::NS(btn.tmp, "filter")]]
-    }
+      input[[shiny::NS(btn.tmp, "filter")]]},
+      {
+        add.filter$df[btn.tmp, 1] <- input[[shiny::NS(btn.tmp, "filter")]]
+        add.filter$df[btn.tmp, "grouping"][[1]] <- list(input[[shiny::NS(btn.tmp, "groupdropdown")]])
+      }
+    )
 
-    , {
-      add.filter$df[btn.tmp, 1] <- input[[shiny::NS(btn.tmp, "filter")]]
-      add.filter$df[btn.tmp, "grouping"][[1]] <- list(input[[shiny::NS(btn.tmp, "groupdropdown")]])
-    })
-
-
-
-    # })
-
-    # REMOVE VARIABLES
-
+    # Remove filters
     shiny::observeEvent(input$removebutton, {
 
-      # shiny::req(input$gobutton)
       shiny::validate(shiny::need(input$gobutton > 0, label = "Press go first!"))
 
-
-      # REMOVE LAST LINE FROM DATAFRAME
+      # drop lines and ui
       add.filter$df <- add.filter$df[-btn$value, , drop = FALSE]
-      # print(str(add.filter$df))
 
-
-      print(paste0(btn$value, "-filt"))
-      # REMOVE LAST LINE MODULE UI
       shiny::removeUI(
-        ## pass in appropriate div id
         selector = paste0("#", btn$value, "-filt"))
 
-      # SUBTRACT 1 FROM BUTTON VALUE
+      # manage buttons
       if(btn$value > 1){
         btn$value <- btn$value - 1
       } else {
         btn$value <- 0
       }
     })
-    # OUTPUT DATAFRAME
-    output$outDF <- shiny::renderPrint({
-      print(add.filter$df)
-    })
+
+    # # diagnostic df
+    # output$outDF <- shiny::renderPrint({
+    #   print(add.filter$df)
+    # })
 
 
   })

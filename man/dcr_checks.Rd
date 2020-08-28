@@ -13,5 +13,5 @@ dcr_checks(dframe)
 Nothing - just check!
 }
 \description{
-Initial checks for data set
+test
 }

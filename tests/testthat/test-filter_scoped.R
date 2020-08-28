@@ -8,16 +8,22 @@ test_that("filter works with correct statement", {
 })
 
 
-test_that("filter identifies incorrect statement", {
+test_that("filter fails with incorrect statement", {
 
 
-    checks <- filter_scoped(iris,
-                     "Spec == 'setosa'",
-                     scope_at = NULL)$succeeded
+    # checks <- filter_scoped(iris,
+    #                  "Spec == 'setosa'",
+    #                  scope_at = NULL)$succeeded
 
 
-  expect_equivalent(checks,
-                   c(FALSE))
+  # expect_equivalent(checks,
+  #                  c(FALSE))
+  #
+  expect_error(filter_scoped(iris,
+                             "Spec == 'setosa'",
+                             scope_at = NULL),
+               class = "dplyr_error")
+
 })
 
 

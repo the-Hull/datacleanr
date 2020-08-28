@@ -2,10 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{split_groups}
 \alias{split_groups}
-\title{Identify filter inputs by id and label}
+\title{Split data.frame/tibble based on grouping}
 \usage{
 split_groups(dframe)
 }
+\arguments{
+\item{dframe}{data.frame}
+}
+\value{
+list of data frames
+}
 \description{
-Identify filter inputs by id and label
+Split data.frame/tibble based on grouping
 }

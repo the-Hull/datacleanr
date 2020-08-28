@@ -107,8 +107,10 @@ module_server_extract_code  <-
             } else {
                 index_str <- glue::glue(
                     '
+
                     # {info_comment_outlier_index}
                     {df_label}$.dcrkey <- seq_len(nrow({df_label}))
+
                     ')
             }
 
@@ -116,7 +118,6 @@ module_server_extract_code  <-
                 '
                 library(dplyr)
                 library(datacleanr)
-
                 {index_str}
                 ')
 
@@ -166,10 +167,10 @@ module_server_extract_code  <-
 
 
                 apply_filter_string <- glue::glue('
-
                 {group_string}
                 # {info_comment_filt_df}
                 {filt_df_string}
+
                 # {info_comment_filters}
                 {df_label_filtered} <- datacleanr::filter_scoped_df(dframe = {df_label},
                 condition_df = filter_conditions)

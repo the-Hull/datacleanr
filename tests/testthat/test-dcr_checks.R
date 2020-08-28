@@ -12,13 +12,13 @@ test_that("Initial dcr checks recognize wrong class", {
 
 
 
-test_that("User warned about large data set", {
-
-
-  testdf <- data.frame(x = 1:15001)
-
-  expect_warning(dcr_checks(testdf),
-                 regexp = "Data set has over")
-})
-
+# test_that("User warned about large data set", {
+#
+#
+#   testdf <- data.frame(x = 1:15001)
+#
+#   expect_warning(dcr_checks(testdf),
+#                  regexp = "Data set has over")
+# })
+#
 

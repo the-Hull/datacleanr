@@ -128,16 +128,12 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   } else {
     geo_def <- list()
   }
-  # handle "Plot!" click
-  # shiny::observeEvent(selector_inputs$abutton, {
   output$scatterselect <- plotly::renderPlotly({
 
     p <-  rlang::eval_tidy(
       rlang::quo_squash(
         rlang::quo({
 
-          print("redrawing")
-          # pnew <- plot_data %>%
           pnew <- { if(is_spatial_plot){
             plotly::plot_mapbox(data = plot_data,
                                 source = "scatterselect")
@@ -157,12 +153,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                 customdata = ~.dcrkey,
                                 text = ~.dcrkey,
                                 showlegend = TRUE,
-                                marker = list(opacity = opac
-
-                                              # size = 7,
-                                              # line = list(color = plotly::toRGB("white", opac),
-                                              # width = 1)
-                                ),
+                                marker = list(opacity = opac),
                                 unselected = list(marker = list(opacity = opac))) %>%
             plotly::layout(showlegend = TRUE,
                            dragmode = "lasso",
@@ -177,21 +168,15 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                x = 0.5,
                                y = 1.2,
                                buttons = list(
-
                                  list(method = "restyle",
                                       args = list("mode", "markers",  as.list(seq_len(n_groups_original)-1)),
                                       args2 = list("mode", "lines+markers", as.list(seq_len(n_groups_original)-1)),
                                       label = "Toggle Lines")
-                                )
-
-                               # list(method = "restyle",
-                               #      args = list("mode", "lines+markers"),
-                               #      label = "Add Lines")))
+                               )
                              ))
             )  %>%
             plotly::config(displaylogo = FALSE,
                            modeBarButtonsToRemove = list("hoverCompareCartesian")) %>%
-            # plotly::event_register(event = "plotly_doubleclick") %>%
             plotly::event_register(event = "plotly_afterplot") %>%
             plotly::event_register(event = "plotly_deselect") %>%
             plotly::event_register(event = "plotly_click") %>%
@@ -207,14 +192,11 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     # re-add outlier traces on "Plot!" click
     if(length(shiny::isolate(sel_points$df$keys)) > 0){
 
-      add_data <- dplyr::left_join(shiny::isolate(sel_points$df),
-                                   plot_data,
-                                   by = c('keys' = '.dcrkey')) %>%
+      add_data <- dplyr::left_join(
+        shiny::isolate(sel_points$df),
+        plot_data,
+        by = c('keys' = '.dcrkey')) %>%
         dplyr::rename(.dcrkey = .data$keys)
-
-      # print(head(add_data))
-      print("READDING traces---------------\\\\")
-
 
       add_color <- "black"
 
@@ -222,16 +204,13 @@ module_server_plot_selectable <- function(input, output, session, selector_input
         rlang::quo_squash(
           rlang::quo({
 
-
             plotly::add_trace(p,
                               data = add_data,
                               x = ~ !!shiny::isolate(selector_inputs$xvar),
                               y = ~ !!shiny::isolate(selector_inputs$yvar),
-                              # size = eval(size_expression),
                               name = "O",
                               type = "scattergl",
                               mode = "markers",
-                              # legendgroup = "out",
                               customdata = ~.dcrkey,
                               text = ~.dcrkey,
                               showlegend = TRUE,
@@ -245,47 +224,42 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                   list(color = add_color,
                                        symbol = "x",
                                        size = 12
-                                       # opacity = 1
-                                       # line = list(color = add_color,
-                                       # width = 2)
                                   )
                                 },
-                              # }
-                              # ,
                               unselected = list(marker = list(opacity = 1)))
 
-      #
-      #       purrr::reduce(.x = split(add_data, f = add_data$selection_count),
-      #                     .f = function(oplot, spdf) {
-      #
-      #                       plotly::add_trace(oplot,
-      #                                         data = spdf,
-      #                                         x = ~ !!shiny::isolate(selector_inputs$xvar),
-      #                                           y = ~ !!shiny::isolate(selector_inputs$yvar),
-      #                                           size = eval(size_expression),
-      #                                           name = "O",
-      #                                           type = "scattergl",
-      #                                           mode = "markers",
-      #                                           legendgroup = "out",
-      #                                           customdata = ~.dcrkey,
-      #                                           text = ~.dcrkey,
-      #                                           showlegend = TRUE,
-      #                                           marker =
-      #                                             if(is_spatial_plot){
-      #                                               list(color = add_color,
-      #                                                    opacity = 1)
-      #                                             } else {
-      #                                               list(color = add_color
-      #                                                    # opacity = 1
-      #                                                    # line = list(color = add_color,
-      #                                                                # width = 2)
-      #                                               )
-      #                                             },
-      #                         # }
-      #                     # ,
-      #                                           unselected = list(marker = list(opacity = 1)))},
-      #                       .init = shiny::isolate(p)
-      # )
+            #
+            #       purrr::reduce(.x = split(add_data, f = add_data$selection_count),
+            #                     .f = function(oplot, spdf) {
+            #
+            #                       plotly::add_trace(oplot,
+            #                                         data = spdf,
+            #                                         x = ~ !!shiny::isolate(selector_inputs$xvar),
+            #                                           y = ~ !!shiny::isolate(selector_inputs$yvar),
+            #                                           size = eval(size_expression),
+            #                                           name = "O",
+            #                                           type = "scattergl",
+            #                                           mode = "markers",
+            #                                           legendgroup = "out",
+            #                                           customdata = ~.dcrkey,
+            #                                           text = ~.dcrkey,
+            #                                           showlegend = TRUE,
+            #                                           marker =
+            #                                             if(is_spatial_plot){
+            #                                               list(color = add_color,
+            #                                                    opacity = 1)
+            #                                             } else {
+            #                                               list(color = add_color
+            #                                                    # opacity = 1
+            #                                                    # line = list(color = add_color,
+            #                                                                # width = 2)
+            #                                               )
+            #                                             },
+            #                         # }
+            #                     # ,
+            #                                           unselected = list(marker = list(opacity = 1)))},
+            #                       .init = shiny::isolate(p)
+            # )
           })
         )
       ) #\ eval_tidy
@@ -293,155 +267,4 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     return(p)
 
   }) # / renderPlotly
-#
-#
-#
-#     old_keys <- shiny::reactiveVal()
-#
-#
-#
-#     # traces <- matrix(input$tracemap, ncol = 2, byrow = TRUE)
-#     # n_original_traces <- max(traces[, 2])
-#     # print(n_original_traces)
-#
-#
-#     max_id_original_traces <- n_groups - 1
-#     # n_original_traces <- shiny::reactive({req(input$tracemap)
-#     #                                         traces <- matrix(shiny::isolate(input$tracemap), ncol = 2, byrow = TRUE)
-#     #                                         return(max(traces[, 2]))
-#     #                                         })
-#
-#
-#
-#
-#     shiny::observeEvent(plotly::event_data("plotly_click", source = "scatterselect", priority = "event"),
-#                         # shiny::observeEvent(sel_points,
-#
-#                         {
-#
-#
-#                           print("that")
-#
-#
-#                           ok <- handle_add_traces(sp = sel_points,
-#                                                   pd = plot_data,
-#                                                   ok = old_keys,
-#                                                   selectors = selector_inputs,
-#                                                   source = "scatterselect",
-#                                                   session = session)
-#
-#                           old_keys(ok())
-#                         },
-#                         once = TRUE)
-#
-#
-#     shiny::observeEvent(plotly::event_data("plotly_selected", source = "scatterselect", priority = "event"),
-#                         # shiny::observeEvent(sel_points,
-#
-#                         {
-#
-#                           print("this")
-#
-#
-#                           ok <- handle_add_traces(sp = sel_points,
-#                                                   pd = plot_data,
-#                                                   ok = old_keys,
-#                                                   selectors = selector_inputs,
-#                                                   source = "scatterselect",
-#                                                   session = session)
-#
-#                           old_keys(ok())
-#
-#
-#                         },
-#                         once = TRUE)
-#
-#
-#     # shiny::observeEvent(plotly::event_data(c("plotly_doubleclick"), source = "scatterselect", priority = "event"), {
-#     #
-#     #   print("remove dblclick")
-#     #
-#     #   req(input$tracemap)
-#     #
-#     #
-#     #
-#     #
-#     #   traces <- matrix(input$tracemap, ncol = 2, byrow = TRUE)
-#     #   indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces, 2])
-#     #
-#     #   print(paste("indices are:", indices))
-#     #
-#     #   if(length(indices)>0){
-#     #     plotly::plotlyProxy("plot-scatterselect", session) %>%
-#     #       plotly::plotlyProxyInvoke(
-#     #         "deleteTraces",
-#     #         max(indices)
-#     #       )
-#     #     print("removed trace!!")
-#     #
-#     #   }
-#     #     print(traces)
-#     #     old_keys(NULL)
-#     # })
-#
-#
-#     shiny::observeEvent(plotly::event_data(c("plotly_deselect"), source = "scatterselect", priority = "event"), {
-#
-#       print("remove deselect")
-#
-#       shiny::validate(shiny::need(input$tracemap,
-#                                   label = "need tracepam"))
-#
-#
-#
-#
-#       traces <- matrix(input$tracemap, ncol = 2, byrow = TRUE)
-#       indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces, 2])
-#
-#       print(paste("indices are:", indices))
-#
-#       if(length(indices)>0){
-#         plotly::plotlyProxy("plot-scatterselect", session) %>%
-#           plotly::plotlyProxyInvoke(
-#             "deleteTraces",
-#             max(indices)
-#           )
-#
-#         print("removed trace!!")
-#
-#       }
-#
-#       old_keys(NULL)
-#       print(traces)
-#     })
-#
-
-
-    #   # handle when input selector changes
-    #   plotchange_observer <- shiny::isolate(shiny::reactive(
-    # {
-    #     list( selector_inputs$xvar,
-    #             selector_inputs$yvar,
-    #             selector_inputs$abutton())}))
-    #   #
-    #   # # shiny::observeEvent(selector_inputs,
-    #   shiny::observeEvent(plotchange_observer(),
-    #   # shiny::observeEvent(selector_inputs$yvar,
-    #   #
-    #   {
-    #
-    #     shiny::validate(need(plotchange_observer, label = "reactive for tracking plot inputs"))
-    #   #
-    #
-    #                 print(selector_inputs$xvar)
-    #                   print(shiny::is.reactive(selector_inputs$xvar))
-    #                   print("new case here")
-    #
-    #                 })
-    #
-    #
-    #
-
 }
-
-

@@ -11,15 +11,6 @@
 module_ui_group_select <- function(id){
     ns <- shiny::NS(id)
 
-    # vars <- colnames(df)[get_factor_cols_idx(df)]
-    #
-    # shiny::tagList(shiny::selectInput(inputId = ns("groupvar"),
-    #                                   label = "Grouping Variables",
-    #                                   choices = vars,
-    #                                   selected = NULL,
-    #                                   multiple = TRUE,
-    #                                   selectize = TRUE)
-    # )
 
     shiny::uiOutput(ns("groupvar"))
 

@@ -14,9 +14,6 @@ module_ui_df_filter <- function(id){
 
     shiny::uiOutput(outputId = ns("filterdf"))
 
-
-
-
 }
 
 
@@ -42,8 +39,6 @@ module_server_df_filter <- function(input, output, session, dframe, condition_df
 
 
 
-
-
     if(any(states) ){
     out <- filter_scoped_df(dframe = dframe,
                                  condition_df = condition_df)
@@ -56,14 +51,12 @@ module_server_df_filter <- function(input, output, session, dframe, condition_df
         percent_filtered <-  0
     }
 
-    # print(paste("FILTER %:", percent_filtered))
 
     output$filterdf <- shiny::renderUI({
 
         if(!is.null(states) & any(!states)){
 
             return(shiny::tagList(shiny::tags$p("Filter(s) ",
-                                                # str(states),
                                                 shiny::tags$b(
                                                     paste(which(states == FALSE),
                                                           collapse = ", ")),
@@ -77,14 +70,7 @@ module_server_df_filter <- function(input, output, session, dframe, condition_df
         } else if(!is.null(states) & all(states)){
 
             return(shiny::tagList(shiny::tags$p(
-                # "Filter(s) ",
-                # str(states),
-                # shiny::tags$b(
-                #     paste(which(states == FALSE),
-                #           collapse = ", ")),
-                # " won't be applied, due to invalid statement(s).",
-                # shiny::tags$br(),
-                # shiny::tags$br(),
+
                 "A total of",
                 shiny::tags$b(paste(percent_filtered), "%"),
                 "will be filtered.")))
@@ -95,12 +81,8 @@ module_server_df_filter <- function(input, output, session, dframe, condition_df
     })
 
     if(any(states)){
-        # print("this yeah.")
-        # print(out$filtered_df)
         return(list(df = out, statements_lgl = states))
     } else if(all(!states)){
-        # print("heeere")
-        # print(dframe)
 
         return(list(df = dframe, statements_lgl = NULL))
     }

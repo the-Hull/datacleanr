@@ -95,94 +95,7 @@ check_individual_statement <- function(df, statement){
     return(condition_worked)
 }
 
-#' Filter a data frame with series of statements
-#' @param df data frame / tibble to be filtered
-#' @param statements character vector of individual conditional statements; need not evaluate successfully individually
-#' @param apply_grouped logical, should filter be applied to each group?
-#' @return list, logical vector of success and failures, and
-checked_filter <- function(df, statements, apply_grouped){
 
-    is.error <- function(x) inherits(x, "try-error")
-
-    checks <- sapply(statements,
-                     function(x)
-                         check_individual_statement(df = df,
-                                                    statement = x))
-
-
-    if(any(checks)){
-
-
-
-
-
-        grouped_checks <- checks
-        grouped_checks[which(!apply_grouped)] <- FALSE
-        ungrouped_checks <- checks
-        ungrouped_checks[which(apply_grouped)] <- FALSE
-
-
-        # generate strings for grouped and ungrouped checks
-
-        if(any(grouped_checks)){
-
-
-            cond_string_full <- paste(statements[grouped_checks],
-                                      collapse = " & ")
-            # filtered_df <- dplyr::filter(df,
-            #                             eval(str2expression(cond_string_full)))
-
-
-            filtered_df <- do.call(rbind,
-                                   by(df,
-                                      # as.factor(dplyr::group_indices(df)),
-                                      as.factor(df$.dcrindex),
-                                      function(x) base::subset(x,
-                                                               eval(str2expression(cond_string_full)))
-                                   )
-            )
-
-        }
-
-        if(any(ungrouped_checks)) {
-
-            if(all(!grouped_checks)){
-                filtered_df <- df
-            }
-
-            cond_string_full <- paste(statements[ungrouped_checks],
-                                      collapse = " & ")
-            #
-            #             filtered_df <- do.call(rbind,
-            #                     by(filtered_df,
-            #                        as.factor(dplyr::groups(filtered_df)),
-            #                        function(x) base::subset(filtered_df,
-            #                                                 eval(str2expression(cond_string_full)))
-            #                        )
-            #                     )
-
-            filtered_df <- dplyr::filter(dplyr::ungroup(filtered_df),
-                                         eval(str2expression(cond_string_full)))
-
-
-        }
-
-
-
-
-
-
-        return(list(succeeded = checks,
-                    filtered_df = filtered_df,
-                    statement_strings = statements[checks],
-                    statement_strings_grouped = statements[grouped_checks],
-                    statement_strings_ungrouped = statements[ungrouped_checks]
-        ))
-    } else {
-
-        return(list(succeeded = checks))
-    }
-}
 
 
 
@@ -504,120 +417,130 @@ handle_restyle_traces <- function(source_id,
 
 
 
-#' Handle Add traces
+#' #' Handle Add traces
+#' #'
+#' #' @param sp selected points
+#' #' @param dframe plot data
+#' #' @param ok reactive, old keys
+#' #' @param selectors reactive input selectors
+#' #' @param max_trace numeric, previous max trace id
+#' #' @param source plotly source
+#' #' @param session active session
+#' #'
+#' handle_add_traces <- function(sp, dframe, ok, selectors, max_trace, source = "scatterselect", session){
+#'
+#'     add_color <- "black"
+#'
+#'     is_spatial_plot <- identical(c(as.character(selectors$xvar),
+#'                                    as.character(selectors$yvar)),
+#'                                  c("lon", "lat"))
+#'
+#'
+#'     if(is_spatial_plot){
+#'         geo_def <-  list(style = "light")
+#'     } else {
+#'         geo_def <- list()
+#'     }
+#'
+#'
+#'     if(length(sp$df$keys) > 0){
+#'
+#'         # check if selection is new
+#'         if(!identical(ok(),
+#'                       sp$df$keys)){
+#'
+#'             max_sel_count <- max(sp$df$selection_count)
+#'
+#'             last_sel_keys <- as.integer(sp$df$keys[sp$df$selection_count == max_sel_count])
+#'             # grab points
+#'             add_points <- dframe()[last_sel_keys, ]
+#'             # handle plotly - only adds trace for array > 2L
+#'             if(nrow(add_points) == 1){
+#'                 add_points <- rbind(add_points, add_points)
+#'             }
+#'
+#'             z <- zvar_toggle(selectors$zvar, df = add_points)
+#'
+#'             if(is_spatial_plot){
+#'
+#'                 plotly::plotlyProxy(source, session) %>%
+#'                     plotly::plotlyProxyInvoke(
+#'                         "addTraces",
+#'                         list(
+#'                             lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
+#'                             lat = add_points[ , as.character(selectors$yvar), drop = TRUE],
+#'                             customdata = add_points[ , ".dcrkey", drop = TRUE],
+#'                             text = add_points[ , ".dcrkey", drop = TRUE],
+#'                             legendgroup = "out",
+#'                             size = z,
+#'                             sizes = c(25,100),
+#'                             type = "scattermapbox",
+#'                             mode = "markers",
+#'                             name = "O",
+#'                             opacity = 1,
+#'                             marker = list(
+#'                                 color = add_color,
+#'                                 opacity = 1),
+#'                             unselected = list(marker = list(opacity = 1)),
+#'                             showlegend = list(TRUE)
+#'                         )
+#'                     )
+#'
+#'             } else {
+#'
+#'
+#'                 plotly::plotlyProxy(source, session) %>%
+#'                     plotly::plotlyProxyInvoke(
+#'                         "addTraces",
+#'                         list(
+#'                             x = add_points[ , as.character(selectors$xvar), drop = TRUE],
+#'                             y = add_points[ , as.character(selectors$yvar), drop = TRUE],
+#'                             size = z,
+#'                             type = "scattergl",
+#'                             mode = "markers",
+#'                             name = "O",
+#'                             customdata = add_points[ , ".dcrkey", drop = TRUE],
+#'                             text = add_points[ , ".dcrkey", drop = TRUE],
+#'                             legendgroup = "out",
+#'                             marker = list(
+#'                                 color = add_color,
+#'                                 opacity = 1),
+#'                             unselected = list(marker = list(opacity = 1)),
+#'                             selected = list(marker = list(opacity = 1)),
+#'                             showlegend = TRUE
+#'                         ),
+#'                         max_trace+1
+#'                     )
+#'             }
+#'             ok(sp$df$keys)
+#'
+#'
+#'         } else {
+#'
+#'             cat("WE DOWN\n")
+#'
+#'         }
+#'     }
+#'     return(ok)
+#'
+#' }
+#'
+#'
+#'
+#' Handle outlier trace
+#'
+#' @description Single outlier trace is added to plotly; interactive select/deselect
+#' was implemented by adjusting \code{selected_points}, and subsequently adding, or deleting+adding
+#' the (modified) trace at the end of the existing JS data array. Requires tracemap with
+#' trace names and corresponding indices.
+#' Simple check for re-execution was implemented by passing on the selection keys to compare against
+#' on pertinent \code{plotly_event}.
 #'
 #' @param sp selected points
 #' @param dframe plot data
 #' @param ok reactive, old keys
 #' @param selectors reactive input selectors
-#' @param max_trace numeric, previous max trace id
-#' @param source plotly source
-#' @param session active session
-#'
-handle_add_traces <- function(sp, dframe, ok, selectors, max_trace, source = "scatterselect", session){
-
-    add_color <- "black"
-
-    is_spatial_plot <- identical(c(as.character(selectors$xvar),
-                                   as.character(selectors$yvar)),
-                                 c("lon", "lat"))
-
-
-    if(is_spatial_plot){
-        geo_def <-  list(style = "light")
-    } else {
-        geo_def <- list()
-    }
-
-
-    if(length(sp$df$keys) > 0){
-
-        # check if selection is new
-        if(!identical(ok(),
-                      sp$df$keys)){
-
-            max_sel_count <- max(sp$df$selection_count)
-
-            last_sel_keys <- as.integer(sp$df$keys[sp$df$selection_count == max_sel_count])
-            # grab points
-            add_points <- dframe()[last_sel_keys, ]
-            # handle plotly - only adds trace for array > 2L
-            if(nrow(add_points) == 1){
-                add_points <- rbind(add_points, add_points)
-            }
-
-            z <- zvar_toggle(selectors$zvar, df = add_points)
-
-            if(is_spatial_plot){
-
-                plotly::plotlyProxy(source, session) %>%
-                    plotly::plotlyProxyInvoke(
-                        "addTraces",
-                        list(
-                            lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
-                            lat = add_points[ , as.character(selectors$yvar), drop = TRUE],
-                            customdata = add_points[ , ".dcrkey", drop = TRUE],
-                            text = add_points[ , ".dcrkey", drop = TRUE],
-                            legendgroup = "out",
-                            size = z,
-                            sizes = c(25,100),
-                            type = "scattermapbox",
-                            mode = "markers",
-                            name = "O",
-                            opacity = 1,
-                            marker = list(
-                                color = add_color,
-                                opacity = 1),
-                            unselected = list(marker = list(opacity = 1)),
-                            showlegend = list(TRUE)
-                        )
-                    )
-
-            } else {
-
-
-                plotly::plotlyProxy(source, session) %>%
-                    plotly::plotlyProxyInvoke(
-                        "addTraces",
-                        list(
-                            x = add_points[ , as.character(selectors$xvar), drop = TRUE],
-                            y = add_points[ , as.character(selectors$yvar), drop = TRUE],
-                            size = z,
-                            type = "scattergl",
-                            mode = "markers",
-                            name = "O",
-                            customdata = add_points[ , ".dcrkey", drop = TRUE],
-                            text = add_points[ , ".dcrkey", drop = TRUE],
-                            legendgroup = "out",
-                            marker = list(
-                                color = add_color,
-                                opacity = 1),
-                            unselected = list(marker = list(opacity = 1)),
-                            selected = list(marker = list(opacity = 1)),
-                            showlegend = TRUE
-                        ),
-                        max_trace+1
-                    )
-            }
-            ok(sp$df$keys)
-
-
-        } else {
-
-            cat("WE DOWN\n")
-
-        }
-    }
-    return(ok)
-
-}
-#' Handle Add traces
-#'
-#' @param sp selected points
-#' @param dframe plot data
-#' @param ok reactive, old keys
-#' @param selectors reactive input selectors
-#' @param trace_map numeric, previous max trace id
+#' @param trace_map numeric, max trace id
 #' @param source plotly source
 #' @param session active session
 #'
@@ -653,7 +576,6 @@ handle_add_outlier_trace <- function(sp,
     # general config
     add_color <- "black"
 
-
     # handle spatial config
     is_spatial_plot <- identical(c(as.character(selectors$xvar),
                                    as.character(selectors$yvar)),
@@ -665,10 +587,6 @@ handle_add_outlier_trace <- function(sp,
         geo_def <- list()
     }
 
-
-
-
-
     # handle case when points exist in selection
     if(length(sp$df$keys) > 0){
 
@@ -678,12 +596,10 @@ handle_add_outlier_trace <- function(sp,
             add_points <- rbind(add_points, add_points)
         }
 
-        print("---- adding traces -----")
-
-
         # handle size
-        z <- zvar_toggle(selectors$zvar, df = add_points)
-
+        # currently using fixed size of 12 for all outlier markers
+        # may change in future again
+        # z <- zvar_toggle(selectors$zvar, df = add_points)
 
         if(is_spatial_plot){
 
@@ -699,9 +615,6 @@ handle_add_outlier_trace <- function(sp,
                             lat = add_points[ , as.character(selectors$yvar), drop = TRUE],
                             customdata = add_points[ , ".dcrkey", drop = TRUE],
                             text = add_points[ , ".dcrkey", drop = TRUE],
-                            # legendgroup = "out",
-                            # size = z,
-                            # sizes = c(25,100),
                             type = "scattermapbox",
                             mode = "markers",
                             name = "O",
@@ -763,8 +676,6 @@ handle_add_outlier_trace <- function(sp,
                         list(
                             x = add_points[ , as.character(selectors$xvar), drop = TRUE],
                             y = add_points[ , as.character(selectors$yvar), drop = TRUE],
-                            # size = z,
-                            # sizes = c(25,100),
                             type = "scattergl",
                             mode = "markers",
                             name = "O",
@@ -799,8 +710,6 @@ handle_add_outlier_trace <- function(sp,
                         list(
                             x = add_points[ , as.character(selectors$xvar), drop = TRUE],
                             y = add_points[ , as.character(selectors$yvar), drop = TRUE],
-                            # size = z,
-                            # sizes = c(25,100),
                             type = "scattergl",
                             mode = "markers",
                             name = "O",
@@ -820,25 +729,20 @@ handle_add_outlier_trace <- function(sp,
         }
         # update the old keys
         ok(sp$df$keys)
-
     }
-
     return(ok)
 }
 
 # helpers ------------
 
-
-zvar_toggle <- function(zvar, df){
-    if(nchar(zvar)>0){
-        z <- df[ , as.character(zvar), drop = TRUE]
-    } else {
-        z <- NULL
-    }
-    return(z)
-}
-
-
+# zvar_toggle <- function(zvar, df){
+#     if(nchar(zvar)>0){
+#         z <- df[ , as.character(zvar), drop = TRUE]
+#     } else {
+#         z <- NULL
+#     }
+#     return(z)
+# }
 
 
 `%nin%` <-  Negate(`%in%`)
@@ -868,6 +772,9 @@ make_group_table <- function(dframe){
 
 #' Return x and y limits of "group-subsetted" dframe
 #'
+#' @description Used for adjusting layout of plotly plot based on selected
+#' groups in \code{group_selector_table}; currently used in viz tab
+#'
 #' @param dframe dataframe/tibble, grouped/ungrouped
 #' @param group_index numeric, group indices for which to return lims
 #' @param xvar character, name of x var for plot (must exist in dframe)
@@ -877,9 +784,7 @@ make_group_table <- function(dframe){
 #' @return list with xlim and ylim
 calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.02){
 
-
     if(is.null(group_index)){
-
         group_index <- seq_len(dplyr::n_groups(dframe))
     }
 
@@ -894,7 +799,6 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
             warning("supplied group index outside of group stack, setting to 1")
             group_index <- 1
         }
-
     }
 
     if(any(c(xvar, yvar) %nin% names(dframe))){
@@ -904,9 +808,6 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
     group_rows <- unlist(
         dplyr::group_data(
             dframe)$.rows[group_index])
-
-
-
 
     if(any(rlang::inherits_any(dframe[, xvar, drop = TRUE], "POSIXct"),
            rlang::inherits_any(dframe[, xvar, drop = TRUE], "POSIXct"))){
@@ -935,8 +836,6 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
             ylim <- posix_scale(dframe[group_rows, yvar, drop = TRUE])
         }
 
-
-
     }
 
     if(!exists("xlim")){
@@ -944,7 +843,6 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
                       na.rm = TRUE) *
             c(1 - scaling, 1 + scaling)
     }
-
 
     if(!exists("ylim")){
 

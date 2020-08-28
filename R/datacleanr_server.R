@@ -179,7 +179,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     dframe <- apply_data_set_up(df = dplyr::ungroup(dataset), gvar())
     dframe <- dplyr::mutate(dframe,
-                               .dcrindex = dplyr::cur_group_id())
+                            .dcrindex = dplyr::cur_group_id())
 
 
     datareactive(dframe)
@@ -299,9 +299,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
     filt_out <- shiny::callModule(module = module_server_df_filter,
-                            id = "check",
-                            dframe = shiny::isolate(recover_data()),
-                            condition_df = add.filter$df)
+                                  id = "check",
+                                  dframe = shiny::isolate(recover_data()),
+                                  condition_df = add.filter$df)
 
     shiny::isolate(tmp_filter(filt_out))
 
@@ -311,9 +311,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
   # FILTER Apply/Undo  -------------------------------------------------------
 
-  # # used for extraction tab
-  # filter_string <- shiny::reactiveVal()
-  # selected_data_recovery <- shiny::reactiveVal()
 
   #apply
   shiny::observeEvent(input$apply_filter, {
@@ -327,17 +324,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     shiny::isolate(datareactive(shiny::isolate(tmp_filter()$df)))
 
-    # df <- try({checked_filter(df = recover_data(),
-    #                           statements = add.filter$df$filter,
-    #                           grouping_indices = add.filter$df$grouping)})
-
-    # if(any(df$succeeded)){
-    #   datareactive(df$filtered_df)
-    #   filter_strings$statement_strings <- df$statement_strings
-    #   filter_strings$statement_strings_grouped <- df$statement_strings_grouped
-    #   filter_strings$statement_strings_ungrouped <- df$statement_strings_grouped
-    # }
-    # rm(df)
 
     ## Logic to handle removal of selected data in plotly
     # id points in selection now missing in data
@@ -1083,10 +1069,10 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   code_out <- shiny::reactiveVal()
 
   # shiny::observeEvent({
-    # input$apply_filter
-    # selected_data$df
-    # },
-    # {
+  # input$apply_filter
+  # selected_data$df
+  # },
+  # {
   shiny::observe({
 
     shiny::req(datareactive())
@@ -1094,7 +1080,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     if(!is.null(input$apply_filter) | nrow(selected_data$df) > 0 ){
 
 
-    code_out(
+      code_out(
         shiny::callModule(module_server_extract_code,
                           id = "extract",
                           df_label = df_name,
@@ -1103,7 +1089,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                           statements = tmp_filter()$statements_lgl,
                           sel_points = selected_data$df,
                           overwrite = input$overwrite)
-    )
+      )
     }
 
   })

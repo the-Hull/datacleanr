@@ -51,7 +51,7 @@ module_server_group_selector_table <- function(input, output, session, df, df_la
             output$grouptable <- DT::renderDT(group_table,
                                               rownames = FALSE,
                                               ...
-                                              )
+            )
 
 
 

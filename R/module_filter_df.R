@@ -40,8 +40,10 @@ module_server_df_filter <- function(input, output, session, dframe, condition_df
 
 
     if(any(states) ){
+
+
     out <- filter_scoped_df(dframe = dframe,
-                                 condition_df = condition_df)
+                                 condition_df = condition_df[states, ])
 
 
         percent_filtered <- round(100 * (1 - ( nrow(out) /

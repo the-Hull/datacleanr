@@ -310,6 +310,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   # FILTER Apply/Undo  -------------------------------------------------------
 
 
+  filter_statements_lgl <- shiny::reactiveVal()
+
   #apply
   shiny::observeEvent(input$apply_filter, {
 
@@ -321,6 +323,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                 label = "StartButton"))
 
     shiny::isolate(datareactive(shiny::isolate(tmp_filter()$df)))
+    filter_statements_lgl(tmp_filter()$statements_lgl)
 
 
     ## Logic to handle removal of selected data in plotly
@@ -358,6 +361,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                   label = "StartButton"))
 
       datareactive(recover_data())
+      filter_statements_lgl(NULL)
 
       # reset filters
       add.filter$df <- add.filter$df[0,,drop = FALSE]
@@ -1084,7 +1088,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                           df_label = df_name,
                           gvar = gvar(),
                           filter_df = add.filter$df,
-                          statements = tmp_filter()$statements_lgl,
+                          statements = filter_statements_lgl(),
                           sel_points = selected_data$df,
                           overwrite = input$overwrite)
       )

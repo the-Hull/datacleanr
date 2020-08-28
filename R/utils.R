@@ -105,6 +105,13 @@ check_individual_statement <- function(df, statement){
 #' @return list of data frames
 split_groups <- function(dframe){
 
+    if (!all(c(".dcrindex") %in% names(dframe))) {
+
+        dframe <- dplyr::mutate(dframe,
+                                .dcrindex = dplyr::cur_group_id())
+
+    }
+
     outlist <- base::split(
         dframe,
         f = as.factor(dframe$.dcrindex)
@@ -132,6 +139,10 @@ filter_scoped <- function(dframe, statement, scope_at){
     n_groups <- dplyr::n_groups(dframe)
     var_groups <- rlang::syms(dplyr::group_vars(dframe))
 
+    # statement <- rlang::enquos(statement)
+    statement <- parse(text = statement)
+
+
     # statement_check <- check_individual_statement(df = dframe,
     #                                               statement = statement)
     #
@@ -152,47 +163,73 @@ filter_scoped <- function(dframe, statement, scope_at){
     # } else if(isTRUE(statement_check)){
 
 
-        if(rlang::is_missing(scope_at)){
-            scope_at <- NULL
-        }
+    if(rlang::is_missing(scope_at)){
+        scope_at <- NULL
+    }
 
-        if(is.null(scope_at) | n_groups == 1){
+    if(is.null(scope_at) | n_groups == 1){
 
 
-            filt_expr <- paste0('dplyr::group_by(dplyr::filter(dplyr::ungroup(dframe),',
-                                statement,
-                                '), !!! var_groups)')
-            filtered_df <- eval(parse(text = filt_expr))
+        # df passed in function is already for table generation and plotting
+        # needs ungrouping first
+        filtered_df <- dplyr::group_by(
+            dplyr::filter(dplyr::ungroup(dframe),
+                          eval(statement)),
+            !!! var_groups
+        )
+
+        #
+        #             filt_expr <- paste0('dplyr::group_by(dplyr::filter(dplyr::ungroup(dframe),',
+        #                                 statement,
+        #                                 '), !!! var_groups)')
+        #             filtered_df <- eval(parse(text = filt_expr))
 
         } else if(length(scope_at) == n_groups){
-            filt_expr <- paste0('dplyr::filter(dframe,',
-                                statement,
-                                ')')
-            filtered_df <- eval(parse(text = filt_expr))
+            # filt_expr <- paste0('dplyr::filter(dframe,',
+            #                     statement,
+            #                     ')')
+            # filtered_df <- eval(parse(text = filt_expr))
+            #
+
+            filtered_df <- dplyr::filter(dframe, eval(statement))
+
         } else if(n_groups > 1 &
                   length(scope_at) >= 1 &
                   length(scope_at) != n_groups){
 
-            filt_expr <- glue::glue(
-                "dplyr::bind_rows(purrr::map_at(
-                    .x = split_groups(dframe),
-                    .at = {{deparse(scope_at)}},
-                    .f = function(x){
-                        dplyr::filter(
-                            x,
-                            {{statement}})
+            # filt_expr <- glue::glue(
+            #     "
+            #     dplyr::bind_rows(purrr::map_at(
+            #         .x = split_groups(dframe),
+            #         .at = {{deparse(scope_at)}},
+            #         .f = function(x){dplyr::filter(x,
+            #         {{statement}}
+            #         )}
+            #         ))
+            #     ",
+            #     .open = "{{",
+            #     .close = "}}"
+            # )
+            # filtered_df <- eval(str2expression(filt_expr))
+
+
+            filtered_df <- dplyr::bind_rows(purrr::map_at(
+                .x = split_groups(dframe),
+                .at = scope_at,
+                .f = function(x){dplyr::filter(x,
+                                               eval(statement))
                     }
-                ))",
-                .open = "{{",
-                .close = "}}"
-            )
-            filtered_df <- eval(str2expression(filt_expr))
-        } else {
+            ))
+
+
+
         }
         return(list(
             # succeeded = statement_check,
-                    filtered_df = filtered_df,
-                    expression_string = filt_expr))
+                    filtered_df = filtered_df
+                    # ,
+                    # expression_string = filt_expr
+                    ))
     # }
 
 }

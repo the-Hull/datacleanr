@@ -125,9 +125,10 @@ module_server_extract_code  <-
 
 
             # Output from filtering tab
-            if(any(statements)){
+            if(any(statements)  &
+               nrow(filter_df) > 0){
                 # FILTERING ---------------------------------------------------------------
-                filter_df <- filter_df[statements]
+                filter_df <- filter_df[statements, ]
 
 
 

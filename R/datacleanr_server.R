@@ -185,8 +185,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     datareactive(dframe)
     recover_data(dframe)
 
-    print(paste("Is DF Grouped??", dplyr::is.grouped_df(datareactive())))
-
     shiny::callModule(module_server_summary,
                       "summary",
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{filter_scoped}
 \alias{filter_scoped}
-\title{Apply filter based on a statement, scoped to groups}
+\title{Apply filter based on a statement, scoped to \code{dplyr} groups}
 \usage{
 filter_scoped(dframe, statement, scope_at)
 }
@@ -14,10 +14,8 @@ filter_scoped(dframe, statement, scope_at)
 \item{scope_at}{numeric, group indices to apply filter statements to}
 }
 \value{
-List, containing logical item stating \code{success}, and if \code{TRUE}
-additional items \code{filtered_df} and the respective \code{expression_string} (character) for generating
-the data.frame \ tibble
+List, containing item \code{filtered_df}, a \code{data.frame} filtered based on statements and scope.
 }
 \description{
-Apply filter based on a statement, scoped to groups
+Apply filter based on a statement, scoped to \code{dplyr} groups
 }

@@ -13,11 +13,8 @@ datacleanr_ui <- function(request){
 
     # Panel texts ----------------------------
 
-    text_grouping_side_panel <- shiny::tagList(shiny::h4(shiny::tags$strong("Overview")),
-                                               shiny::br(),
-                                               shiny::p("Select grouping variables for subsequent cleaning."),
-                                               shiny::br(),
-                                               shiny::p("Choose if you want to view an overview with or without grouping."))
+    text_grouping_side_panel <- shiny::tagList(shiny::br(),
+                                               shiny::p("Select grouping variables for subsequent viewing and cleaning."))
 
     # text_filtering_side_panel <- shiny::tagList(
     #     # shiny::p(
@@ -98,21 +95,29 @@ datacleanr_ui <- function(request){
 
 
     navbarPageWithInputs(
-        theme = "sandstone.min.css",
         # theme = shinythemes::shinytheme("sandstone"),
         "datacleanr",
         id = "nav",
 
         # TAB GROUPING ------------
-        shiny::tabPanel("Overview & Set-up",
-                        value = "grouping",
+        shiny::tabPanel(value = "tabOverview",
+            title = "Overview & Set-up",
                         icon = shiny::icon("layer-group"),
 
                         # panel set-up
                         shiny::sidebarLayout(
 
                             sidebarPanel = shiny::sidebarPanel(
+                                shiny::h4(shiny::tags$strong("Grouping")),
+
+                                shiny::actionLink("help-ov",
+                                                  "Click for Help",
+                                                  icon = shiny::icon("question-circle")),
+                                shiny::br(),
+
                                 text_grouping_side_panel,
+
+
                                 module_ui_group_select(id = "group"),
                                 module_ui_checkbox(id = "grouptick",
                                                    cond_id = "group-groupvar"),
@@ -133,8 +138,8 @@ datacleanr_ui <- function(request){
         ), # /tabPanel
 
         # TAB FILTERING -----------
-        shiny::tabPanel("Filtering",
-                        value = "filtering",
+        shiny::tabPanel(value = "tabFiltering",
+                        title = "Filtering",
                         icon = shiny::icon("sliders-h"),
 
 
@@ -194,8 +199,8 @@ datacleanr_ui <- function(request){
         ), #/tabPanel
 
         # TAB VIS -----------------
-        shiny::tabPanel("Visualization",
-                        value = "visu",
+        shiny::tabPanel(value = "tabVisualization",
+                        title = "Visual Cleaning & Annotating",
                         icon = shiny::icon("chart-area"),
                         shiny::sidebarLayout(
 
@@ -215,14 +220,26 @@ datacleanr_ui <- function(request){
                                                                module_ui_text_annotator("annotator"),
 
                                                                shiny::br(),
-                                                               shiny::h4(shiny::tags$strong("Impact on distribution")),
-                                                               # shiny::actionButton(inputId = "histogramupdate",
-                                                               #                     label = "Update",
-                                                               #                     icon = shiny::icon("sync-alt"),
-                                                               #                     class = "btn-info"),
-                                                               shiny::uiOutput("histogramupdatebutton"),
-                                                                                module_ui_histograms("plotvars")
-                                             ),
+
+                                                               # shiny::h4(shiny::tags$strong("Impact on distribution")),
+
+
+                                                               shiny::tagList(
+                                                                   shiny::fluidRow(
+                                                                       shiny::column(8,
+                                                                                     shiny::h4(shiny::tags$strong("Impact on distribution")),
+                                                                       ),
+                                                                       shiny::column(4,
+                                                                                     shiny::uiOutput("histogramupdatebutton")
+                                                                       )
+                                                                   ) #/fluidRow
+                                                               ), #/taglist
+                                                               shiny::actionLink("help-hist",
+                                                                                 "Click for Help",
+                                                                                 icon = shiny::icon("question-circle")),
+
+                                                               module_ui_histograms("plotvars")
+                            ),
 
                                              mainPanel = shiny::mainPanel(width = 8,
                                                                           module_ui_plot_selectorcontrols("selectors"),
@@ -238,8 +255,8 @@ datacleanr_ui <- function(request){
 
                          ,
                          # TAB EXTRACT -------------
-                         shiny::tabPanel("Extraction",
-                                         value = "extract",
+                         shiny::tabPanel(value = "tabExtraction",
+                                         title = "Extract",
                                          icon = shiny::icon("file-export"),
                                          shiny::sidebarLayout(
 
@@ -248,7 +265,8 @@ datacleanr_ui <- function(request){
                                              sidebarPanel = shiny::sidebarPanel(width = 4,
                                                                                 shiny::h4(shiny::tags$strong("Reproducible Recipe")),
                                                                                 shiny::br(),
-                                                                                shiny::p("All commands and operations in previous tabs are translated to code on the right, ensuring reproducibility"),
+                                                                                shiny::p("All commands and operations in previous tabs are translated to
+                                                                                         code on the right, ensuring reproducibility."),
                                                                                 shiny::br(""),
                                                                                 shiny::checkboxInput("overwrite",
                                                                                                      label = "Concise code?",
@@ -264,23 +282,14 @@ datacleanr_ui <- function(request){
                          inputs = list(shiny::actionButton("done",
                                                            "Finish",
                                                            icon = shiny::icon("check-circle"),
-                                                           class = "btn-success"),
-                                       shiny::actionButton("cancel",
-                                                           "Cancel",
-                                                           icon = shiny::icon("window-close"),
-                                                           class = "btn-secondary")
+                                                           class = "btn-success")
+                                       # shiny::actionButton("cancel",
+                                       #                     "Cancel",
+                                       #                     icon = shiny::icon("window-close"),
+                                       #                     class = "btn-secondary")
                                        # shiny::bookmarkButton("bookmark",
                                                              # label = "Save",
                                                              # icon = shiny::icon("save"))
-
-                                       # miniUI::miniTitleBarButton(ns("done"),
-                                       #                                      "Done",
-                                       #                                      primary = TRUE),
-                                       #
-                                       #           miniUI::miniTitleBarCancelButton(inputId = ns("cancel"),
-                                       #                                            label = "Cancel",
-                                       #                                            primary = FALSE)
-                                       #
                          ), #inputs
 
 

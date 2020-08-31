@@ -9,9 +9,6 @@ dcr_checks(dframe)
 \arguments{
 \item{dframe}{dframe supplied to \code{dcr_app}}
 }
-\value{
-Nothing - just check!
-}
 \description{
-test
+Initial checks for data set
 }

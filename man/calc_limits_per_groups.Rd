@@ -21,5 +21,6 @@ calc_limits_per_groups(dframe, group_index, xvar, yvar, scaling = 0.02)
 list with xlim and ylim
 }
 \description{
-Return x and y limits of "group-subsetted" dframe
+Used for adjusting layout of plotly plot based on selected
+groups in \code{group_selector_table}; currently used in viz tab
 }

@@ -8,46 +8,48 @@ module_ui_extract_code <- function(id) {
     ns <- shiny::NS(id)
 
 
-    shiny::tagList(shiny::fluidRow(
-        # shiny::column(
-        #     # align = "left",
-        #     width = 6,
-        #     shiny::selectInput(
-        #         inputId = ns("paradigm"),
-        #         label = "Choose coding style",
-        #         choices = c("base", "data.table", "dplyr"),
-        #         selected = "base",
-        #         selectize = TRUE,
-        #         multiple = FALSE
-        #     )
-        # ),
+    shiny::uiOutput(ns("codebuttons"))
 
-        shiny::column(
-            # align = "left",
-            width = 3,
-            style = "margin-top: 25px;",
-            shiny::actionButton(
-                inputId = ns("codebtn"),
-                label = "Send to RStudio",
-                class = "btn-info",
-                icon = shiny::icon("share-square")
-            )
-        ),
-        shiny::column(
-            width = 3,
-            style = "margin-top: 25px;",
-            shiny::actionButton(
-                inputId = ns("copybtn"),
-                label = "Copy to clipboard",
-                class = "btn-info",
-                icon = shiny::icon("copy")
-            )
-        )),
-        shiny::br(),
-
-        shiny::verbatimTextOutput(ns("codeprint"))
-        # shiny::uiOutput(ns("codeprint")))
-    )
+    # shiny::tagList(shiny::fluidRow(
+    #     # shiny::column(
+    #     #     # align = "left",
+    #     #     width = 6,
+    #     #     shiny::selectInput(
+    #     #         inputId = ns("paradigm"),
+    #     #         label = "Choose coding style",
+    #     #         choices = c("base", "data.table", "dplyr"),
+    #     #         selected = "base",
+    #     #         selectize = TRUE,
+    #     #         multiple = FALSE
+    #     #     )
+    #     # ),
+    #
+    #     shiny::column(
+    #         # align = "left",
+    #         width = 3,
+    #         style = "margin-top: 25px;",
+    #         shiny::actionButton(
+    #             inputId = ns("codebtn"),
+    #             label = "Send to RStudio",
+    #             class = "btn-info",
+    #             icon = shiny::icon("share-square")
+    #         )
+    #     ),
+    #     shiny::column(
+    #         width = 3,
+    #         style = "margin-top: 25px;",
+    #         shiny::actionButton(
+    #             inputId = ns("copybtn"),
+    #             label = "Copy to clipboard",
+    #             class = "btn-info",
+    #             icon = shiny::icon("copy")
+    #         )
+    #     )),
+    #     shiny::br(),
+    #
+    #     shiny::verbatimTextOutput(ns("codeprint"))
+    #     # shiny::uiOutput(ns("codeprint")))
+    # )
 }
 #------------------------------------------------------------------------------#
 # MODULE SERVER ----
@@ -254,6 +256,9 @@ module_server_extract_code  <-
 
             text_out <- glue::glue(
                 '
+            # datacleaning with datacleanr ({utils::packageVersion("datacleanr")})
+            # {utils::timestamp(quiet = TRUE)}
+
             {setup_string}
 
             {apply_filter_string}
@@ -282,6 +287,37 @@ module_server_extract_code  <-
 
 
         output$codeprint <- shiny::renderText(text_out)
+
+
+
+        output$codebuttons <- shiny::renderUI(
+            shiny::tagList(shiny::fluidRow(
+
+                shiny::column(
+                    width = 3,
+                    style = "margin-top: 25px;",
+                    shiny::actionButton(
+                        inputId = ns("codebtn"),
+                        label = "Send to RStudio",
+                        class = "btn-info",
+                        icon = shiny::icon("share-square")
+                    )
+                ),
+                shiny::column(
+                    width = 3,
+                    style = "margin-top: 25px;",
+                    shiny::actionButton(
+                        inputId = ns("copybtn"),
+                        label = "Copy to clipboard",
+                        class = "btn-info",
+                        icon = shiny::icon("copy")
+                    )
+                )),
+                shiny::br(),
+
+                shiny::verbatimTextOutput(ns("codeprint"))
+            )
+        )
 
         return(text_out)
 

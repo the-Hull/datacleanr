@@ -26,7 +26,6 @@ module_ui_histograms <- function(id) {
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param dframe df
-#' @param dframe_recover df, unfiltered df (faster subsetting via dcrkeys)
 #' @param selector_inputs reactive vals from above-plot controls,
 #' @param sel_points reactive, provides .dcrkey of selected points
 #'
@@ -38,7 +37,6 @@ module_server_histograms  <-
              output,
              session,
              dframe,
-             dframe_recover,
              selector_inputs,
              sel_points) {
         ns = session$ns
@@ -117,8 +115,7 @@ module_server_histograms  <-
             vars_to_plot %>%
                 lapply(one_plot,
                        dfull = dframe,
-                       # dfilt = dframe[dframe$.dcrkey %nin% sel_points$keys,]) %>%
-                       dfilt = dframe_recover[-sel_points$keys, ]) %>%
+                       dfilt = dframe[dframe$.dcrkey %nin% sel_points$keys,]) %>%
                 stats::setNames(rep("histoplot", NROW(vars_to_plot))) %>%
                 # arrange
                 plotly::subplot(

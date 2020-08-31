@@ -1,12 +1,14 @@
 #' datacleanr server function
+#' @param input,output,session standard \code{shiny} boilerplate
 #' @param dataset data.frame, tibble or data.table that needs cleaning
 #' @param df_name character, name of dataset passed into shiny app
 #'
-#' @param input,output,session standard \code{shiny} boilerplate
 datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
   ns <- session$ns
+
+
 
   # old_tz <- Sys.getenv("TZ")
   # Sys.setenv(TZ = "UTC")
@@ -16,86 +18,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   # options(warn = -1)
 
 
-  # Help Texts --------------------------------------------------------------
 
-  text_filtering_side_panel <- shiny::tagList(
-    # shiny::p(
-    # shiny::tags$b("Add/Remove"),
-    # "text boxes and add unquoted filter statements."),
-    shiny::p(shiny::tags$b("Add/Remove"),
-             "filter statements as necessary. These are passed to",
-             shiny::tags$b("base::subset()"), "."),
-    shiny::p("Use", shiny::tags$b("single quotes"), "for values of character/factor variables."),
-    shiny::tags$p("For example, valid statements for filtering",
-                  shiny::tags$b("iris"),
-                  "are:"),
-    shiny::tags$ol(
-      shiny::tags$li(shiny::tags$small("Species == 'setosa'")),
-      shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')")),
-      shiny::tags$li(shiny::tags$small("Sepal.Width > quantile(Sepal.Width, 0.05)"))
-    ),
-
-    shiny::br(),
-    shiny::p("Click",
-             shiny::tags$b("'Apply'"),
-             "when you're ready, and",
-             shiny::tags$b("'Reset'"),
-             "to start from scratch."))
-
-
-  text_annotate_side_panel <- shiny::tagList(
-    shiny::p("After selecting points by",
-             shiny::tags$b("clicking/lasso-selecting"),
-             "the",
-             shiny::tags$b("last selection"),
-             "can be annotated with a text label.",
-             shiny::br(),
-             "These labels are collected and provided as an additional column",
-             shiny::tags$b("'.annotation'"),
-             "in the table to the right and outputted via the",
-             shiny::tags$b("Extraction Tab.")),
-    shiny::br(),
-
-    shiny::p("The annotation can be updated or removed by deleting all characters in the input box and clicking the button again.",
-             "Note, that the most-recent selection can be deleted with a ",
-             shiny::tags$b("double-click on the plot."),
-             "This also removes the respective annotations."))
-
-
-  text_plot_main_panel <- shiny::tagList(
-    shiny::p("Select at least ",
-             shiny::tags$b("X and Y"),
-             " variables and click",
-             shiny::tags$b("'Plot!'."),
-             "The",
-             shiny::tags$b("Z"),
-             "variable adjusts point size.",
-             "The legend entries correspond with the rownumbers on the table to the left.",
-             "Individual items (i.e. groups) can be",
-             shiny::tags$b("hidden"),
-             "by clicking on the legend.",
-             "Double-clicking one item hides all others (speeding up selections), and a subsequent double-click displays all data."),
-    shiny::p("Note, that",
-             shiny::tags$b("'Plot!'"),
-             "must be clicked after any variable input has been",
-             shiny::tags$b("clicked or changed."),
-             shiny::br(),
-             shiny::br(),
-             "To mark and exclude outliers, ",
-             shiny::tags$b("click or lasso/box select"),
-             "individual points.",
-             shiny::tags$b("Double-click"),
-             "on the plot area to remove the last selection.",
-             shiny::br(),
-             "The plot's",
-             shiny::tags$b("control bar"),
-             "allows to",
-             shiny::tags$b("zoom and reset views")),
-    shiny::br(),
-
-    shiny::p("Selected points appear in the",
-             shiny::tags$b(" table below"),
-             "and can be annotated with the tool to the left."))
 
   # DIAGNOSTICS ----------------------
 
@@ -463,7 +386,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     handle_restyle_traces(source_id = "plot-scatterselect",
                           session = session,
                           dframe = datareactive(),
-                          scaling = 0.075,
+                          scaling = 0.1,
                           xvar = as.character(selector_vals$xvar),
                           yvar = as.character(selector_vals$yvar),
                           max_id_group_trace = max_id_original_traces(),
@@ -880,11 +803,13 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     input$`lwrcontrol-undoselection`},
     {
 
+
       shiny::validate(shiny::need(input[["plot-tracemap"]],
                                   label = "need tracepam"))
 
       traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
       indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+      print(traces)
 
       if(length(indices)>0){
         plotly::plotlyProxy("plot-scatterselect", session) %>%
@@ -894,7 +819,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
           )
 
 
-        z <- zvar_toggle(selector_vals$zvar, df = recover_data()[ selected_data$df$keys, ])
+        # z <- zvar_toggle(selector_vals$zvar, df = recover_data()[ selected_data$df$keys, ])
 
 
 
@@ -928,29 +853,29 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     })
 
   # undo last selection with click
-  shiny::observeEvent({
-    plotly::event_data(c("plotly_deselect"),
-                       source = "scatterselect",
-                       priority = "event")},
-    {
-
-      shiny::validate(shiny::need(input[["plot-tracemap"]],
-                                  label = "need tracepam"))
-
-      traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
-      indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
-
-
-      if(length(indices)>0){
-        plotly::plotlyProxy("plot-scatterselect", session) %>%
-          plotly::plotlyProxyInvoke(
-            "deleteTraces",
-            max(indices)
-          )
-        print("removed trace!!")
-      }
-      old_keys(NULL)
-    })
+  # shiny::observeEvent({
+  #   plotly::event_data(c("plotly_deselect"),
+  #                      source = "scatterselect",
+  #                      priority = "event")},
+  #   {
+  #
+  #     shiny::validate(shiny::need(input[["plot-tracemap"]],
+  #                                 label = "need tracepam"))
+  #
+  #     traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
+  #     indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+  #
+  #
+  #     if(length(indices)>0){
+  #       plotly::plotlyProxy("plot-scatterselect", session) %>%
+  #         plotly::plotlyProxyInvoke(
+  #           "deleteTraces",
+  #           max(indices)
+  #         )
+  #       print("removed trace!!")
+  #     }
+  #     old_keys(NULL)
+  #   })
 
 
   # delete entire selection with button
@@ -1004,7 +929,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
       shiny::callModule(id = "plotvars",
                         module = module_server_histograms,
                         dframe = shiny::isolate(datareactive()),
-                        dframe_recover = recover_data(),
                         selector_inputs = shiny::isolate(selector_vals),
                         sel_points = shiny::isolate(selected_data$df))
     }
@@ -1117,7 +1041,157 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   # // ----------------------------------------------------------------------
 
 
+  # Help Texts --------------------------------------------------------------
+
+  text_filtering_overview_panel <- shiny::tagList(
+    shiny::p(
+      "Select relevant groups",
+      shiny::tags$b("(order matters for plotting)"),
+      "and click",
+      shiny::tags$b("Start!"),
+      "This displays a summary (by columns, and optionally, by groups), and makes the other tabs' functions available",
+      shiny::br(),
+
+      "The",
+      shiny::tags$b("grouping order"),
+      "should reflect units that are most convenient for breaking up the data,",
+      "and how you plan on cycling through them during visual cleaning. For example, useful groups could be",
+
+      shiny::tags$ol(
+        shiny::tags$li(shiny::tags$small("time periods")),
+        shiny::tags$li(shiny::tags$small("locations")),
+        shiny::tags$li(shiny::tags$small("sensors"))
+      ),
+
+      "Smart combinations of grouping variables can, e.g. allow to cycle through multiple sensors for a given period with ease."
+    )
+  )
+
+
+
+  text_filtering_side_panel <- shiny::tagList(
+    # shiny::p(
+    # shiny::tags$b("Add/Remove"),
+    # "text boxes and add unquoted filter statements."),
+    shiny::p(shiny::tags$b("Add/Remove"),
+             "filter statements as necessary. These are passed to",
+             shiny::tags$b("dplyr::filter()"), "."),
+    shiny::p("Use", shiny::tags$b("single quotes"), "for values of character/factor variables."),
+    shiny::tags$p("For example, valid statements for filtering",
+                  shiny::tags$b("iris"),
+                  "are:"),
+    shiny::tags$ol(
+      shiny::tags$li(shiny::tags$small("Species == 'setosa'")),
+      shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')")),
+      shiny::tags$li(shiny::tags$small("Sepal.Width > quantile(Sepal.Width, 0.05)"))
+    ),
+    shiny::p("Any function returning a logical vector (i.e. TRUE/FALSE) can be employed here!"),
+    shiny::br(),
+    shiny::p("A dynamic text will inform you which filter statements are
+             viable, and how much of the data will be filtered when they are applied.",
+             "Adjust the",
+             shiny::tags$b("Grouping scope"),
+             "in the drop down next to the text box. This allows to apply the filter statement to:"),
+    shiny::tags$ol(
+      shiny::tags$li(shiny::tags$small("none (ungrouped filtering)")),
+      shiny::tags$li(shiny::tags$small("individual groups (scoped filtering)")),
+      shiny::tags$li(shiny::tags$small("all groups (grouped filtering)"))
+    ),
+    shiny::p("Click",
+             shiny::tags$b("'Apply'"),
+             "when you're ready, and",
+             shiny::tags$b("'Reset'"),
+             "to start from scratch."),
+    shiny::p("A table",
+             shiny::tags$b("Data Overview"),
+             "will inform you how many data points remain in the data set (by group)"),
+    shiny::p("Note, clicking",
+             shiny::tags$b("Apply!"),
+             "generates output in the",
+             shiny::tags$b("Extract Tab"),
+             "if any viable filtering statements have been provided.")
+  )
+
+
+  text_annotate_side_panel <- shiny::tagList(
+    shiny::p("After selecting points by",
+             shiny::tags$b("clicking/lasso-selecting"),
+             "the",
+             shiny::tags$b("last selection"),
+             "can be annotated with a text label.",
+             shiny::br(),
+             "These labels are collected and provided as an additional column",
+             shiny::tags$b("'.annotation'"),
+             "in the table to the right and outputted via the",
+             shiny::tags$b("Extraction Tab.")),
+    shiny::br(),
+    shiny::p("The annotation can be updated or removed by deleting all characters in the input box and clicking the button again."))
+
+  text_distribution_side_panel <- shiny::tagList(
+    shiny::p("Clicking the",
+             shiny::tags$b("Update"),
+             "button will generate histograms of all plotted variables",
+             shiny::tags$b("(X, Y, Z)."),
+             "If any points have been selected via",
+             shiny::tags$b("clicking/lasso-selecting"),
+             "the histograms will show the difference between the raw and cleaned data set."),
+    shiny::p("Note, that this plot mus tbe re-generated manually to visualize any changes."))
+
+
+  text_plot_main_panel <- shiny::tagList(
+    shiny::p("Select at least ",
+             shiny::tags$b("X and Y"),
+             "(the ",
+             shiny::tags$b("Z"),
+             "variable adjusts point size)",
+             "and click",
+             shiny::tags$b("'Plot!'.")),
+    shiny::p("The legend entries correspond with the row-numbers (i.e. groups) of the",
+             shiny::tags$b("Data Overview"),
+             "Table",
+             shiny::tags$b("Groups can be highlighted"),
+             "for selective display by clicking on the respective rows",
+             "Clicking on the plot's legend (single for hide/unhide, double for hide all others/show all) has a similar effect."),
+    shiny::p("Note, that",
+             shiny::tags$b("'Plot!'"),
+             "must be clicked after any variable input (X, Y, Z) has been",
+             shiny::tags$b("clicked or changed."),
+             shiny::br(),
+             shiny::br(),
+             "To mark and exclude outliers, ",
+             shiny::tags$b("click or lasso/box select"),
+             "individual points.",
+             "Hit the",
+             shiny::tags$b("Undo last selection"),
+             "or",
+             shiny::tags$b("Clear all"),
+             "button to adjust/remove outliers."),
+    shiny::p(shiny::br(),
+             "The plot's",
+             shiny::tags$b("control bar"),
+             "allows to",
+             shiny::tags$b("zoom and reset views")),
+    shiny::br(),
+
+    shiny::p("Selected points appear in the",
+             shiny::tags$b(" table below"),
+             "and can be annotated with the tool (box and button) to the left."))
+
   # HELP LINKS --------------------------------------------------------------
+
+
+  ## Filter Tab
+  shiny::observeEvent(input$`help-ov`, {
+
+    shiny::showModal(shiny::modalDialog(
+      text_filtering_overview_panel,
+      title = "Getting started",
+      size = "m",
+      easyClose = TRUE,
+      footer = NULL
+    ))
+
+  })
 
 
   ## Filter Tab
@@ -1143,52 +1217,64 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
       easyClose = TRUE,
       footer = NULL
     ))
-
-  })
-  # Viz tab - plot + selector tool
-  shiny::observeEvent(input$`help-plot`, {
-
-    shiny::showModal(shiny::modalDialog(
-      text_plot_main_panel,
-      title = "Plotting data and selecting outliers",
-      size = "m",
-      easyClose = TRUE,
-      footer = NULL
-    ))
-
   })
 
+    # VIZ tab - histogram tool
+    shiny::observeEvent(input$`help-hist`, {
+
+      shiny::showModal(shiny::modalDialog(
+        text_distribution_side_panel,
+        title = "How to annotate outliers",
+        size = "m",
+        easyClose = TRUE,
+        footer = NULL
+      ))
+
+    })
+    # Viz tab - plot + selector tool
+    shiny::observeEvent(input$`help-plot`, {
+
+      shiny::showModal(shiny::modalDialog(
+        text_plot_main_panel,
+        title = "Plotting data and selecting outliers",
+        size = "m",
+        easyClose = TRUE,
+        footer = NULL
+      ))
+
+    })
 
 
-  # OUTLIST
-  # shiny::observeEvent(input[["selectors-startscatter"]], {
-  #     outs <- outputOptions(output)
-  #     print(outs)
-  #     print("ya")
-  #     lapply(names(outs), function(name) {
-  #         outputOptions(output, name, suspendWhenHidden = FALSE)
-  #     })
-  #
-  # })
+
+    # OUTLIST
+    # shiny::observeEvent(input[["selectors-startscatter"]], {
+    #     outs <- outputOptions(output)
+    #     print(outs)
+    #     print("ya")
+    #     lapply(names(outs), function(name) {
+    #         outputOptions(output, name, suspendWhenHidden = FALSE)
+    #     })
+    #
+    # })
 
 
 
 
 
-  # END ---------------------------
-  shiny::observeEvent(input$done, {
+    # END ---------------------------
+    shiny::observeEvent(input$done, {
 
-    # handle plotly TZ issue
-    # Sys.setenv(TZ = old_tz)
-    shiny::stopApp("Done")
-  })
-  shiny::observeEvent(input$cancel, {
+      # handle plotly TZ issue
+      # Sys.setenv(TZ = old_tz)
+      shiny::stopApp("Done")
+    })
+    # shiny::observeEvent(input$cancel, {
+    #
+    #   # Sys.setenv(TZ = old_tz)
+    #   shiny::stopApp(NULL)
+    #
+    # })
 
-    # Sys.setenv(TZ = old_tz)
-    shiny::stopApp(NULL)
-
-  })
-
-}
+  }
 
 

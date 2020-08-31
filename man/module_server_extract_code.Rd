@@ -9,7 +9,9 @@ module_server_extract_code(
   output,
   session,
   df_label,
-  filter_strings,
+  filter_df,
+  gvar,
+  statements,
   sel_points,
   overwrite
 )
@@ -19,9 +21,13 @@ module_server_extract_code(
 
 \item{df_label}{string, name of original df input}
 
-\item{filter_strings}{reactive value, individual strings from filtering}
+\item{filter_df}{data frame with filter statements and scoping lvl}
 
-\item{sel_points}{reactive values, data frame with selected point keys, annotations, and selection count}
+\item{gvar}{character, grouping vars for \code{dplyr::group_by}}
+
+\item{statements}{lgl, vector of working statements}
+
+\item{sel_points}{data frame with selected point keys, annotations, and selection count}
 
 \item{overwrite}{reacive value, TRUE/FALSE from checkbox input}
 }

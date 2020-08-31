@@ -27,7 +27,6 @@ module_ui_plot_annotation_table <- function(id) {
 #'
 module_server_plot_annotation_table <- function(input, output, session, dframe, sel_points){
     ns = session$ns
-    print("Restarting Table Stuff")
 
 
 
@@ -46,7 +45,10 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
     # str(df$df$data)
     # str(table_dat)
 
-    table_dat <- dframe()[dframe()$.dcrkey %in% sel_points$df$keys, ]
+    # table_dat <- dframe()[dframe()$.dcrkey %in% sel_points$df$keys, ]
+
+    # use index to subset data from original df!
+    table_dat <- dframe[as.numeric(sel_points$df$keys), ]
 
     # table_dat$.annotation <-
 
@@ -56,8 +58,6 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
                                       by = c(".dcrkey" = "keys"))
     } else {
 
-        print(grep("keys",
-                   colnames(sel_points$df)))
         table_dat <- cbind(dplyr::ungroup(table_dat[0, ]),
                            sel_points$df[0, -grep("keys",
                                                   colnames(sel_points$df)

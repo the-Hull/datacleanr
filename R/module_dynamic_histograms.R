@@ -25,7 +25,7 @@ module_ui_histograms <- function(id) {
 #' str filter condition
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
-#' @param dframe reactive df
+#' @param dframe df
 #' @param selector_inputs reactive vals from above-plot controls,
 #' @param sel_points reactive, provides .dcrkey of selected points
 #'
@@ -82,20 +82,40 @@ module_server_histograms  <-
             selector_inputs[grepl("var$", names(selector_inputs))]
         all_vars <- vapply(all_vars, as.character, character(1))
 
+
         # check which vars are not numeric
         non_numeric_columns <-
-            colnames(dframe())[!vapply(dframe(), is.numeric, logical(1))]
+            colnames(dframe)[!vapply(dframe,
+                                       FUN = rlang::inherits_any,
+                                       FUN.VALUE = logical(1),
+                                       c("numeric", "integer", "POSIXt", "POSIXct"))]
 
         # drop empty var name entries and grab only
         # those representing numeric columns
         vars_to_plot <- setdiff(drop_empty(all_vars),
                                 non_numeric_columns)
 
+
+
+
+        if(length(vars_to_plot) == 0){
+
+            output$histogram <- plotly::renderPlotly({
+
+                NULL
+            })
+        } else{
+
+
+
+
         output$histogram <- plotly::renderPlotly({
+
+
             vars_to_plot %>%
                 lapply(one_plot,
-                       dfull = dframe(),
-                       dfilt = dframe()[dframe()$.dcrkey %nin% sel_points$df$keys,]) %>%
+                       dfull = dframe,
+                       dfilt = dframe[dframe$.dcrkey %nin% sel_points$keys,]) %>%
                 stats::setNames(rep("histoplot", NROW(vars_to_plot))) %>%
                 # arrange
                 plotly::subplot(
@@ -108,12 +128,14 @@ module_server_histograms  <-
                 ) %>%
                 plotly::config(displaylogo = FALSE,
                                modeBarButtonsToRemove = list("hoverCompareCartesian"))
+            # no webgl barplot -> slow rendering atm
+            # %>%
+                # plotly::toWebGL()
 
         })
 
         output$histmodule <- shiny::renderUI({
             shiny::tagList(
-                shiny::h4(shiny::tags$strong("Impact on distribution")),
                 plotly::plotlyOutput(ns("histogram"),
                                      height = paste0(NROW(
                                          vars_to_plot
@@ -123,5 +145,5 @@ module_server_histograms  <-
 
         })
 
-
+        }
     }

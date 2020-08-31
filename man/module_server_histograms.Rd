@@ -17,7 +17,7 @@ module_server_histograms(
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
-\item{dframe}{reactive df}
+\item{dframe}{df}
 
 \item{selector_inputs}{reactive vals from above-plot controls,}
 

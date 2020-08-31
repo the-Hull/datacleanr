@@ -35,4 +35,7 @@ Imports:
     RColorBrewer,
     clipr,
     rstudioapi,
-    utils
+    utils,
+    lubridate,
+    shinyWidgets,
+    htmlwidgets

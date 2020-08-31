@@ -2,5 +2,6 @@
 
 export("%>%")
 export(dcr_app)
+export(filter_scoped_df)
 importFrom(magrittr,"%>%")
 importFrom(rlang,.data)

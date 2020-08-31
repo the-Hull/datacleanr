@@ -4,17 +4,17 @@
 \alias{module_server_df_filter}
 \title{Server Module: filter info text and filtered df output}
 \usage{
-module_server_df_filter(input, output, session, df, statements)
+module_server_df_filter(input, output, session, dframe, condition_df)
 }
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
-\item{df}{data frame/tibble for filtering}
+\item{dframe}{data frame/tibble for filtering}
 
-\item{statements}{character, lengths >= 0, with (valid) statements for \code{base::subset}}
+\item{condition_df}{data frame/tibble with filtering conditions and grouping scope}
 }
 \value{
-df, either filtered or original, based on validity of \code{statements}
+df, either filtered or original, based on validity of \code{statements} in \code{condition_df}
 }
 \description{
 Server Module: filter info text and filtered df output

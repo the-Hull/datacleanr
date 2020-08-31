@@ -75,21 +75,46 @@ module_ui_filter_str <- function(id) {
 #' Server Module: box for str filter condition
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
+#' @param dframe, data frame passed into dcr app
 #'
 #' @details provides UI text box element
-module_server_filter_str <- function(input, output, session){
+module_server_filter_str <- function(input, output, session, dframe){
     ns = session$ns
 
+
+
     output$filter <- shiny::renderUI({
-        shiny::textInput(
-            inputId = ns("filter"),
-            # label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
-            label = paste0("Filter ", substr(x = ns(""),
-                                             regexpr("[0-9]", ns("")),
-                                             regexpr("[0-9]", ns("")))),
-            value = NULL,
-            width = "100%",
-            placeholder = NULL
+        shiny::fluidRow(
+            shiny::column(width = 8,
+                          shiny::textInput(
+                              inputId = ns("filter"),
+                              # label = paste0("Filter ", strsplit(x = ns(""), split = "-")),
+                              label = paste0("Filter ", gsub(pattern = "[^0-9]",
+                                                             replacement = "",
+                                                             x = ns(""))),
+                              value = NULL,
+                              width = "100%",
+                              placeholder = NULL
+                          )),
+
+
+            shiny::column(width = 4,
+                          align = "center",
+                          # style="margin-top: 20px;",
+
+
+                          shinyWidgets::pickerInput(
+                              inputId = ns("groupdropdown"),
+                              label = "Select/deselect Groups",
+                              choices = sort(as.integer(unique(dframe$.dcrindex))),
+                              options = list(
+                                  `actions-box` = TRUE),
+                              multiple = TRUE
+                          )
+
+
+            )
         )
+
     })
 }

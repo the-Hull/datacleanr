@@ -52,6 +52,6 @@ fdf <- filter_scoped_df(
    condition_df = cdf)
 
 # Example of invalid expression:
-column 'Spec' does not exist in iris
+# column 'Spec' does not exist in iris
 # "Spec == 'setosa'"
 }

@@ -86,14 +86,21 @@ module_server_lowercontrol_btn  <-
                                      inputId =  ns("mapstyle"),
                                       label = "Select map style",
                                       choices = c(
-                                          "open-street-map",
-                                          "carto-positron",
-                                          "carto-darkmatter",
-                                          "stamen-terrain",
-                                          "stamen-toner",
-                                          "stamen-watercolor"
+                                          "basic",
+                                          "streets",
+                                          "outdoors",
+                                          "light",
+                                          "satellite",
+                                          "satellite-streets"
+                                          #
+                                          # "open-street-map",
+                                          # "carto-positron",
+                                          # "carto-darkmatter",
+                                          # "stamen-terrain",
+                                          # "stamen-toner",
+                                          # "stamen-watercolor"
                                       ),
-                                     selected = "open-street-map",
+                                     selected = "basic",
                                   )),
                     shiny::column(
                         4,

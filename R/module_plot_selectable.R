@@ -114,7 +114,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
     geo_def <-  list(style = ifelse(is.null(mapstyle),
-                                    "open-street-map",
+                                    "basic",
                                     mapstyle),
                      zoom = 2,
                      center = list(
@@ -206,21 +206,21 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                               x = ~ !!shiny::isolate(selector_inputs$xvar),
                               y = ~ !!shiny::isolate(selector_inputs$yvar),
                               name = "O",
-                              type = "scattergl",
                               mode = "markers",
                               customdata = ~.dcrkey,
                               text = ~.dcrkey,
                               showlegend = TRUE,
                               marker =
                                 if(is_spatial_plot){
-                                  list(color = add_color,
-                                       symbol = "x",
-                                       size = 12,
-                                       opacity = 1)
+                                  list(
+                                    symbol = "hospital",
+                                    size = 12,
+                                    allowoverlap = TRUE)
+
+                                  # size = 12)
                                 } else {
                                   list(color = add_color,
-                                       symbol = "x",
-                                       size = 12
+                                       symbol = "x"
                                   )
                                 },
                               unselected = list(marker = list(opacity = 1)))

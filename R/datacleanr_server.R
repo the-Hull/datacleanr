@@ -445,6 +445,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
   ## PLOTTING -----------------
+
+
+
+
+
   shiny::observeEvent(selector_vals$startscatter,
                       {
                         action_tracking$plot_start <- TRUE
@@ -471,7 +476,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
                                           df = datareactive,
                                           selector_inputs = shiny::isolate(selector_vals),
                                           sel_points = shiny::isolate(selected_data),
-                                          mapstyle = input[['lwrcontrol-mapstyle']])
+                                          mapstyle = shiny::isolate(input[['lwrcontrol-mapstyle']]))
 
                         # if(selected_table_rows()){
                         #
@@ -505,6 +510,14 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   #                     stringsAsFactors = FALSE)
   # )
 
+  # force replotting in plot observer
+  # there must be a better way of achieving this
+  # likely with plotly::restyle or relayout
+  shiny::observeEvent(input[['lwrcontrol-mapstyle']],
+    {
+      selector_vals$startscatter <- selector_vals$startscatter + 1
+    }
+  )
 
   # PLOT DATA SELECTION ---------------
 

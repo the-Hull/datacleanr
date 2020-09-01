@@ -944,19 +944,45 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   # ANNOTATION ADDING --------------------------------------------------------
 
 
-
-  # shiny::observe({
+# provide annotator button
   shiny::observeEvent(input$`annotator-annotate_button`, {
-
-    # if(nrow(shiny::isolate(selected_data$df))>0){
-
 
     selected_data$df <- shiny::callModule(module_server_text_annotator,
                                           "annotator",
                                           sel_data = shiny::isolate(selected_data))
 
+  })
+
+# handle auto-annotation
+  selected_data_nrow_track <- shiny::reactiveValues(last_nrow=0,cur_nrow=0)
+
+  shiny::observeEvent(selected_data$df,
+               {selected_data_nrow_track$last_nrow <- selected_data_nrow_track$cur_nrow;
+               selected_data_nrow_track$cur_nrow <- nrow(selected_data$df)})
+
+
+  selected_data_nrow_track_lgl <- shiny::reactive({
+    req(selected_data$df)
+    return(selected_data_nrow_track$cur_nrow >= selected_data_nrow_track$last_nrow)
+    })
+
+
+  shiny::observeEvent(
+    selected_data$df, {
+
+      if(input$`annotator-autoannotate` &
+         selected_data_nrow_track_lgl()){
+
+        selected_data$df <- shiny::callModule(module_server_text_annotator,
+                                              "annotator",
+                                              sel_data = shiny::isolate(selected_data))
+      }
+
 
   })
+
+
+
 
 
   # ANNOTATION TABLE --------------------------------------------------------

@@ -17,12 +17,15 @@ module_ui_text_annotator <- function(id) {
                           shiny::textInput(inputId = ns('textinput'),
                                            value = "",
                                            placeholder = "outlier, flag, shift, ...",
-                                           label = NULL)),
+                                           label = NULL),
+                          shiny::checkboxInput(ns('autoannotate'),
+                                               label = "Auto-annotate")),
             shiny::column(4,
                           shiny::actionButton(inputId = ns('annotate_button'),
                                               icon = shiny::icon("paragraph"),
                                               class = "btn-info",
                                               label = "Annotate!")))
+
     )
 
 }

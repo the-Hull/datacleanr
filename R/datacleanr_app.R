@@ -23,25 +23,40 @@ dcr_app <- function(dframe, browser = TRUE){
 
 
 
-    dcr_checks(dframe)
+    use_data <- dcr_checks(dframe)
+
+
+
     opts_list <- if(browser) {
         list(launch.browser = browser)
     } else {
         list()
     }
 
-    df_name <- deparse(substitute(dframe))
 
-    shiny::shinyApp(ui     = datacleanr_ui,
-                    server = function(input, output, session){
-                        datacleanr_server(input,
-                                          output,
-                                          session,
-                                          dataset = dframe,
-                                          df_name = df_name)},
-                    enableBookmarking = "server",
-                    options = opts_list
+    if(is.null(use_data$file_path)){
+        df_name <- deparse(substitute(dframe))
+    } else {
+        df_name <- use_data$file_path
+    }
+
+
+
+    shiny::runApp(appDir =
+
+                      shiny::shinyApp(ui     = datacleanr_ui,
+                                      server = function(input, output, session){
+                                          datacleanr_server(input,
+                                                            output,
+                                                            session,
+                                                            dataset = use_data$dataset,
+                                                            df_name = df_name,
+                                                            is_on_disk = !is.null(use_data$file_path))},
+                                      enableBookmarking = "server",
+                                      options = opts_list)
     )
+
+
 
 }
 

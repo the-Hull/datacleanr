@@ -2,9 +2,43 @@
 #' @param dframe dframe supplied to \code{dcr_app}
 dcr_checks <- function(dframe){
 
-    if(!rlang::inherits_any(dframe, c("tbl", "data.frame", "data.table"))){
+    # check if dframe is string or tibble
 
-        stop("Please provide a data.frame, tibble, or data.table")
+    classes <- c("character", "tbl", "data.frame", "data.table")
+
+    from_file <- FALSE
+    file_path <- NULL
+
+    if(rlang::inherits_only(dframe, classes[1])){
+
+        # check if file exists, if not, error out
+        if(!file.exists(dframe)){
+            stop("File does not exist")
+        }
+
+        if(!identical("rds",
+                      tolower(tools::file_ext(dframe)))){
+            stop("Please provide a *.Rds file")
+        }
+
+
+        file_path <- dframe
+        dframe <- readRDS(dframe)
+        from_file <- TRUE
+
+
+    }
+
+
+
+
+    if(!rlang::inherits_any(dframe, classes[-1])){
+
+        msg <- paste0("Please provide a data.frame, tibble, or data.table",
+                     ifelse(from_file, " in your file path", ""),
+                     ".")
+
+        stop(msg)
     }
 #
 #     if(nrow(dframe) > 10000){
@@ -12,6 +46,11 @@ dcr_checks <- function(dframe){
 #         warning(paste("Data set has over", nrow(dframe), "observations. Consider breaking it up into smaller chunks."))
 #
 #     }
+
+
+    return(list(dataset = dframe,
+                file_path = file_path))
+
 }
 
 

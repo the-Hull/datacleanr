@@ -38,4 +38,5 @@ Imports:
     utils,
     lubridate,
     shinyWidgets,
-    htmlwidgets
+    htmlwidgets,
+    tools

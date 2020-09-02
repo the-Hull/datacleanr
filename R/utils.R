@@ -273,6 +273,7 @@ filter_scoped <- function(dframe, statement, scope_at){
 
 
 
+
 #' Filter / Subset data \code{dplyr}-groupwise
 #'
 #' \code{filter_scoped_df} subsets rows of a data frame based on grouping structure
@@ -992,4 +993,20 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
 
 }
 
+
+
+# methods -----------------------------------------------------------------
+
+
+#' Method for printing dcr_code output
+#'
+#' @param x character, code  output from \code{dcr_app}
+#'
+#' @return
+#' @export
+#'
+#' @examples
+print.dcr_code <- function(x, ...){
+    cat(x, ...)
+}
 

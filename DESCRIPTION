@@ -39,4 +39,6 @@ Imports:
     lubridate,
     shinyWidgets,
     htmlwidgets,
-    tools
+    tools,
+    fs,
+    shinyFiles

@@ -1071,6 +1071,14 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     # EXTRACTION --------------------------------------------------------------
 
 
+shiny::callModule(module_server_extract_code_fileconfig,
+                  id = "config",
+                  df_label = df_name,
+                  is_on_disk = is_on_disk)
+
+
+    shinyDirChoose(input, 'folder', roots=c(wd='.'), filetypes=c('', 'txt'))
+
 
 
     code_out <- shiny::reactiveVal()
@@ -1082,7 +1090,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     # {
     shiny::observe({
 
-        shiny::req(datareactive())
+        shiny::req(datareactive(), input$`extract-overwrite`)
 
         # if(!is.null(input$apply_filter) | nrow(selected_data$df) > 0 ){
         if(nrow(filter_df()) > 0  | nrow(selected_data$df) > 0 ){
@@ -1096,7 +1104,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                                   filter_df = filter_df(),
                                   statements = filter_statements_lgl(),
                                   sel_points = selected_data$df,
-                                  overwrite = input$overwrite)
+                                  overwrite = input$`extract-overwrite`,
+                                  is_on_disk = is_on_disk)
             )
         }
 
@@ -1346,7 +1355,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     # END ---------------------------
     shiny::observeEvent(input$close, {
 
+        dcr_code <-  paste0("\n", code_out(), "\n")
+        class(dcr_code) <- c(class(dcr_code), "dcr_code")
+
         out_data <- list(
+            df_name = df_name,
             dcr_df =
                 dplyr::left_join(x  = datareactive(),
                                  y  = selected_data$df,
@@ -1358,7 +1371,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
             dcr_condition_df =
                 if(nrow(filter_df()) > 0){
                     filter_df()[filter_statements_lgl(), ]}
-            else {NULL}
+            else {NULL},
+            dcr_code = dcr_code
         )
 
         # handle plotly TZ issue

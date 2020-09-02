@@ -52,7 +52,6 @@ dcr_app <- function(dframe, browser = TRUE){
                                                             dataset = use_data$dataset,
                                                             df_name = df_name,
                                                             is_on_disk = !is.null(use_data$file_path))},
-                                      enableBookmarking = "server",
                                       options = opts_list)
     )
 

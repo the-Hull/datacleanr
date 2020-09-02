@@ -263,14 +263,22 @@ datacleanr_ui <- function(request){
 
 
                                              sidebarPanel = shiny::sidebarPanel(width = 4,
+
+                                                                                shinyFiles::shinyDirButton('folder',
+                                                                                                           'Folder select',
+                                                                                                           'Please select a folder',
+                                                                                                           FALSE),
+
                                                                                 shiny::h4(shiny::tags$strong("Reproducible Recipe")),
                                                                                 shiny::br(),
                                                                                 shiny::p("All commands and operations in previous tabs are translated to
                                                                                          code on the right, ensuring reproducibility."),
                                                                                 shiny::br(""),
-                                                                                shiny::checkboxInput("overwrite",
-                                                                                                     label = "Concise code?",
-                                                                                                     value = FALSE)),
+                                                                                # shiny::checkboxInput("overwrite",
+                                                                                #                      label = "Concise code?",
+                                                                                #                      value = FALSE)),
+                                                                                module_ui_extract_code_fileconfig("config")
+                                                                                ),
 
                                              mainPanel = shiny::mainPanel(width = 8,
                                                                           module_ui_extract_code("extract")))

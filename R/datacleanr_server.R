@@ -1077,7 +1077,6 @@ shiny::callModule(module_server_extract_code_fileconfig,
                   is_on_disk = is_on_disk)
 
 
-    shinyDirChoose(input, 'folder', roots=c(wd='.'), filetypes=c('', 'txt'))
 
 
 

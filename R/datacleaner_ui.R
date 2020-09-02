@@ -264,10 +264,6 @@ datacleanr_ui <- function(request){
 
                                              sidebarPanel = shiny::sidebarPanel(width = 4,
 
-                                                                                shinyFiles::shinyDirButton('folder',
-                                                                                                           'Folder select',
-                                                                                                           'Please select a folder',
-                                                                                                           FALSE),
 
                                                                                 shiny::h4(shiny::tags$strong("Reproducible Recipe")),
                                                                                 shiny::br(),

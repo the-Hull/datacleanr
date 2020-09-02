@@ -1071,10 +1071,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     # EXTRACTION --------------------------------------------------------------
 
 
-shiny::callModule(module_server_extract_code_fileconfig,
-                  id = "config",
-                  df_label = df_name,
-                  is_on_disk = is_on_disk)
+
+
+
 
 
 
@@ -1082,14 +1081,9 @@ shiny::callModule(module_server_extract_code_fileconfig,
 
     code_out <- shiny::reactiveVal()
 
-    # shiny::observeEvent({
-    # input$apply_filter
-    # selected_data$df
-    # },
-    # {
-    shiny::observe({
+        shiny::observe({
 
-        shiny::req(datareactive(), input$`extract-overwrite`)
+        shiny::req(datareactive(), input$`config-overwrite`)
 
         # if(!is.null(input$apply_filter) | nrow(selected_data$df) > 0 ){
         if(nrow(filter_df()) > 0  | nrow(selected_data$df) > 0 ){
@@ -1103,7 +1097,7 @@ shiny::callModule(module_server_extract_code_fileconfig,
                                   filter_df = filter_df(),
                                   statements = filter_statements_lgl(),
                                   sel_points = selected_data$df,
-                                  overwrite = input$`extract-overwrite`,
+                                  overwrite = input$`config-overwrite`,
                                   is_on_disk = is_on_disk)
             )
         }
@@ -1111,7 +1105,7 @@ shiny::callModule(module_server_extract_code_fileconfig,
     })
 
 
-    shiny::observeEvent(input$`extract-codebtn`, {
+    shiny::observeEvent(input$`config-codebtn`, {
 
 
         context <- rstudioapi::getSourceEditorContext()
@@ -1119,13 +1113,85 @@ shiny::callModule(module_server_extract_code_fileconfig,
                                id = context$id)
     })
 
-    shiny::observeEvent(input$`extract-copybtn`, {
+    shiny::observeEvent(input$`config-copybtn`, {
 
 
         clipr::write_clip(content = code_out(),
                           object_type = "character")
 
     })
+
+
+
+    out_data <- shiny::reactive({
+        dcr_code <-  paste0("\n", code_out(), "\n")
+        class(dcr_code) <- c(class(dcr_code), "dcr_code")
+
+        out_data <- list(
+            df_name = df_name,
+            dcr_df =
+                dplyr::left_join(x  = datareactive(),
+                                 y  = selected_data$df,
+                                 by = c(".dcrkey" = "keys")),
+            dcr_selected_outliers =
+                selected_data$df %>%
+                dplyr::rename(.dcrkey = .data$keys),
+            dcr_groups = gvar(),
+            dcr_condition_df =
+                if(nrow(filter_df()) > 0){
+                    filter_df()[filter_statements_lgl(), ]}
+            else {NULL},
+            dcr_code = dcr_code
+        )
+
+        return(out_data)
+
+    })
+
+
+    out_path <- shiny::callModule(module_server_extract_code_fileconfig,
+                                  id = "config",
+                                  df_label = df_name,
+                                  is_on_disk = is_on_disk)
+
+    shiny::observeEvent(input$`config-save`,
+                        {
+
+                            # req(nchar(out_path()$dirraw > 0))
+
+                            file_out_raw <- make_save_filepath(
+                                save_dir = out_path()$dirraw,
+                                input_filepath = df_name,
+                                suffix = "meta_RAW",
+                                ext = "Rds")
+
+                            file_out_cleaned <- make_save_filepath(
+                                save_dir = out_path()$dirclean,
+                                input_filepath = df_name,
+                                suffix = "CLEAN",
+                                ext = "Rds")
+
+
+                            file_script_cleaning <- make_save_filepath(
+                                save_dir = out_path()$dirclean,
+                                input_filepath = df_name,
+                                suffix = "cleaning_recipe",
+                                ext = "R")
+
+
+
+
+                            saveRDS(object = out_data()$dcr_df,
+                                    file = file_out_cleaned)
+                            saveRDS(object = list(dcr_condition_df = out_data()$dcr_condition_df,
+                                                  dcr_selected_outliers = out_data()$dcr_selected_outliers),
+                                    file = file_out_raw)
+
+                            writeLines(text = enc2utf8(out_data()$dcr_code),
+                                       con = file_script_cleaning,
+                                       useBytes = TRUE)
+
+                        })
 
 
     # // ----------------------------------------------------------------------
@@ -1351,39 +1417,40 @@ shiny::callModule(module_server_extract_code_fileconfig,
 
 
 
+
     # END ---------------------------
     shiny::observeEvent(input$close, {
 
-        dcr_code <-  paste0("\n", code_out(), "\n")
-        class(dcr_code) <- c(class(dcr_code), "dcr_code")
-
-        out_data <- list(
-            df_name = df_name,
-            dcr_df =
-                dplyr::left_join(x  = datareactive(),
-                                 y  = selected_data$df,
-                                 by = c(".dcrkey" = "keys")),
-            dcr_selected_outliers =
-                selected_data$df %>%
-                dplyr::rename(.dcrkey = .data$keys),
-            dcr_groups = gvar(),
-            dcr_condition_df =
-                if(nrow(filter_df()) > 0){
-                    filter_df()[filter_statements_lgl(), ]}
-            else {NULL},
-            dcr_code = dcr_code
-        )
+        # dcr_code <-  paste0("\n", code_out(), "\n")
+        # class(dcr_code) <- c(class(dcr_code), "dcr_code")
+        #
+        # out_data <- list(
+        #     df_name = df_name,
+        #     dcr_df =
+        #         dplyr::left_join(x  = datareactive(),
+        #                          y  = selected_data$df,
+        #                          by = c(".dcrkey" = "keys")),
+        #     dcr_selected_outliers =
+        #         selected_data$df %>%
+        #         dplyr::rename(.dcrkey = .data$keys),
+        #     dcr_groups = gvar(),
+        #     dcr_condition_df =
+        #         if(nrow(filter_df()) > 0){
+        #             filter_df()[filter_statements_lgl(), ]}
+        #     else {NULL},
+        #     dcr_code = dcr_code
+        # )
 
         # handle plotly TZ issue
         # Sys.setenv(TZ = old_tz)
-        shiny::stopApp(returnValue = invisible(out_data))
+        shiny::stopApp(returnValue = invisible(out_data()))
     })
-    # shiny::observeEvent(input$cancel, {
-    #
-    #   # Sys.setenv(TZ = old_tz)
-    #   shiny::stopApp(NULL)
-    #
-    # })
+    shiny::observeEvent(input$cancel, {
+
+      # Sys.setenv(TZ = old_tz)
+      shiny::stopApp(NULL)
+
+    })
 
 }
 

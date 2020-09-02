@@ -14,8 +14,10 @@ module_ui_extract_code_fileconfig <- function(id) {
 
     shiny::tagList(
         shiny::uiOutput(ns("codeconfig")),
+        shiny::uiOutput(ns("codebuttons")),
         shiny::uiOutput(ns("fileRawExportConfig")),
-        shiny::uiOutput(ns("fileCleanedExportConfig"))
+        shiny::uiOutput(ns("fileCleanedExportConfig")),
+        shiny::uiOutput(ns("savebutton"))
     )
 
 
@@ -48,14 +50,45 @@ module_server_extract_code_fileconfig  <- function(input,
         output$codeconfig <- shiny::renderUI({
             shiny::tagList(
 
-                shiny::h4(shiny::tags$strong("Code config")),
+                # shiny::h4(shiny::tags$strong("Code config")),
                 shiny::br(),
 
                 shiny::checkboxInput(ns("overwrite"),
                                      label = "Concise code?",
-                                     value = FALSE))
+                                     value = TRUE))
         })
 
+
+
+        output$codebuttons <- shiny::renderUI({
+            shiny::tagList(shiny::fluidRow(
+
+                shiny::br(),
+            shiny::column(
+                width = 6,
+                align = "left",
+                # style = "margin-top: 25px;",
+                shiny::actionButton(
+                    inputId = ns("codebtn"),
+                    label = "Send to RStudio",
+                    class = "btn-secondary",
+                    icon = shiny::icon("share-square")
+                )
+            ),
+            shiny::column(
+                width = 6,
+                align = "center",
+                # style = "margin-top: 25px;",
+                shiny::actionButton(
+                    inputId = ns("copybtn"),
+                    label = "Copy to clipboard",
+                    class = "btn-secondary",
+                    icon = shiny::icon("copy")
+                )
+            ))
+
+        )
+            })
 
 
         output$fileRawExportConfig <- shiny::renderUI(
@@ -112,8 +145,30 @@ shiny::column(7,
         })
 
 
+        output$savebutton <- shiny::renderUI({
+
+            req(is_on_disk, )
+
+            shiny::tagList(
+
+                shiny::br(),
+                shiny::actionButton(inputId = ns("save"),
+                                     label = "Save Recipe",
+                                    icon = shiny::icon("save"),
+                                    class = "btn-success"))
+        })
+
+
+
+
+# file path and selection logic ---------------------------------------------------------
+
+
+
         # if(is_on_disk){
-        roots = c(wd='.')
+        roots = c(`Dataset dir` = fs::path_dir(df_label),
+            `Working dir` ='.',
+                  `Home dir` = Sys.getenv("HOME"))
 
             shinyFiles::shinyDirChoose(input,
                                        id = "dirraw",
@@ -131,5 +186,28 @@ shiny::column(7,
 #                                                input$dirchoose)))
 #                 })
 
+
+            outpath <- shiny::reactive({
+
+                dirraw <- shinyFiles::parseDirPath(roots = roots,
+                                                   input$dirraw)
+
+                dirraw <- ifelse(length(dirraw) == 0,
+                                 fs::path_dir(df_label),
+                                 dirraw)
+
+                dirclean <- shinyFiles::parseDirPath(roots = roots,
+                                                    input$dirclean)
+                dirclean <- ifelse(length(dirclean) == 0,
+                       dirraw, dirclean)
+
+                return(list(dirraw = dirraw,
+                dirclean = dirclean))
+
+
+            })
+
+
+            return(outpath)
 
 }

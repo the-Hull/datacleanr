@@ -286,11 +286,11 @@ datacleanr_ui <- function(request){
                          inputs = list(shiny::actionButton("close",
                                                            "Close",
                                                            icon = shiny::icon("check-circle"),
-                                                           class = "btn-success")
-                                       # shiny::actionButton("cancel",
-                                       #                     "Cancel",
-                                       #                     icon = shiny::icon("window-close"),
-                                       #                     class = "btn-secondary")
+                                                           class = "btn-success"),
+                                       shiny::actionButton("cancel",
+                                                           "Cancel",
+                                                           icon = shiny::icon("window-close"),
+                                                           class = "btn-secondary")
                                        # shiny::bookmarkButton("bookmark",
                                                              # label = "Save",
                                                              # icon = shiny::icon("save"))

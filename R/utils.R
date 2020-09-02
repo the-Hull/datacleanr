@@ -993,7 +993,23 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
 
 }
 
+#' Wrapper for saving files
+#'
+#' @param save_dir character, selected save dir
+#' @param input_filepath character, original file path to folder
+#' @param suffix character, e.g. 'CLEAN' or 'cleaning_script'
+#' @param ext character, file extension, no dot!!
+#'
+#' @return OS-conform file path for saving
+#'
+make_save_filepath <- function(save_dir, input_filepath, suffix, ext){
 
+    file_name <- fs::path_ext_remove(fs::path_file(input_filepath))
+    file_name <- paste0(file_name, "_", suffix)
+
+    out_filepath <- fs::path(save_dir, file_name, ext = ext)
+
+}
 
 # methods -----------------------------------------------------------------
 

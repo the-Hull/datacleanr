@@ -276,6 +276,11 @@ module_server_extract_code  <-
 
             if(!is_on_disk){
             text_out <- text_out_interactive(sel_points,statements,filter_df,df_label,overwrite,gvar)
+            } else if(is_on_disk){
+                # ONLY FOR TESTING PURPOSES!
+                # MAKE DEDICATED FUNCTION FOR ON-DISK
+            text_out <- text_out_interactive(sel_points,statements,filter_df,df_label,overwrite,gvar)
+
             }
 
 

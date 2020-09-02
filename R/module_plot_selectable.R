@@ -74,6 +74,10 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   plot_data <- df()
 
 
+  # Check for .dcrflag column
+  has_flag_column <- hasName(plot_data, ".dcrflag")
+
+
   # n_groups <- dplyr::n_groups(plot_data)
   n_groups_original <- max(plot_data$.dcrindex)
 
@@ -125,6 +129,9 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   } else {
     geo_def <- list()
   }
+
+
+
   output$scatterselect <- plotly::renderPlotly({
 
     p <-  rlang::eval_tidy(
@@ -136,22 +143,35 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                 source = "scatterselect")
           } else {
             plotly::plot_ly(data = plot_data,
-                            source = "scatterselect")
+                            source = "scatterselect",
+                            symbols = c("circle", "star-triangle-down"),
+                            symbol = if(has_flag_column){
+                              ~as.numeric(!.dcrflag)}
+                            else{NULL})
           }
           } %>%
             plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar),
                                 y = ~ !!shiny::isolate(selector_inputs$yvar),
+                                type = 'scattergl',
+
                                 size = eval(size_expression),
                                 sizes = c(25,100),
+
+
+
                                 color = ~as.factor(.dcrindex),
-                                name = ~as.factor(.dcrindex),
                                 colors = col_value_vector,
-                                type = 'scattergl',
-                                customdata = ~.dcrkey,
+
+                                name = ~as.factor(.dcrindex),
                                 text = ~.dcrkey,
+                                customdata = ~.dcrkey,
+
                                 showlegend = TRUE,
-                                marker = list(opacity = opac),
-                                unselected = list(marker = list(opacity = opac))) %>%
+                                marker = list(opacity = opac,
+                                              allowoverlap = TRUE),
+                                unselected = list(marker = list(opacity = opac))
+                                ) %>%
+
             plotly::layout(showlegend = TRUE,
                            dragmode = "lasso",
                            mapbox = geo_def,
@@ -178,8 +198,9 @@ module_server_plot_selectable <- function(input, output, session, selector_input
             plotly::event_register(event = "plotly_deselect") %>%
             plotly::event_register(event = "plotly_click") %>%
             plotly::event_register(event = "plotly_selected") %>%
-            htmlwidgets::onRender(jsfull, data = list(x = "tracemap",
-                                                      ns = sessionval)) %>%
+            htmlwidgets::onRender(jsfull,
+                                  data = list(x = "tracemap",
+                                              ns = sessionval)) %>%
             plotly::toWebGL()
 
         })
@@ -220,7 +241,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                   # size = 12)
                                 } else {
                                   list(color = add_color,
-                                       symbol = "x"
+                                       symbol = "x",
+                                       size = 12
                                   )
                                 },
                               unselected = list(marker = list(opacity = 1)))

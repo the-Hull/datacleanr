@@ -421,6 +421,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
   })
 
+
+  # set up disabling of selection when using x/y/z vars
   shiny::observe({
 
     selector_vals$xvar <-  input$`selectors-xvar`
@@ -429,6 +431,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     selector_vals$startscatter <- input$`selectors-startscatter`
   })
 
+
+  # disable selecting when clicked on x/y/z var for plot (need to replot)
   shiny::observeEvent({
     selector_vals$xvar
     selector_vals$yvar
@@ -442,6 +446,23 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
     print("used controls - disable selecting")
   })
+
+
+  # disable selecting when clicked on different map style (need to replot)
+  # shiny::observeEvent(input[['lwrcontrol-mapstyle']],{
+  #
+  #   shiny::validate(shiny::need(shiny::isolate(selector_vals),
+  #                               label = "control vals"))
+  #
+  #   # shiny::validate(shiny::need(input[["selectors-startscatter"]],
+  #   #                             label = "PlotStartbutton"))
+  #
+  #   action_tracking$plot_start <- FALSE
+  #   action_tracking$controls <- TRUE
+  #
+  #   print("used controls - disable selecting")
+  # }
+  #                     )
 
 
   ## PLOTTING -----------------
@@ -513,11 +534,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
   # force replotting in plot observer
   # there must be a better way of achieving this
   # likely with plotly::restyle or relayout
-  shiny::observeEvent(input[['lwrcontrol-mapstyle']],
-    {
-      selector_vals$startscatter <- selector_vals$startscatter + 1
-    }
-  )
+  # shiny::observeEvent(input[['lwrcontrol-mapstyle']],
+  #   {
+  #     shiny::isolate({selector_vals$startscatter <- selector_vals$startscatter + 1})
+  #   }
+  # )
 
   # PLOT DATA SELECTION ---------------
 
@@ -797,16 +818,22 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
 
 
   # undo buttons
-  shiny::observe({
+  # shiny::observe({
     # shiny::observeEvent(input[["selectors-startscatter"]], {
+    shiny::observeEvent(ignoreInit = TRUE,
+                        ignoreNULL = FALSE,
+                        action_tracking$plot_start, {
 
     # shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
 
-    if(shiny::req(action_tracking$plot_start)){
+    # if(shiny::req(shiny::isolate(action_tracking$plot_start))){
+    # if(shiny::req(shiny::isolate(action_tracking$plot_start))){
       shiny::callModule(module_server_lowercontrol_btn,
                         id = "lwrcontrol",
                         selector_inputs = shiny::isolate(selector_vals))
-    }
+    # }
+
+
   })
 
 
@@ -817,8 +844,16 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
     {
 
 
+
+
+
       shiny::validate(shiny::need(input[["plot-tracemap"]],
                                   label = "need tracepam"))
+
+
+      is_spatial_plot <- identical(c(as.character(selector_vals$xvar),
+                                     as.character(selector_vals$yvar)),
+                                   c("lon", "lat"))
 
       traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
       indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
@@ -850,7 +885,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name){
               customdata = recover_data()[selected_data$df$keys, ".dcrkey" , drop = TRUE],
               text = recover_data()[selected_data$df$keys, ".dcrkey" , drop = TRUE],
               marker = list(
-                symbol = "x",
+                symbol = ifelse(is_spatial_plot,
+                                "hospital",
+                                "x"),
                 size = 12,
                 color = "black",
                 opacity = 1),

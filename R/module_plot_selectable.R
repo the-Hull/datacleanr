@@ -75,7 +75,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
   # Check for .dcrflag column
-  has_flag_column <- hasName(plot_data, ".dcrflag")
+  has_flag_column <- utils::hasName(plot_data, ".dcrflag")
 
 
   # n_groups <- dplyr::n_groups(plot_data)

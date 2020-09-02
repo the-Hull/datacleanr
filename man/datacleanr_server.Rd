@@ -4,14 +4,16 @@
 \alias{datacleanr_server}
 \title{datacleanr server function}
 \usage{
-datacleanr_server(input, output, session, dataset, df_name)
+datacleanr_server(input, output, session, dataset, df_name, is_on_disk)
 }
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
 \item{dataset}{data.frame, tibble or data.table that needs cleaning}
 
-\item{df_name}{character, name of dataset passed into shiny app}
+\item{df_name}{character, name of dataset or file_path passed into shiny app}
+
+\item{is_on_disk}{logical, whether df was read from file}
 }
 \description{
 datacleanr server function

@@ -4,6 +4,8 @@
 #' @param df_name character, name of dataset or file_path passed into shiny app
 #' @param is_on_disk logical, whether df was read from file
 #'
+#' @importFrom rlang .data
+#'
 datacleanr_server <- function(input, output, session, dataset, df_name, is_on_disk){
 
 
@@ -1015,7 +1017,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
 
     selected_data_nrow_track_lgl <- shiny::reactive({
-        req(selected_data$df)
+        shiny::req(selected_data$df)
         return(selected_data_nrow_track$cur_nrow >= selected_data_nrow_track$last_nrow)
     })
 
@@ -1351,7 +1353,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                                  by = c(".dcrkey" = "keys")),
             dcr_selected_outliers =
                 selected_data$df %>%
-                dplyr::rename(.dcrkey = keys),
+                dplyr::rename(.dcrkey = .data$keys),
             dcr_groups = gvar(),
             dcr_condition_df =
                 if(nrow(filter_df()) > 0){

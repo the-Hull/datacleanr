@@ -11,10 +11,10 @@ filter_scoped_df(dframe, condition_df)
 
 \item{condition_df}{A \code{tibble} with two columns; \code{condition_df[ ,1]} with
 \code{character} strings which evaluate to valid logical expressions applicable in
-\code{base::subset} or \code{dplyr::filter}, and \code{condition_df[ ,2]},
+\code{\link{subset}} or \code{\link[dplyr]{filter}}, and \code{condition_df[ ,2]},
 a list-column with group scoping levels (\code{numeric}) or \code{NULL} for
 unscoped filtering. If all groups are given for a statement, the operation is
-the same as for a grouped \code{data.frame} in \code{\link{dplyr::filter}}.}
+the same as for a grouped \code{data.frame} in \code{\link[dplyr]{filter}}.}
 }
 \value{
 An object of the same type as \code{dframe}. The output is a subset of
@@ -24,10 +24,10 @@ The output may have less groups as the input, depending on subsetting.
 }
 \description{
 \code{filter_scoped_df} subsets rows of a data frame based on grouping structure
-(see \code{\link{dplyr::group_by}}). Filtering statements are provided in a seperate \code{tibble}
+(see \code{\link[dplyr]{group_by}}). Filtering statements are provided in a separate \code{tibble}
 where each row represents a combination of a logical expression and a list of groups
 to which the expression should be applied to corresponding to see indices from
-\code{\link{dplyr::cur_group_id}}).
+\code{\link[dplyr]{cur_group_id}}).
 }
 \details{
 This function is applied in the "Filtering" tab of the \code{datacleanr} app,

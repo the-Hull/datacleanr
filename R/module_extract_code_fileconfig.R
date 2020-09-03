@@ -26,12 +26,12 @@ module_ui_extract_code_fileconfig <- function(id) {
 #------------------------------------------------------------------------------#
 # MODULE SERVER ----
 
-#' UI Module: Extraction File selection menu
+#' Server Module: Extraction File selection menu
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param df_label character, name of original df input
 #' @param is_on_disk Logical, whether df represented by \code{df_label} was on disk or from interactive \code{R} use
-#' @param code character, printed in code box and script, used as input check here.
+#' @param has_processed reactive, logical, TRUE if filtered / selected points
 #'
 #' @importFrom rlang .data
 #'
@@ -40,42 +40,34 @@ module_server_extract_code_fileconfig  <- function(input,
                                                    session,
                                                    df_label,
                                                    is_on_disk,
-                                                   code)
+                                                   has_processed)
 {
 
     ns = session$ns
 
 
-
-    # hacky check if code has been produced (indicator for selected_points / filter_df)
-    # code_available <- shiny::reactive(grepl("\n", code()))
-    code_available <- shiny::reactive(!is.null(code()))
-
-
     output$codeconfig <- shiny::renderUI({
 
-        # shiny::req(code_available())
 
-        shiny::validate(shiny::need(code_available(),
+        shiny::validate(shiny::need(has_processed(),
                                     message = "Filter or manually select data to set and save outputs."))
 
         shiny::tagList(
             # shiny::h4(shiny::tags$strong("Code config")),
+            shiny::br(),
             shiny::checkboxInput(ns("overwrite"),
                                  label = "Concise code?",
-                                 value = TRUE),
-            shiny::br())
+                                 value = TRUE))
     })
-
-
 
     output$codebuttons <- shiny::renderUI({
 
-        shiny::req(code_available())
+        # shiny::req(shiny::isolate(code_available()))
+        shiny::req(has_processed())
 
         shiny::tagList(shiny::fluidRow(
+            style = "margin-bottom: 20px;",
 
-            shiny::br(),
             shiny::column(
                 width = 6,
                 align = "left",
@@ -106,14 +98,14 @@ module_server_extract_code_fileconfig  <- function(input,
     output$fileRawExportConfig <- shiny::renderUI(
         {
            shiny::req(is_on_disk)
-            shiny::req(code_available())
-
+            # shiny::req(shiny::isolate(code_available()))
+            shiny::req(has_processed())
 
 
             shiny::tagList(
                 shiny::h4(shiny::tags$strong("Set Output Locations")),
-                shiny::br(),
                 shiny::fluidRow(
+                    style = "margin-top: 25px;",
                     shiny::column(5, shinyFiles::shinyDirButton(id = ns("dirraw"),
                                                                 "Meta & Recipe",
                                                                 "Set and/or create a directory for the raw data and the reproducible recipe.",
@@ -123,7 +115,7 @@ module_server_extract_code_fileconfig  <- function(input,
 
                     shiny::column(7,
                                   shiny::checkboxInput(inputId = ns("dirchooseIdentical"),
-                                                       label = "Use same output folder for cleaned data?",
+                                                       label = "Same folder for cleaned data?",
                                                        value = TRUE)
                     )
                 )
@@ -135,19 +127,20 @@ module_server_extract_code_fileconfig  <- function(input,
     output$fileCleanedExportConfig <- shiny::renderUI({
 
        shiny::req(input$dirchooseIdentical == FALSE)
-        shiny::req(code_available())
-
+        # shiny::req(shiny::isolate(code_available()))
+        shiny::req(has_processed())
 
         shiny::tagList(
-            shiny::br(),
             # "Cleaned data",
 
-            shinyFiles::shinyDirButton(id = ns("dirclean"),
-                                       "Cleaned Data",
-                                       "Set and/or create a directory for the cleaned data.",
-                                       FALSE,
-                                       class = 'btn-info',
-                                       icon = shiny::icon("folder"))
+            shinyFiles::shinyDirButton(
+                style = "margin-bottom: 25px;",
+                id = ns("dirclean"),
+                "Cleaned Data",
+                "Set and/or create a directory for the cleaned data.",
+                FALSE,
+                class = 'btn-info',
+                icon = shiny::icon("folder"))
         )
     })
 
@@ -155,8 +148,8 @@ module_server_extract_code_fileconfig  <- function(input,
     output$savebutton <- shiny::renderUI({
 
        shiny::req(is_on_disk)
-        shiny::req(code_available())
-
+        # shiny::req(shiny::isolate(code_available()))
+        shiny::req(has_processed())
 
         shiny::tagList(
 
@@ -180,12 +173,7 @@ module_server_extract_code_fileconfig  <- function(input,
                                 class = "btn-success"))
     })
 
-
-
-
     # file path and selection logic ---------------------------------------------------------
-
-
 
     # if(is_on_disk){
     roots = c(`Dataset dir` = fs::path_dir(df_label),
@@ -199,15 +187,6 @@ module_server_extract_code_fileconfig  <- function(input,
     shinyFiles::shinyDirChoose(input,
                                id = "dirclean",
                                roots=roots)
-    #
-    #             shiny::observeEvent(input$dirchoose,
-    #                                 ignoreNULL = TRUE,
-    #                                 ignoreInit = TRUE,
-    #                                 {
-    #                 print(paste("test", shinyFiles::parseDirPath(roots = roots,
-    #                                                input$dirchoose)))
-    #                 })
-
 
     outpath <- shiny::reactive({
 

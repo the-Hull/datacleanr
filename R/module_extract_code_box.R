@@ -1,21 +1,21 @@
 
 # Helpers -----------------------------------------------------------------
 
-text_out_interactive <- function(sel_points, statements, filter_df, df_label, overwrite, gvar) {
+text_out_interactive <- function(sepo, stats, fdf, df_lab, ovt, gv) {
     info_comment_outlier_index <-
         " adding column for unique IDs;"
 
 
 
 
-    if(nrow(sel_points) == 0){
+    if(nrow(sepo) == 0){
         index_str <- ""
     } else {
         index_str <- glue::glue(
             '
 
                       # {info_comment_outlier_index}
-                      {df_label}$.dcrkey <- seq_len(nrow({df_label}))
+                      {df_lab}$.dcrkey <- seq_len(nrow({df_lab}))
 
                       ')
     }
@@ -31,23 +31,23 @@ text_out_interactive <- function(sel_points, statements, filter_df, df_label, ov
 
 
     # Output from filtering tab
-    if(any(statements)  &
-       nrow(filter_df) > 0){
+    if(any(stats)  &
+       nrow(fdf) > 0){
         # FILTERING ---------------------------------------------------------------
-        filter_df <- filter_df[statements, ]
+        fdf <- fdf[stats, ]
 
 
 
 
         #### INFO COMMENTS
         info_comment_filt_df <-
-            " statements and scoping level for filtering"
+            " stats and scoping level for filtering"
         info_comment_filters <-
             " applying (scoped) filtering by groups;"
 
 
         filt_df_dput <-
-            paste(utils::capture.output(dput(filter_df)),
+            paste(utils::capture.output(dput(fdf)),
                   collapse = " ")
 
 
@@ -56,15 +56,15 @@ text_out_interactive <- function(sel_points, statements, filter_df, df_label, ov
                                       ')
 
 
-        if (!overwrite) {
-            df_label_filtered <- paste0(df_label, "_filtered")
+        if (!ovt) {
+            df_lab_filtered <- paste0(df_lab, "_filtered")
         } else {
-            df_label_filtered <- df_label
+            df_lab_filtered <- df_lab
         }
 
-        if(!is.null(gvar)){
+        if(!is.null(gv())){
             group_string <- glue::glue('
-                                 {df_label} <- dplyr::group_by({df_label}, {paste(gvar, collapse = ", ")})
+                                 {df_lab} <- dplyr::group_by({df_lab}, {paste(gv(), collapse = ", ")})
 
                       ')
         } else {
@@ -79,27 +79,27 @@ text_out_interactive <- function(sel_points, statements, filter_df, df_label, ov
                   {filt_df_string}
 
                   # {info_comment_filters}
-                  {df_label_filtered} <- datacleanr::filter_scoped_df(dframe = {df_label},
+                  {df_lab_filtered} <- datacleanr::filter_scoped_df(dframe = {df_lab},
                   condition_df = filter_conditions)
                                            ')
 
     } else {
 
         apply_filter_string <- ""
-        df_label_filtered <- df_label
+        df_lab_filtered <- df_lab
     }
 
 
 
 
 
-    if(nrow(sel_points)>0){
+    if(nrow(sepo)>0){
         # VIZ SELECT --------------------------------------------------------------
 
-        if(!overwrite){
-            df_label_viz <- paste0(df_label, "_vizclean")
+        if(!ovt){
+            df_lab_viz <- paste0(df_lab, "_vizclean")
         } else {
-            df_label_viz <- df_label
+            df_lab_viz <- df_lab
         }
 
         #### INFO COMMENTS
@@ -108,45 +108,46 @@ text_out_interactive <- function(sel_points, statements, filter_df, df_label, ov
         info_comment_outlier_merge <-
             " create data set with annotation column (non-outliers are NA);"
         info_comment_outlier_removal <-
-            " comment out below to keep manually selected obs in data set;"
+            "remove comment below to drop manually selected obs in data set;"
 
 
 
-        sepo <- sel_points %>%
+
+        sepo <- sepo %>%
             dplyr::rename(.dcrkey = .data$keys)
 
-        sel_points_dput <-
+        sepo_dput <-
             paste(utils::capture.output(dput(sepo[, colnames(sepo) %nin% "selection_count"])),
                   collapse = " ")
 
-        sel_points_str <-
+        sepo_str <-
             glue::glue(
                 '
                           # {info_comment_outlier_obs}
-                          {df_label}_outlier_selection <- {sel_points_dput}
+                          {df_lab}_outlier_selection <- {sepo_dput}
                           '
             )
 
 
 
 
-        if(!overwrite){
-            df_label_viz_final <- paste0(df_label_viz, "_out")
+        if(!ovt){
+            df_lab_viz_final <- paste0(df_lab_viz, "_out")
         } else {
-            df_label_viz_final <- df_label
+            df_lab_viz_final <- df_lab
         }
 
 
         code_join_outlier_dplyr <-
             glue::glue(
                 '
-                       {sel_points_str}
+                       {sepo_str}
 
                       # {info_comment_outlier_merge}
-                      {df_label_viz}  <- dplyr::left_join({df_label_filtered}, {df_label}_outlier_selection, by = ".dcrkey");
+                      {df_lab_viz}  <- dplyr::left_join({df_lab_filtered}, {df_lab}_outlier_selection, by = ".dcrkey");
 
                       # {info_comment_outlier_removal}
-                      {df_label_viz_final}  <- {df_label_viz} %>% dplyr::filter(is.na(.annotation))
+                      # {df_lab_viz_final}  <- {df_lab_viz} %>% dplyr::filter(is.na(.annotation))
 
                       '
             )
@@ -176,11 +177,11 @@ text_out_interactive <- function(sel_points, statements, filter_df, df_label, ov
 
 
 
-text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite, gvar, out_path) {
+text_out_file <- function(sepo, stats, fdf, df_lab, ovt, gv, out_path) {
 
 
-    file_path <- df_label
-    df_label <- fs::path_ext_remove(fs::path_file(file_path))
+    file_path <- df_lab
+    df_lab <- fs::path_ext_remove(fs::path_file(file_path))
 
 
     info_comment_outlier_index <-
@@ -189,15 +190,13 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
 
 
 
-    if(nrow(sel_points) == 0){
+    if(nrow(sepo) == 0){
         index_str <- ""
     } else {
         index_str <- glue::glue(
             '
-
                       # {info_comment_outlier_index}
-                      {df_label}$.dcrkey <- seq_len(nrow({df_label}))
-
+                      {df_lab}$.dcrkey <- seq_len(nrow({df_lab}))
                       ')
     }
 
@@ -206,7 +205,7 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
                   library(dplyr)
                   library(datacleanr)
 
-                  {df_label} <- readRDS("{file_path}")
+                  {df_lab} <- readRDS("{file_path}")
 
                   {index_str}
                   ')
@@ -215,23 +214,23 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
 
 
     # Output from filtering tab
-    if(any(statements)  &
-       nrow(filter_df) > 0){
+    if(any(stats)  &
+       nrow(fdf) > 0){
         # FILTERING ---------------------------------------------------------------
-        filter_df <- filter_df[statements, ]
+        fdf <- fdf[stats, ]
 
 
 
 
         #### INFO COMMENTS
         info_comment_filt_df <-
-            " statements and scoping level for filtering"
+            " stats and scoping level for filtering"
         info_comment_filters <-
             " applying (scoped) filtering by groups;"
 
 
         # filt_df_dput <-
-        #     paste(utils::capture.output(dput(filter_df)),
+        #     paste(utils::capture.output(dput(fdf)),
         #           collapse = " ")
 
 
@@ -240,16 +239,15 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
                                       ')
 
 
-        if (!overwrite) {
-            df_label_filtered <- paste0(df_label, "_filtered")
+        if (!ovt) {
+            df_lab_filtered <- paste0(df_lab, "_filtered")
         } else {
-            df_label_filtered <- df_label
+            df_lab_filtered <- df_lab
         }
 
-        if(!is.null(gvar)){
+        if(!is.null(gv)){
             group_string <- glue::glue('
-                                 {df_label} <- dplyr::group_by({df_label}, {paste(gvar, collapse = ", ")})
-
+                                 {df_lab} <- dplyr::group_by({df_lab}, {paste(gv, collapse = ", ")})
                       ')
         } else {
 
@@ -263,27 +261,27 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
                   {filt_df_string}
 
                   # {info_comment_filters}
-                  {df_label_filtered} <- datacleanr::filter_scoped_df(dframe = {df_label},
+                  {df_lab_filtered} <- datacleanr::filter_scoped_df(dframe = {df_lab},
                   condition_df = filter_conditions)
                                            ')
 
     } else {
 
         apply_filter_string <- ""
-        df_label_filtered <- df_label
+        df_lab_filtered <- df_lab
     }
 
 
 
 
 
-    if(nrow(sel_points)>0){
+    if(nrow(sepo)>0){
         # VIZ SELECT --------------------------------------------------------------
 
-        if(!overwrite){
-            df_label_viz <- paste0(df_label, "_vizclean")
+        if(!ovt){
+            df_lab_viz <- paste0(df_lab, "_vizclean")
         } else {
-            df_label_viz <- df_label
+            df_lab_viz <- df_lab
         }
 
         #### INFO COMMENTS
@@ -296,43 +294,43 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
 
 
 
-        sepo <- sel_points %>%
+        sepo <- sepo %>%
             dplyr::rename(.dcrkey = .data$keys)
 
-        sel_points_dput <-
+        sepo_dput <-
             paste(utils::capture.output(dput(sepo[, colnames(sepo) %nin% "selection_count"])),
                   collapse = " ")
 
-        sel_points_str <-
+        sepo_str <-
             glue::glue(
                 '
                           # {info_comment_outlier_obs}
-                          {df_label}_outlier_selection <- readRDS("{out_path$file_out_raw}")$dcr_selected_outliers
+                          {df_lab}_outlier_selection <- readRDS("{out_path$file_out_raw}")$dcr_selected_outliers
                           '
             )
 
 
 
 
-        if(!overwrite){
-            df_label_viz_final <- paste0(df_label_viz, "_out")
+        if(!ovt){
+            df_lab_viz_final <- paste0(df_lab_viz, "_out")
         } else {
-            df_label_viz_final <- df_label
+            df_lab_viz_final <- df_lab
         }
 
 
         code_join_outlier_dplyr <-
             glue::glue(
                 '
-                       {sel_points_str}
+                       {sepo_str}
 
                       # {info_comment_outlier_merge}
-                      {df_label_viz}  <- dplyr::left_join({df_label_filtered}, {df_label}_outlier_selection, by = ".dcrkey");
+                      {df_lab_viz}  <- dplyr::left_join({df_lab_filtered}, {df_lab}_outlier_selection, by = ".dcrkey");
 
-                      # {info_comment_outlier_removal} \n
-                      # {df_label_viz_final}  <- {df_label_viz} %>% dplyr::filter(is.na(.annotation))
+                      # {info_comment_outlier_removal}
+                      # {df_lab_viz_final}  <- {df_lab_viz} %>% dplyr::filter(is.na(.annotation))
 
-                      saveRDS({df_label_viz_final}, "{out_path$file_out_cleaned}")
+                      saveRDS({df_lab_viz_final}, "{out_path$file_out_cleaned}")
 
                       '
             )
@@ -422,13 +420,13 @@ module_ui_extract_code <- function(id) {
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param df_label string, name of original df input
-#' @param filter_df data frame with filter statements and scoping lvl
-#' @param gvar character, grouping vars for \code{dplyr::group_by}
-#' @param statements lgl, vector of working statements
-#' @param sel_points data frame with selected point keys, annotations, and selection count
+#' @param filter_df reactiveValue data frame with filter statements and scoping lvl
+#' @param gvar reactive character, grouping vars for \code{dplyr::group_by}
+#' @param statements reactive, lgl, vector of working statements
+#' @param sel_points reactiveValue, data frame with selected point keys, annotations, and selection count
 #' @param overwrite reacive value, TRUE/FALSE from checkbox input
 #' @param is_on_disk Logical, whether df represented by \code{df_label} was on disk or from interactive \code{R} use
-#' @param out_path List, with character strings providing directory paths and file names for saving/reading in code output
+#' @param out_path reactive, List, with character strings providing directory paths and file names for saving/reading in code output
 #'
 #' @importFrom rlang .data
 #'
@@ -449,280 +447,74 @@ module_server_extract_code  <-
 
         # grab only valid statements
 
+        rv_text_out <- shiny::reactive({
 
-
-        # handle initialization
-        if(!is.logical(shiny::isolate(overwrite))){
-            shiny::isolate({overwrite <- TRUE})
-        }
-
-
-        # 'fail' early if nothing selected/filtered
-        if(nrow(sel_points) == 0 &
-           !any(statements)
-        ){
-            # text_out <- "## data has not been cleaned yet"
-            text_out <- NULL
-
-
-        } else {
-
-            if(!is_on_disk){
-                text_out <- text_out_interactive(sel_points,statements,filter_df,df_label,overwrite,gvar)
-            } else if(is_on_disk){
-                # ONLY FOR TESTING PURPOSES!
-                # MAKE DEDICATED FUNCTION FOR ON-DISK
-                text_out <- text_out_file(sel_points,statements,filter_df,df_label,overwrite,gvar,out_path)
-
+            # handle initialization
+            if(!is.logical(overwrite())){
+                # overwrite() <- TRUEove
+                overwrite <- shiny::reactive(TRUE)
             }
 
+            # 'fail' early if nothing selected/filtered
+            if(nrow(sel_points$df) == 0 &
+               !any(statements())
+            ){
+                # text_out <- "## data has not been cleaned yet"
+                text_out <- NULL
 
+            } else {
 
+                if(!is_on_disk){
+                    text_out <- text_out_interactive(sel_points$df,statements(),filter_df(),df_label,overwrite(),gvar())
+                } else if(is_on_disk){
+                    # ONLY FOR TESTING PURPOSES!
+                    # MAKE DEDICATED FUNCTION FOR ON-DISK
+                    text_out <- text_out_file(sel_points$df,statements(),filter_df(),df_label,overwrite(),gvar(),out_path())
+                }
+            }
 
-        }
+            if(!is.null(text_out)){
+                text_out <-
+                    paste(
+                        formatR::tidy_source(
+                            text = text_out,
+                            output = FALSE,
+                            width = 100,
+                            wrap = FALSE
+                        )$text.tidy,
+                        collapse = "\n"
+                    )
+            } else {
+                NULL
+            }
 
-
+        })
 
         # UI
         # Rendering ---------------------------------------------------------------
 
-
-        if(!is.null(text_out)){
-
-        text_out <-
-            paste(
-                formatR::tidy_source(
-                    text = text_out,
-                    output = FALSE,
-                    width = 100
-                )$text.tidy,
-                collapse = "\n"
-            )
-        } else {
-
-            NULL
-        }
-
-
-        output$codeprint <- shiny::renderText(text_out)
-
-
-
-        output$codeDiv <- shiny::renderUI(
-            shiny::tagList(
-                # shiny::fluidRow(
-                #
-                # shiny::column(
-                #     width = 3,
-                #     style = "margin-top: 25px;",
-                #     shiny::actionButton(
-                #         inputId = ns("codebtn"),
-                #         label = "Send to RStudio",
-                #         class = "btn-info",
-                #         icon = shiny::icon("share-square")
-                #     )
-                # ),
-                # shiny::column(
-                #     width = 3,
-                #     style = "margin-top: 25px;",
-                #     shiny::actionButton(
-                #         inputId = ns("copybtn"),
-                #         label = "Copy to clipboard",
-                #         class = "btn-info",
-                #         icon = shiny::icon("copy")
-                #     )
-                # )),
-                shiny::verbatimTextOutput(ns("codeprint"))
-            )
+        output$codeprint <- shiny::renderText(
+            {
+                shiny::req(rv_text_out())
+                rv_text_out()
+            }
         )
 
 
+        output$codeDiv <- shiny::renderUI({
 
-        return(text_out)
+            # shiny::req(rv_text_out())
+
+            shiny::validate(shiny::need(rv_text_out(),
+                                        "Filter or manually select data to generate the code recipe."))
+
+            shiny::tagList(
+                shiny::verbatimTextOutput(ns("codeprint"))
+            )}
+        )
+
+
+        return(rv_text_out)
 
     }
 
-
-#
-#
-#
-#
-#
-#
-#
-#     if (!is.null(filter_strings$statement_strings) |
-#         nrow(sel_points$df) > 0) {
-#         text_out <- setup_string
-#
-#
-#     } else {
-#         text_out <- "## data has not been cleaned yet"
-#     }
-#
-#
-#     # Filtering ---------------------------------------------------------------
-#     subset_strings <- shiny::reactiveValues(base = NULL,
-#                                             dplyr = NULL,
-#                                             dt = NULL)
-#     if (!is.null(filter_strings$statement_strings)) {
-#         if (!overwrite) {
-#             df_label_filtered <- paste0(df_label, "_filtered")
-#         } else {
-#             df_label_filtered <- df_label
-#         }
-#
-#         subset_strings$base <- glue::glue('
-#                 subset({df_label},
-#                    {paste0(filter_strings$statement_strings, collapse = ", ")})
-#                               ')
-#
-#
-#         subset_strings$dplyr <- glue::glue('
-#                 dplyr::filter({df_label},
-#                    {paste0(filter_strings$statement_strings, collapse = ", ")})
-#                               ')
-#
-#         subset_strings$dt <- glue::glue('
-#                 subset({df_label},
-#                    {paste0(filter_strings$statement_strings, collapse = ", ")})
-#                               ')
-#
-#
-#         use_code_subset <- base::switch(
-#             as.character(input$paradigm),
-#             base = subset_strings$base,
-#             dplyr = subset_strings$dplyr,
-#             data.table = subset_strings$dt
-#         )
-#
-#         text_out <- glue::glue('{text_out}
-#
-#                             {df_label_filtered} <- {use_code_subset}')
-#
-#
-#     }
-#     # Outlier selection -------------------------------------------------------
-#     sel_points_strings <-
-#         shiny::reactiveValues(
-#             code_make_outlier_var = NULL,
-#             code_join_outlier_dplyr = NULL,
-#             code_join_outlier_dt = NULL
-#         )
-#
-#     if (nrow(sel_points$df) > 0) {
-#         if (!is.null(filter_strings$statement_strings)) {
-#             df_label <- df_label_filtered
-#         }
-#
-#         # extra string as comment
-#
-#         info_comment_outlier_obs <-
-#             " observations from manual selection (Viz tab);"
-#         info_comment_outlier_merge <-
-#             " create data set with annotation column (non-outliers are NA);"
-#         info_comment_outlier_removal <-
-#             " comment out below to keep manually selected obs in data set;"
-#
-#
-#
-#
-#         if (!overwrite) {
-#             df_label_outlier <- paste0(df_label, "_outlier")
-#         } else {
-#             df_label_outlier <- df_label
-#         }
-#
-#         sepo <- sel_points$df %>%
-#             dplyr::rename(.dcrkey = .data$keys)
-#
-#         sel_points_str <-
-#             paste(utils::capture.output(dput(sepo[, colnames(sepo) %nin% "selection_count"])),
-#                   collapse = " ")
-#
-#
-#         sel_points_strings$code_make_outlier_var <-
-#             glue::glue(
-#                 '
-#                        # {info_comment_outlier_obs}
-#                        {df_label}_outlier_selection <- {sel_points_str}
-#                        '
-#             )
-#
-#         sel_points_strings$code_join_outlier_dplyr <-
-#             glue::glue(
-#                 '
-#                 # {info_comment_outlier_merge}
-#                 {df_label_outlier}  <- dplyr::left_join({df_label}, {df_label}_outlier_selection, by = ".dcrkey");
-#
-#                 # {info_comment_outlier_removal}
-#                 {df_label_outlier}  <- {df_label_outlier} %>% dplyr::filter(is.na(.annotation))
-#
-#                 '
-#             )
-#
-#         sel_points_strings$code_join_outlier_dt <-
-#             glue::glue(
-#                 '
-#                 # {info_comment_outlier_merge}
-#                 {df_label_outlier}  <- merge({df_label}, {df_label}_outlier_selection, by = ".dcrkey", all = TRUE)
-#
-#                 # {info_comment_outlier_removal}
-#                 {df_label_outlier}  <- {df_label_outlier}[is.na(.annotation), ]
-#                 '
-#             )
-#
-#
-#         sel_points_strings$code_join_outlier_base <-
-#             glue::glue(
-#                 '
-#                 # {info_comment_outlier_merge}
-#                 {df_label_outlier}  <- merge({df_label}, {df_label}_outlier_selection, by = ".dcrkey", all = TRUE)
-#
-#                 # {info_comment_outlier_removal}
-#                 {df_label_outlier}  <- {df_label_outlier}[is.na({df_label_outlier}$.annotation), ]
-#                 '
-#             )
-#
-#         use_code_outlier <-  base::switch(
-#             input$paradigm,
-#             base = sel_points_strings$code_join_outlier_base,
-#             dplyr = sel_points_strings$code_join_outlier_dplyr,
-#             data.table = sel_points_strings$code_join_outlier_dt
-#         )
-#
-#
-#         text_out <- glue::glue(
-#             '
-#             {text_out}
-#
-#                             # observations from manual selection in Viz. Tab
-#                             {sel_points_strings$code_make_outlier_var}
-#
-#                             {use_code_outlier}
-#
-#                             '
-#         )
-#     }
-#
-#
-#     # Rendering ---------------------------------------------------------------
-#
-#     text_out <-
-#         paste(
-#             formatR::tidy_source(
-#                 text = text_out,
-#                 output = FALSE,
-#                 width = 100
-#             )$text.tidy,
-#             collapse = "\n"
-#         )
-#
-#
-#     output$codeprint <- shiny::renderText(text_out)
-#
-#     return(text_out)
-#
-#
-#    }
-#
-# }

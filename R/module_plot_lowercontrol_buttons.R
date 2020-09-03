@@ -20,12 +20,13 @@ module_ui_lowercontrol_btn <- function(id) {
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param selector_inputs reactive vals from above-plot controls, used to determine if plot is a map (lon/lat)
+#' @param action_track reactive, logical - has plot been pressed?
 #'
 #' @details provides UI buttons for deleting last / entire outlier selection
 #'
 #' @return reactive values with input xvar, yvar and actionbutton counter
 module_server_lowercontrol_btn  <-
-    function(input, output, session, selector_inputs) {
+    function(input, output, session, selector_inputs, action_track) {
         ns = session$ns
 
         is_spatial_plot <-
@@ -37,6 +38,9 @@ module_server_lowercontrol_btn  <-
 
 
         output$lowercontrolbuttons <- shiny::renderUI({
+
+            shiny::req(action_track$plot_start)
+
             if (!is_spatial_plot) {
                 shiny::fluidRow(
                     style = "margin-bottom: 25px;",
@@ -83,7 +87,7 @@ module_server_lowercontrol_btn  <-
                     shiny::column(4,
                                   align = "center",
                                   shiny::selectInput(
-                                     inputId =  ns("mapstyle"),
+                                      inputId =  ns("mapstyle"),
                                       label = "Select map style",
                                       choices = c(
                                           "basic",
@@ -100,7 +104,7 @@ module_server_lowercontrol_btn  <-
                                           # "stamen-toner",
                                           # "stamen-watercolor"
                                       ),
-                                     selected = "basic",
+                                      selected = "basic",
                                   )),
                     shiny::column(
                         4,

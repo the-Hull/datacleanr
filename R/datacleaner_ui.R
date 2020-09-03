@@ -269,7 +269,7 @@ datacleanr_ui <- function(request){
                                                                                 shiny::br(),
                                                                                 shiny::p("All commands and operations in previous tabs are translated to
                                                                                          code on the right, ensuring reproducibility."),
-                                                                                shiny::br(""),
+                                                                                # shiny::br(""),
                                                                                 # shiny::checkboxInput("overwrite",
                                                                                 #                      label = "Concise code?",
                                                                                 #                      value = FALSE)),
@@ -277,6 +277,7 @@ datacleanr_ui <- function(request){
                                                                                 ),
 
                                              mainPanel = shiny::mainPanel(width = 8,
+                                                                          shiny::h4(shiny::tags$strong("Reproducible Recipe")),
                                                                           module_ui_extract_code("extract")))
                          ), #/tabPanel
 

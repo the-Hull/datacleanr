@@ -826,7 +826,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     # shiny::observe({
     # shiny::observeEvent(input[["selectors-startscatter"]], {
     shiny::observeEvent(ignoreInit = TRUE,
-                        ignoreNULL = FALSE,
+                        ignoreNULL = TRUE,
                         action_tracking$plot_start, {
 
                             # shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
@@ -835,7 +835,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                             # if(shiny::req(shiny::isolate(action_tracking$plot_start))){
                             shiny::callModule(module_server_lowercontrol_btn,
                                               id = "lwrcontrol",
-                                              selector_inputs = shiny::isolate(selector_vals))
+                                              selector_inputs = shiny::isolate(selector_vals),
+                                              action_track = action_tracking)
                             # }
 
 
@@ -1071,31 +1072,31 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
 
 
-    code_out <- shiny::reactiveVal()
+    # code_out <- shiny::reactiveVal()
 
-        shiny::observe({
+        # shiny::observe({
 
-        shiny::req(datareactive())
+        # shiny::req(datareactive())
 
         # if(!is.null(input$apply_filter) | nrow(selected_data$df) > 0 ){
-        if(nrow(filter_df()) >= 0  | nrow(selected_data$df) >= 0 ){
+        # if(nrow(filter_df()) >= 0  | nrow(selected_data$df) >= 0 ){
 
 
-            code_out(
-                shiny::callModule(module_server_extract_code,
+            # code_out(
+                code_out <- shiny::callModule(module_server_extract_code,
                                   id = "extract",
                                   df_label = df_name,
-                                  gvar = gvar(),
-                                  filter_df = filter_df(),
-                                  statements = filter_statements_lgl(),
-                                  sel_points = selected_data$df,
-                                  overwrite = input$`config-overwrite`,
+                                  gvar = gvar,
+                                  filter_df = filter_df,
+                                  statements = filter_statements_lgl,
+                                  sel_points = selected_data,
+                                  overwrite = shiny::reactive(input$`config-overwrite`),
                                   is_on_disk = is_on_disk,
-                                  out_path = out_path())
-            )
-        }
+                                  out_path = out_path)
+            # )
+        # }
 
-    })
+    # })
 
 
     shiny::observeEvent(input$`config-codebtn`, {
@@ -1145,11 +1146,29 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
     # EXTR - CONFIG, SAVE UI ---------------------
 
+    has_processed <- shiny::reactive({
+
+        selected_data$df
+        filter_df()
+        filter_statements_lgl()
+
+        if(nrow(selected_data$df) > 0 |
+                nrow(filter_df()[filter_statements_lgl(), ]) > 0){
+
+
+            return(TRUE)
+
+        } else {
+
+            return(FALSE)
+        }
+    })
+
     out_path <- shiny::callModule(module_server_extract_code_fileconfig,
                                   id = "config",
                                   df_label = df_name,
                                   is_on_disk = is_on_disk,
-                                  code = code_out
+                                  has_processed = has_processed
                                   )
 
 
@@ -1180,6 +1199,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                             #     ext = "R")
 
 
+                            shiny::req(!is.null(code_out()))
 
 
                             saveRDS(object = out_data()$dcr_df,

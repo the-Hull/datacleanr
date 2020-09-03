@@ -167,7 +167,7 @@ split_groups <- function(dframe){
 #' @param statement character, statement for filtering (only VALID expressions; use \code{check_individual_statement} to grab only valid.
 #' @param scope_at numeric, group indices to apply filter statements to
 #' @return List, containing item \code{filtered_df}, a \code{data.frame} filtered based on statements and scope.
-filter_scoped <- function(dframe, statement, scope_at){
+filter_scoped <- function(dframe, statement, scope_at = NULL){
 
 
     scope_at <- unlist(scope_at)
@@ -200,9 +200,9 @@ filter_scoped <- function(dframe, statement, scope_at){
     # } else if(isTRUE(statement_check)){
 
 
-    if(rlang::is_missing(scope_at)){
-        scope_at <- NULL
-    }
+    # if(rlang::is_missing(scope_at)){
+    #     scope_at <- NULL
+    # }
 
     if(is.null(scope_at) | n_groups == 1){
 
@@ -328,7 +328,7 @@ filter_scoped_df <- function(dframe, condition_df){
     if(!rlang::inherits_any(dframe, class = c("data.frame", "tbl_df", "tbl"))){
         stop("Please provide a data.frame or tibble as dframe")
     }
-    if(!rlang::inherits_any(condition_df, class = c("data.frame", "tbl_df", "tbl"))){
+    if(!rlang::inherits_any(condition_df, class = c("tbl_df", "tbl"))){
         stop("Please provide a tibble as condition_df")
     }
 
@@ -1008,6 +1008,8 @@ make_save_filepath <- function(save_dir, input_filepath, suffix, ext){
     file_name <- paste0(file_name, "_", suffix)
 
     out_filepath <- fs::path(save_dir, file_name, ext = ext)
+
+    return(out_filepath)
 
 }
 

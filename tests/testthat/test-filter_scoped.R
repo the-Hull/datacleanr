@@ -8,6 +8,7 @@ test_that("filter works with correct statement", {
 })
 
 
+
 test_that("filter fails with incorrect statement", {
 
 
@@ -83,12 +84,12 @@ test_that("recursive filter gives same result as manual, repeated filter (ungrou
       "Petal.Length > quantile(Petal.Length, 0.1)"),
     scope_at = list(NULL, NULL, NULL))
 
-    fdf <- filter_scoped_df(iris, condition_df = cdf)
+  fdf <- filter_scoped_df(iris, condition_df = cdf)
 
-    dplyr_fdf <- dplyr::filter(iris, Sepal.Width > quantile(Sepal.Width, 0.1))
-    dplyr_fdf <- dplyr::filter(dplyr_fdf, Petal.Width > quantile(Petal.Width, 0.1))
-    dplyr_fdf <- dplyr::filter(dplyr_fdf, Petal.Length > quantile(Petal.Length, 0.1))
-    expect_equivalent(fdf,dplyr_fdf)
+  dplyr_fdf <- dplyr::filter(iris, Sepal.Width > quantile(Sepal.Width, 0.1))
+  dplyr_fdf <- dplyr::filter(dplyr_fdf, Petal.Width > quantile(Petal.Width, 0.1))
+  dplyr_fdf <- dplyr::filter(dplyr_fdf, Petal.Length > quantile(Petal.Length, 0.1))
+  expect_equivalent(fdf,dplyr_fdf)
 
 
 
@@ -149,6 +150,59 @@ test_that("recursive filter gives same result as manual, repeated filter (groupe
     dplyr::bind_rows()
 
   expect_equivalent(fdf,dplyr_fdf)
+
+
+
+})
+
+
+test_that("non df/tibble/data.table throws error", {
+
+  cdf <- dplyr::tibble(
+    statement = c(
+      "Sepal.Width > quantile(Sepal.Width, 0.1)",
+      "Petal.Width > quantile(Petal.Width, 0.1)",
+      "Petal.Length > quantile(Petal.Length, 0.8)"),
+    scope_at = list(NULL, NULL, c(1,2)))
+
+  expect_error(filter_scoped_df(dframe = character(1),
+                                condition_df = cdf),
+               regexp = "Please provide a data.frame or tibble as dframe")
+
+
+
+})
+
+
+
+test_that("non tibble list-column for condition_df throws error", {
+
+  cdf <- dplyr::tibble(
+    statement = c(
+      "Sepal.Width > quantile(Sepal.Width, 0.1)"),
+    scope_at = "1")
+
+  expect_error(filter_scoped_df(dframe = dplyr::group_by(iris, Species),
+                                condition_df = cdf),
+               regexp = "Please provide a list column or NULL in condition_df[ ,2]",
+               fixed = TRUE)
+
+
+
+})
+
+
+test_that("non tibble  for condition_df throws error", {
+
+  cdf <- data.frame(
+    statement = c(
+      "Sepal.Width > quantile(Sepal.Width, 0.1)"),
+    scope_at = "1")
+
+  expect_error(filter_scoped_df(dframe = dplyr::group_by(iris, Species),
+                                condition_df = cdf),
+               regexp = "Please provide a tibble as condition_df",
+               fixed = TRUE)
 
 
 

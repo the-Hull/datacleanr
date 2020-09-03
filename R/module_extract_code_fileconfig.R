@@ -37,33 +37,33 @@ module_ui_extract_code_fileconfig <- function(id) {
 module_server_extract_code_fileconfig  <- function(input,
                                                    output,
                                                    session,
-             df_label,
-             is_on_disk)
-    {
+                                                   df_label,
+                                                   is_on_disk)
+{
 
-        ns = session$ns
+    ns = session$ns
 
-        # grab only valid statements
-
-
-
-        output$codeconfig <- shiny::renderUI({
-            shiny::tagList(
-
-                # shiny::h4(shiny::tags$strong("Code config")),
-                shiny::br(),
-
-                shiny::checkboxInput(ns("overwrite"),
-                                     label = "Concise code?",
-                                     value = TRUE))
-        })
+    # grab only valid statements
 
 
 
-        output$codebuttons <- shiny::renderUI({
-            shiny::tagList(shiny::fluidRow(
+    output$codeconfig <- shiny::renderUI({
+        shiny::tagList(
 
-                shiny::br(),
+            # shiny::h4(shiny::tags$strong("Code config")),
+            shiny::br(),
+
+            shiny::checkboxInput(ns("overwrite"),
+                                 label = "Concise code?",
+                                 value = TRUE))
+    })
+
+
+
+    output$codebuttons <- shiny::renderUI({
+        shiny::tagList(shiny::fluidRow(
+
+            shiny::br(),
             shiny::column(
                 width = 6,
                 align = "left",
@@ -88,150 +88,160 @@ module_server_extract_code_fileconfig  <- function(input,
             ))
 
         )
-            })
+    })
 
 
-        output$fileRawExportConfig <- shiny::renderUI(
-            {
-                req(is_on_disk)
-
-                            shiny::tagList(
-                                shiny::br(),
-                shiny::h4(shiny::tags$strong("File outputs")),
-                shiny::br(),
-
-                "Outlier (meta) data and cleaning script",
-                shiny::br(),
-                shiny::br(),
-
-
-            shiny::fluidRow(
-                shiny::column(5, shinyFiles::shinyDirButton(id = ns("dirraw"),
-                                       "Folder selection",
-                                       "Please choose a folder to save raw-data outputs to",
-                                       FALSE,
-                                       class = 'btn-info',
-                                       icon = shiny::icon("folder"))),
-
-shiny::column(7,
-            shiny::checkboxInput(inputId = ns("dirchooseIdentical"),
-                                 label = "Use same output folder for cleaned data?",
-                                 value = TRUE)
-        )
-)
-)
-            })
-
-
-
-        output$fileCleanedExportConfig <- shiny::renderUI({
-
-            req(input$dirchooseIdentical == FALSE)
+    output$fileRawExportConfig <- shiny::renderUI(
+        {
+            req(is_on_disk)
 
             shiny::tagList(
                 shiny::br(),
-                "Cleaned data",
+                shiny::h4(shiny::tags$strong("Set Output Locations")),
+                shiny::br(),
+
+                # "Outlier (meta) data and cleaning script",
                 shiny::br(),
                 shiny::br(),
 
 
-            shinyFiles::shinyDirButton(id = ns("dirclean"),
-                                       "Folder selection",
-                                       "Please choose a folder to save raw-data outputs to",
-                                       FALSE,
-                                       class = 'btn-info',
-                                       icon = shiny::icon("folder"))
+                shiny::fluidRow(
+                    shiny::column(5, shinyFiles::shinyDirButton(id = ns("dirraw"),
+                                                                "Meta & Recipe",
+                                                                "Set and/or create a directory for the raw data and the reproducible recipe.",
+                                                                FALSE,
+                                                                class = 'btn-info',
+                                                                icon = shiny::icon("folder"))),
+
+                    shiny::column(7,
+                                  shiny::checkboxInput(inputId = ns("dirchooseIdentical"),
+                                                       label = "Use same output folder for cleaned data?",
+                                                       value = TRUE)
+                    )
+                )
             )
         })
 
 
-        output$savebutton <- shiny::renderUI({
 
-            req(is_on_disk, )
+    output$fileCleanedExportConfig <- shiny::renderUI({
 
-            shiny::tagList(
+        req(input$dirchooseIdentical == FALSE)
 
-                shiny::br(),
-                shiny::actionButton(inputId = ns("save"),
-                                     label = "Save Recipe & Data",
-                                    icon = shiny::icon("save"),
-                                    class = "btn-success"))
-        })
+        shiny::tagList(
+            shiny::br(),
+            # "Cleaned data",
 
-
-
-
-# file path and selection logic ---------------------------------------------------------
-
-
-
-        # if(is_on_disk){
-        roots = c(`Dataset dir` = fs::path_dir(df_label),
-            `Working dir` ='.',
-                  `Home dir` = Sys.getenv("HOME"))
-
-            shinyFiles::shinyDirChoose(input,
-                                       id = "dirraw",
-                                       roots=roots)
-
-            shinyFiles::shinyDirChoose(input,
-                                       id = "dirclean",
-                                       roots=roots)
-#
-#             shiny::observeEvent(input$dirchoose,
-#                                 ignoreNULL = TRUE,
-#                                 ignoreInit = TRUE,
-#                                 {
-#                 print(paste("test", shinyFiles::parseDirPath(roots = roots,
-#                                                input$dirchoose)))
-#                 })
+            shinyFiles::shinyDirButton(id = ns("dirclean"),
+                                       "Cleaned Data",
+                                       "Set and/or create a directory for the cleaned data.",
+                                       FALSE,
+                                       class = 'btn-info',
+                                       icon = shiny::icon("folder"))
+        )
+    })
 
 
-            outpath <- shiny::reactive({
+    output$savebutton <- shiny::renderUI({
 
-                dirraw <- shinyFiles::parseDirPath(roots = roots,
-                                                   input$dirraw)
+        req(is_on_disk, )
 
-                dirraw <- ifelse(length(dirraw) == 0,
-                                 fs::path_dir(df_label),
-                                 dirraw)
+        shiny::tagList(
 
-                dirclean <- shinyFiles::parseDirPath(roots = roots,
-                                                    input$dirclean)
-                dirclean <- ifelse(length(dirclean) == 0,
-                       dirraw, dirclean)
+            shiny::h4(shiny::tags$strong("Set and Save Outputs")),
 
-
-                file_out_raw <- make_save_filepath(
-                    save_dir = dirraw,
-                    input_filepath = df_label,
-                    suffix = "meta_RAW",
-                    ext = "Rds")
-
-                file_out_cleaned <- make_save_filepath(
-                    save_dir = dirclean,
-                    input_filepath = df_label,
-                    suffix = "CLEAN",
-                    ext = "Rds")
+            shiny::textInput(inputId = ns("suffixClean"),
+                             label = "Suffix: Cleaned Data",
+                             value = "cleaned"),
+            shiny::textInput(inputId = ns("suffixRawFile"),
+                             label = "Suffix: Filter + Outlier Data",
+                             value = "meta_RAW"),
+            shiny::textInput(inputId = ns("suffixCleaningScript"),
+                             label = "Suffix: Recipe",
+                             value = "cleaning_script"),
 
 
-                file_script_cleaning <- make_save_filepath(
-                    save_dir = dirraw,
-                    input_filepath = df_label,
-                    suffix = "cleaning_recipe",
-                    ext = "R")
-
-                return(list(
-                    dirraw = dirraw,
-                    dirclean = dirclean,
-                    file_out_raw = file_out_raw,
-                    file_out_cleaned = file_out_cleaned,
-                    file_script_cleaning = file_script_cleaning))
+            shiny::br(),
+            shiny::actionButton(inputId = ns("save"),
+                                label = "Save Recipe & Data",
+                                icon = shiny::icon("save"),
+                                class = "btn-success"))
+    })
 
 
-            })
 
 
-            return(outpath)
+    # file path and selection logic ---------------------------------------------------------
+
+
+
+    # if(is_on_disk){
+    roots = c(`Dataset dir` = fs::path_dir(df_label),
+              `Working dir` ='.',
+              `Home dir` = Sys.getenv("HOME"))
+
+    shinyFiles::shinyDirChoose(input,
+                               id = "dirraw",
+                               roots=roots)
+
+    shinyFiles::shinyDirChoose(input,
+                               id = "dirclean",
+                               roots=roots)
+    #
+    #             shiny::observeEvent(input$dirchoose,
+    #                                 ignoreNULL = TRUE,
+    #                                 ignoreInit = TRUE,
+    #                                 {
+    #                 print(paste("test", shinyFiles::parseDirPath(roots = roots,
+    #                                                input$dirchoose)))
+    #                 })
+
+
+    outpath <- shiny::reactive({
+
+        dirraw <- shinyFiles::parseDirPath(roots = roots,
+                                           input$dirraw)
+
+        dirraw <- ifelse(length(dirraw) == 0,
+                         fs::path_dir(df_label),
+                         dirraw)
+
+        dirclean <- shinyFiles::parseDirPath(roots = roots,
+                                             input$dirclean)
+        dirclean <- ifelse(length(dirclean) == 0,
+                           dirraw, dirclean)
+
+
+        file_out_raw <- make_save_filepath(
+            save_dir = dirraw,
+            input_filepath = df_label,
+            suffix = input$suffixRawFile,
+            ext = "Rds")
+
+        file_out_cleaned <- make_save_filepath(
+            save_dir = dirclean,
+            input_filepath = df_label,
+            suffix = input$suffixClean,
+            ext = "Rds")
+
+
+        file_script_cleaning <- make_save_filepath(
+            save_dir = dirraw,
+            input_filepath = df_label,
+            suffix = input$suffixCleaningScript,
+            ext = "R")
+
+        return(list(
+            dirraw = dirraw,
+            dirclean = dirclean,
+            file_out_raw = file_out_raw,
+            file_out_cleaned = file_out_cleaned,
+            file_script_cleaning = file_script_cleaning))
+
+
+    })
+
+
+    return(outpath)
 
 }

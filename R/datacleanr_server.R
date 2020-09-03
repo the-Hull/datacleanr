@@ -1133,7 +1133,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
             dcr_df =
                 dplyr::left_join(x  = datareactive(),
                                  y  = selected_data$df,
-                                 by = c(".dcrkey" = "keys")),
+                                 by = c(".dcrkey" = "keys")) %>%
+                dplyr::select(-.data$.dcrindex),
             dcr_selected_outliers =
                 selected_data$df %>%
                 dplyr::rename(.dcrkey = .data$keys),

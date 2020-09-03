@@ -96,7 +96,6 @@ text_out_interactive <- function(sel_points, statements, filter_df, df_label, ov
     if(nrow(sel_points)>0){
         # VIZ SELECT --------------------------------------------------------------
 
-        print(overwrite)
         if(!overwrite){
             df_label_viz <- paste0(df_label, "_vizclean")
         } else {
@@ -334,7 +333,7 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
                       # {info_comment_outlier_removal} \n
                       # {df_label_viz_final}  <- {df_label_viz} %>% dplyr::filter(is.na(.annotation))
 
-                      #  saveRDS({df_label_viz_final}, "{out_path$file_out_cleaned}")
+                      saveRDS({df_label_viz_final}, "{out_path$file_out_cleaned}")
 
                       '
             )
@@ -504,30 +503,29 @@ module_server_extract_code  <-
 
 
         output$codebuttons <- shiny::renderUI(
-            shiny::tagList(shiny::fluidRow(
-
-                shiny::column(
-                    width = 3,
-                    style = "margin-top: 25px;",
-                    shiny::actionButton(
-                        inputId = ns("codebtn"),
-                        label = "Send to RStudio",
-                        class = "btn-info",
-                        icon = shiny::icon("share-square")
-                    )
-                ),
-                shiny::column(
-                    width = 3,
-                    style = "margin-top: 25px;",
-                    shiny::actionButton(
-                        inputId = ns("copybtn"),
-                        label = "Copy to clipboard",
-                        class = "btn-info",
-                        icon = shiny::icon("copy")
-                    )
-                )),
-                shiny::br(),
-
+            shiny::tagList(
+                # shiny::fluidRow(
+                #
+                # shiny::column(
+                #     width = 3,
+                #     style = "margin-top: 25px;",
+                #     shiny::actionButton(
+                #         inputId = ns("codebtn"),
+                #         label = "Send to RStudio",
+                #         class = "btn-info",
+                #         icon = shiny::icon("share-square")
+                #     )
+                # ),
+                # shiny::column(
+                #     width = 3,
+                #     style = "margin-top: 25px;",
+                #     shiny::actionButton(
+                #         inputId = ns("copybtn"),
+                #         label = "Copy to clipboard",
+                #         class = "btn-info",
+                #         icon = shiny::icon("copy")
+                #     )
+                # )),
                 shiny::verbatimTextOutput(ns("codeprint"))
             )
         )

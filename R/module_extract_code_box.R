@@ -280,7 +280,6 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
     if(nrow(sel_points)>0){
         # VIZ SELECT --------------------------------------------------------------
 
-        print(overwrite)
         if(!overwrite){
             df_label_viz <- paste0(df_label, "_vizclean")
         } else {
@@ -373,7 +372,7 @@ module_ui_extract_code <- function(id) {
     ns <- shiny::NS(id)
 
 
-    shiny::uiOutput(ns("codebuttons"))
+    shiny::uiOutput(ns("codeDiv"))
 
     # shiny::tagList(shiny::fluidRow(
     #     # shiny::column(
@@ -453,8 +452,8 @@ module_server_extract_code  <-
 
 
         # handle initialization
-        if(!is.logical(overwrite)){
-            overwrite <- TRUE
+        if(!is.logical(shiny::isolate(overwrite))){
+            shiny::isolate({overwrite <- TRUE})
         }
 
 
@@ -462,7 +461,8 @@ module_server_extract_code  <-
         if(nrow(sel_points) == 0 &
            !any(statements)
         ){
-            text_out <- "## data has not been cleaned yet"
+            # text_out <- "## data has not been cleaned yet"
+            text_out <- NULL
 
 
         } else {
@@ -487,6 +487,8 @@ module_server_extract_code  <-
         # Rendering ---------------------------------------------------------------
 
 
+        if(!is.null(text_out)){
+
         text_out <-
             paste(
                 formatR::tidy_source(
@@ -496,13 +498,17 @@ module_server_extract_code  <-
                 )$text.tidy,
                 collapse = "\n"
             )
+        } else {
+
+            NULL
+        }
 
 
         output$codeprint <- shiny::renderText(text_out)
 
 
 
-        output$codebuttons <- shiny::renderUI(
+        output$codeDiv <- shiny::renderUI(
             shiny::tagList(
                 # shiny::fluidRow(
                 #
@@ -529,6 +535,8 @@ module_server_extract_code  <-
                 shiny::verbatimTextOutput(ns("codeprint"))
             )
         )
+
+
 
         return(text_out)
 

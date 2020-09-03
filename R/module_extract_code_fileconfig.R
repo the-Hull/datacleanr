@@ -29,8 +29,9 @@ module_ui_extract_code_fileconfig <- function(id) {
 #' UI Module: Extraction File selection menu
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
-#' @param df_label string, name of original df input
+#' @param df_label character, name of original df input
 #' @param is_on_disk Logical, whether df represented by \code{df_label} was on disk or from interactive \code{R} use
+#' @param code character, printed in code box and script, used as input check here.
 #'
 #' @importFrom rlang .data
 #'
@@ -38,29 +39,40 @@ module_server_extract_code_fileconfig  <- function(input,
                                                    output,
                                                    session,
                                                    df_label,
-                                                   is_on_disk)
+                                                   is_on_disk,
+                                                   code)
 {
 
     ns = session$ns
 
-    # grab only valid statements
 
+
+    # hacky check if code has been produced (indicator for selected_points / filter_df)
+    # code_available <- shiny::reactive(grepl("\n", code()))
+    code_available <- shiny::reactive(!is.null(code()))
 
 
     output$codeconfig <- shiny::renderUI({
+
+        # shiny::req(code_available())
+
+        shiny::validate(shiny::need(code_available(),
+                                    message = "Filter or manually select data to set and save outputs."))
+
         shiny::tagList(
-
             # shiny::h4(shiny::tags$strong("Code config")),
-            shiny::br(),
-
             shiny::checkboxInput(ns("overwrite"),
                                  label = "Concise code?",
-                                 value = TRUE))
+                                 value = TRUE),
+            shiny::br())
     })
 
 
 
     output$codebuttons <- shiny::renderUI({
+
+        shiny::req(code_available())
+
         shiny::tagList(shiny::fluidRow(
 
             shiny::br(),
@@ -71,7 +83,7 @@ module_server_extract_code_fileconfig  <- function(input,
                 shiny::actionButton(
                     inputId = ns("codebtn"),
                     label = "Send to RStudio",
-                    class = "btn-secondary",
+                    class = ifelse(is_on_disk, "btn-secondary", "btn-info"),
                     icon = shiny::icon("share-square")
                 )
             ),
@@ -82,7 +94,7 @@ module_server_extract_code_fileconfig  <- function(input,
                 shiny::actionButton(
                     inputId = ns("copybtn"),
                     label = "Copy to clipboard",
-                    class = "btn-secondary",
+                    class = ifelse(is_on_disk, "btn-secondary", "btn-info"),
                     icon = shiny::icon("copy")
                 )
             ))
@@ -93,18 +105,14 @@ module_server_extract_code_fileconfig  <- function(input,
 
     output$fileRawExportConfig <- shiny::renderUI(
         {
-            req(is_on_disk)
+           shiny::req(is_on_disk)
+            shiny::req(code_available())
+
+
 
             shiny::tagList(
-                shiny::br(),
                 shiny::h4(shiny::tags$strong("Set Output Locations")),
                 shiny::br(),
-
-                # "Outlier (meta) data and cleaning script",
-                shiny::br(),
-                shiny::br(),
-
-
                 shiny::fluidRow(
                     shiny::column(5, shinyFiles::shinyDirButton(id = ns("dirraw"),
                                                                 "Meta & Recipe",
@@ -126,7 +134,9 @@ module_server_extract_code_fileconfig  <- function(input,
 
     output$fileCleanedExportConfig <- shiny::renderUI({
 
-        req(input$dirchooseIdentical == FALSE)
+       shiny::req(input$dirchooseIdentical == FALSE)
+        shiny::req(code_available())
+
 
         shiny::tagList(
             shiny::br(),
@@ -144,7 +154,9 @@ module_server_extract_code_fileconfig  <- function(input,
 
     output$savebutton <- shiny::renderUI({
 
-        req(is_on_disk, )
+       shiny::req(is_on_disk)
+        shiny::req(code_available())
+
 
         shiny::tagList(
 

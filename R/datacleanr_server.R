@@ -862,7 +862,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
             traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
             indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
-            print(traces)
 
             if(length(indices)>0){
                 plotly::plotlyProxy("plot-scatterselect", session) %>%
@@ -1072,13 +1071,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
 
 
-
-
-
-
-
-
-
     code_out <- shiny::reactiveVal()
 
         shiny::observe({
@@ -1086,7 +1078,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
         shiny::req(datareactive())
 
         # if(!is.null(input$apply_filter) | nrow(selected_data$df) > 0 ){
-        if(nrow(filter_df()) > 0  | nrow(selected_data$df) > 0 ){
+        if(nrow(filter_df()) >= 0  | nrow(selected_data$df) >= 0 ){
 
 
             code_out(
@@ -1151,10 +1143,17 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     })
 
 
+    # EXTR - CONFIG, SAVE UI ---------------------
+
     out_path <- shiny::callModule(module_server_extract_code_fileconfig,
                                   id = "config",
                                   df_label = df_name,
-                                  is_on_disk = is_on_disk)
+                                  is_on_disk = is_on_disk,
+                                  code = code_out
+                                  )
+
+
+    # EXTR - SAVE ACTION ------------------
 
     shiny::observeEvent(input$`config-save`,
                         {

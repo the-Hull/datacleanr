@@ -153,7 +153,7 @@ shiny::column(7,
 
                 shiny::br(),
                 shiny::actionButton(inputId = ns("save"),
-                                     label = "Save Recipe",
+                                     label = "Save Recipe & Data",
                                     icon = shiny::icon("save"),
                                     class = "btn-success"))
         })

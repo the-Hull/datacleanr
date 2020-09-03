@@ -177,7 +177,7 @@ text_out_interactive <- function(sel_points, statements, filter_df, df_label, ov
 
 
 
-text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite, gvar) {
+text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite, gvar, out_path) {
 
 
     file_path <- df_label
@@ -207,7 +207,7 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
                   library(dplyr)
                   library(datacleanr)
 
-                  {df_label} <- readRDS({file_path})
+                  {df_label} <- readRDS("{file_path}")
 
                   {index_str}
                   ')
@@ -231,13 +231,13 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
             " applying (scoped) filtering by groups;"
 
 
-        filt_df_dput <-
-            paste(utils::capture.output(dput(filter_df)),
-                  collapse = " ")
+        # filt_df_dput <-
+        #     paste(utils::capture.output(dput(filter_df)),
+        #           collapse = " ")
 
 
         filt_df_string <- glue::glue('
-                                      filter_conditions <- {filt_df_dput}
+                                      filter_conditions <- readRDS("{out_path$file_out_raw}")$dcr_condition_df
                                       ')
 
 
@@ -294,7 +294,7 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
         info_comment_outlier_merge <-
             " create data set with annotation column (non-outliers are NA);"
         info_comment_outlier_removal <-
-            " comment out below to keep manually selected obs in data set;"
+            "remove comment below to drop manually selected obs in data set;"
 
 
 
@@ -309,7 +309,7 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
             glue::glue(
                 '
                           # {info_comment_outlier_obs}
-                          {df_label}_outlier_selection <- {sel_points_dput}
+                          {df_label}_outlier_selection <- readRDS("{out_path$file_out_raw}")$dcr_selected_outliers
                           '
             )
 
@@ -331,8 +331,10 @@ text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite
                       # {info_comment_outlier_merge}
                       {df_label_viz}  <- dplyr::left_join({df_label_filtered}, {df_label}_outlier_selection, by = ".dcrkey");
 
-                      # {info_comment_outlier_removal}
-                      {df_label_viz_final}  <- {df_label_viz} %>% dplyr::filter(is.na(.annotation))
+                      # {info_comment_outlier_removal} \n
+                      # {df_label_viz_final}  <- {df_label_viz} %>% dplyr::filter(is.na(.annotation))
+
+                      #  saveRDS({df_label_viz_final}, "{out_path$file_out_cleaned}")
 
                       '
             )
@@ -428,6 +430,7 @@ module_ui_extract_code <- function(id) {
 #' @param sel_points data frame with selected point keys, annotations, and selection count
 #' @param overwrite reacive value, TRUE/FALSE from checkbox input
 #' @param is_on_disk Logical, whether df represented by \code{df_label} was on disk or from interactive \code{R} use
+#' @param out_path List, with character strings providing directory paths and file names for saving/reading in code output
 #'
 #' @importFrom rlang .data
 #'
@@ -441,7 +444,8 @@ module_server_extract_code  <-
              statements,
              sel_points,
              overwrite,
-             is_on_disk) {
+             is_on_disk,
+             out_path) {
 
         ns = session$ns
 
@@ -449,7 +453,10 @@ module_server_extract_code  <-
 
 
 
-
+        # handle initialization
+        if(!is.logical(overwrite)){
+            overwrite <- TRUE
+        }
 
 
         # 'fail' early if nothing selected/filtered
@@ -466,7 +473,7 @@ module_server_extract_code  <-
             } else if(is_on_disk){
                 # ONLY FOR TESTING PURPOSES!
                 # MAKE DEDICATED FUNCTION FOR ON-DISK
-                text_out <- text_out_interactive(sel_points,statements,filter_df,df_label,overwrite,gvar)
+                text_out <- text_out_file(sel_points,statements,filter_df,df_label,overwrite,gvar,out_path)
 
             }
 

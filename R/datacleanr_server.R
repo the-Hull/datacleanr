@@ -1083,7 +1083,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
         shiny::observe({
 
-        shiny::req(datareactive(), input$`config-overwrite`)
+        shiny::req(datareactive())
 
         # if(!is.null(input$apply_filter) | nrow(selected_data$df) > 0 ){
         if(nrow(filter_df()) > 0  | nrow(selected_data$df) > 0 ){
@@ -1098,7 +1098,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                                   statements = filter_statements_lgl(),
                                   sel_points = selected_data$df,
                                   overwrite = input$`config-overwrite`,
-                                  is_on_disk = is_on_disk)
+                                  is_on_disk = is_on_disk,
+                                  out_path = out_path())
             )
         }
 

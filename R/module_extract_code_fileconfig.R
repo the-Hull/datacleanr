@@ -201,8 +201,32 @@ shiny::column(7,
                 dirclean <- ifelse(length(dirclean) == 0,
                        dirraw, dirclean)
 
-                return(list(dirraw = dirraw,
-                dirclean = dirclean))
+
+                file_out_raw <- make_save_filepath(
+                    save_dir = dirraw,
+                    input_filepath = df_label,
+                    suffix = "meta_RAW",
+                    ext = "Rds")
+
+                file_out_cleaned <- make_save_filepath(
+                    save_dir = dirclean,
+                    input_filepath = df_label,
+                    suffix = "CLEAN",
+                    ext = "Rds")
+
+
+                file_script_cleaning <- make_save_filepath(
+                    save_dir = dirraw,
+                    input_filepath = df_label,
+                    suffix = "cleaning_recipe",
+                    ext = "R")
+
+                return(list(
+                    dirraw = dirraw,
+                    dirclean = dirclean,
+                    file_out_raw = file_out_raw,
+                    file_out_cleaned = file_out_cleaned,
+                    file_script_cleaning = file_script_cleaning))
 
 
             })

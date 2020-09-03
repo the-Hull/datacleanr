@@ -177,6 +177,191 @@ text_out_interactive <- function(sel_points, statements, filter_df, df_label, ov
 
 
 
+text_out_file <- function(sel_points, statements, filter_df, df_label, overwrite, gvar) {
+
+
+    file_path <- df_label
+    df_label <- fs::path_ext_remove(fs::path_file(file_path))
+
+
+    info_comment_outlier_index <-
+        " adding column for unique IDs;"
+
+
+
+
+    if(nrow(sel_points) == 0){
+        index_str <- ""
+    } else {
+        index_str <- glue::glue(
+            '
+
+                      # {info_comment_outlier_index}
+                      {df_label}$.dcrkey <- seq_len(nrow({df_label}))
+
+                      ')
+    }
+
+    setup_string <- glue::glue(
+        '
+                  library(dplyr)
+                  library(datacleanr)
+
+                  {df_label} <- readRDS({file_path})
+
+                  {index_str}
+                  ')
+
+
+
+
+    # Output from filtering tab
+    if(any(statements)  &
+       nrow(filter_df) > 0){
+        # FILTERING ---------------------------------------------------------------
+        filter_df <- filter_df[statements, ]
+
+
+
+
+        #### INFO COMMENTS
+        info_comment_filt_df <-
+            " statements and scoping level for filtering"
+        info_comment_filters <-
+            " applying (scoped) filtering by groups;"
+
+
+        filt_df_dput <-
+            paste(utils::capture.output(dput(filter_df)),
+                  collapse = " ")
+
+
+        filt_df_string <- glue::glue('
+                                      filter_conditions <- {filt_df_dput}
+                                      ')
+
+
+        if (!overwrite) {
+            df_label_filtered <- paste0(df_label, "_filtered")
+        } else {
+            df_label_filtered <- df_label
+        }
+
+        if(!is.null(gvar)){
+            group_string <- glue::glue('
+                                 {df_label} <- dplyr::group_by({df_label}, {paste(gvar, collapse = ", ")})
+
+                      ')
+        } else {
+
+            group_string <- ""
+        }
+
+
+        apply_filter_string <- glue::glue('
+                  {group_string}
+                  # {info_comment_filt_df}
+                  {filt_df_string}
+
+                  # {info_comment_filters}
+                  {df_label_filtered} <- datacleanr::filter_scoped_df(dframe = {df_label},
+                  condition_df = filter_conditions)
+                                           ')
+
+    } else {
+
+        apply_filter_string <- ""
+        df_label_filtered <- df_label
+    }
+
+
+
+
+
+    if(nrow(sel_points)>0){
+        # VIZ SELECT --------------------------------------------------------------
+
+        print(overwrite)
+        if(!overwrite){
+            df_label_viz <- paste0(df_label, "_vizclean")
+        } else {
+            df_label_viz <- df_label
+        }
+
+        #### INFO COMMENTS
+        info_comment_outlier_obs <-
+            " observations from manual selection (Viz tab);"
+        info_comment_outlier_merge <-
+            " create data set with annotation column (non-outliers are NA);"
+        info_comment_outlier_removal <-
+            " comment out below to keep manually selected obs in data set;"
+
+
+
+        sepo <- sel_points %>%
+            dplyr::rename(.dcrkey = .data$keys)
+
+        sel_points_dput <-
+            paste(utils::capture.output(dput(sepo[, colnames(sepo) %nin% "selection_count"])),
+                  collapse = " ")
+
+        sel_points_str <-
+            glue::glue(
+                '
+                          # {info_comment_outlier_obs}
+                          {df_label}_outlier_selection <- {sel_points_dput}
+                          '
+            )
+
+
+
+
+        if(!overwrite){
+            df_label_viz_final <- paste0(df_label_viz, "_out")
+        } else {
+            df_label_viz_final <- df_label
+        }
+
+
+        code_join_outlier_dplyr <-
+            glue::glue(
+                '
+                       {sel_points_str}
+
+                      # {info_comment_outlier_merge}
+                      {df_label_viz}  <- dplyr::left_join({df_label_filtered}, {df_label}_outlier_selection, by = ".dcrkey");
+
+                      # {info_comment_outlier_removal}
+                      {df_label_viz_final}  <- {df_label_viz} %>% dplyr::filter(is.na(.annotation))
+
+                      '
+            )
+
+    } else {
+
+        code_join_outlier_dplyr <- ""
+
+    }
+
+
+    text_out <- glue::glue(
+        '
+              # datacleaning with datacleanr ({utils::packageVersion("datacleanr")})
+              # {utils::timestamp(quiet = TRUE)}
+
+              {setup_string}
+
+              {apply_filter_string}
+
+              {code_join_outlier_dplyr}
+
+              '
+    )
+    return(text_out)
+}
+
+
+
 #------------------------------------------------------------------------------#
 # MODULE UI ----
 #' UI Module: Extraction Text output
@@ -265,6 +450,8 @@ module_server_extract_code  <-
 
 
 
+
+
         # 'fail' early if nothing selected/filtered
         if(nrow(sel_points) == 0 &
            !any(statements)
@@ -275,11 +462,11 @@ module_server_extract_code  <-
         } else {
 
             if(!is_on_disk){
-            text_out <- text_out_interactive(sel_points,statements,filter_df,df_label,overwrite,gvar)
+                text_out <- text_out_interactive(sel_points,statements,filter_df,df_label,overwrite,gvar)
             } else if(is_on_disk){
                 # ONLY FOR TESTING PURPOSES!
                 # MAKE DEDICATED FUNCTION FOR ON-DISK
-            text_out <- text_out_interactive(sel_points,statements,filter_df,df_label,overwrite,gvar)
+                text_out <- text_out_interactive(sel_points,statements,filter_df,df_label,overwrite,gvar)
 
             }
 

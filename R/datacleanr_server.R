@@ -1159,36 +1159,36 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
                             # req(nchar(out_path()$dirraw > 0))
 
-                            file_out_raw <- make_save_filepath(
-                                save_dir = out_path()$dirraw,
-                                input_filepath = df_name,
-                                suffix = "meta_RAW",
-                                ext = "Rds")
-
-                            file_out_cleaned <- make_save_filepath(
-                                save_dir = out_path()$dirclean,
-                                input_filepath = df_name,
-                                suffix = "CLEAN",
-                                ext = "Rds")
-
-
-                            file_script_cleaning <- make_save_filepath(
-                                save_dir = out_path()$dirclean,
-                                input_filepath = df_name,
-                                suffix = "cleaning_recipe",
-                                ext = "R")
+                            # file_out_raw <- make_save_filepath(
+                            #     save_dir = out_path()$dirraw,
+                            #     input_filepath = df_name,
+                            #     suffix = "meta_RAW",
+                            #     ext = "Rds")
+                            #
+                            # file_out_cleaned <- make_save_filepath(
+                            #     save_dir = out_path()$dirclean,
+                            #     input_filepath = df_name,
+                            #     suffix = "CLEAN",
+                            #     ext = "Rds")
+                            #
+                            #
+                            # file_script_cleaning <- make_save_filepath(
+                            #     save_dir = out_path()$dirclean,
+                            #     input_filepath = df_name,
+                            #     suffix = "cleaning_recipe",
+                            #     ext = "R")
 
 
 
 
                             saveRDS(object = out_data()$dcr_df,
-                                    file = file_out_cleaned)
+                                    file = out_path()$file_out_cleaned)
                             saveRDS(object = list(dcr_condition_df = out_data()$dcr_condition_df,
                                                   dcr_selected_outliers = out_data()$dcr_selected_outliers),
-                                    file = file_out_raw)
+                                    file = out_path()$file_out_raw)
 
                             writeLines(text = enc2utf8(out_data()$dcr_code),
-                                       con = file_script_cleaning,
+                                       con = out_path()$file_script_cleaning,
                                        useBytes = TRUE)
 
                         })

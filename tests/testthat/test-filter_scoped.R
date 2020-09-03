@@ -208,3 +208,18 @@ test_that("non tibble  for condition_df throws error", {
 
 })
 
+
+test_that("zero-row tibble for condition_df returns dframe", {
+
+  cdf <- dplyr::tibble(
+    statement = c(
+      "Sepal.Width > quantile(Sepal.Width, 0.1)"),
+    scope_at = list("1"))[0, ]
+
+  expect_equal(filter_scoped_df(dframe = dplyr::group_by(iris, Species),
+                                condition_df = cdf),
+               dplyr::group_by(iris, Species))
+
+
+
+})

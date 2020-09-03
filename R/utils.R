@@ -947,7 +947,7 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
             dframe)$.rows[group_index])
 
     if(any(rlang::inherits_any(dframe[, xvar, drop = TRUE], "POSIXct"),
-           rlang::inherits_any(dframe[, xvar, drop = TRUE], "POSIXct"))){
+           rlang::inherits_any(dframe[, yvar, drop = TRUE], "POSIXct"))){
 
         posix_scale <- function(timestamp){
 

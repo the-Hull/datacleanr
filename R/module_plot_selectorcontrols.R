@@ -56,7 +56,7 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
                    align = "right",
                    style = "margin-top: 25px;",
                    shiny::actionButton(ns('startscatter'),
-                                       label = "Plot!",
+                                       label = "Plot",
                                        icon = shiny::icon("chart-area"),
                                        class = "btn-info")
             )

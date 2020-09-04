@@ -15,6 +15,12 @@ datacleanr_ui <- function(request){
 
     text_grouping_side_panel <- shiny::tagList(shiny::br(),
                                                shiny::p("Select grouping variables for subsequent viewing and cleaning."))
+    text_startsummary_side_panel <- shiny::tagList(shiny::br(),
+                                               shiny::p("Clicking",
+                                               shiny::tags$strong("Start"),
+                                               "will set the grouping structure throughout",
+                                               shiny::tags$code("datacleanr"),
+                                               "and generates a summary of the supplied dataset."))
 
     # text_filtering_side_panel <- shiny::tagList(
     #     # shiny::p(
@@ -101,7 +107,8 @@ datacleanr_ui <- function(request){
 
         # TAB GROUPING ------------
         shiny::tabPanel(value = "tabOverview",
-            title = "Overview & Set-up",
+                        id = "tabOv",
+            title = "Set-up & Overview",
                         icon = shiny::icon("layer-group"),
 
                         # panel set-up
@@ -121,7 +128,14 @@ datacleanr_ui <- function(request){
                                 module_ui_group_select(id = "group"),
                                 module_ui_checkbox(id = "grouptick",
                                                    cond_id = "group-groupvar"),
+                                # shiny::br(),
+                                shiny::h4(shiny::tags$strong("Start and Summarize")),
+                                shiny::actionLink("help-start",
+                                                  "Click for Help",
+                                                  icon = shiny::icon("question-circle")),
                                 shiny::br(),
+
+                                text_startsummary_side_panel,
                                 shiny::actionButton("gobutton",
                                                     "Start",
                                                     icon = shiny::icon("rocket"),
@@ -139,6 +153,7 @@ datacleanr_ui <- function(request){
 
         # TAB FILTERING -----------
         shiny::tabPanel(value = "tabFiltering",
+                        id = "tabFil",
                         title = "Filtering",
                         icon = shiny::icon("sliders-h"),
 
@@ -266,7 +281,12 @@ datacleanr_ui <- function(request){
 
 
                                                                                 shiny::h4(shiny::tags$strong("Reproducible Recipe")),
+                                                                                shiny::actionLink("help-repro",
+                                                                                                  "Click for Help",
+                                                                                                  icon = shiny::icon("question-circle")),
                                                                                 shiny::br(),
+                                                                                shiny::br(),
+
                                                                                 shiny::p("All commands and operations in previous tabs are translated to
                                                                                          code on the right, ensuring reproducibility."),
                                                                                 # shiny::br(""),
@@ -277,7 +297,7 @@ datacleanr_ui <- function(request){
                                                                                 ),
 
                                              mainPanel = shiny::mainPanel(width = 8,
-                                                                          shiny::h4(shiny::tags$strong("Reproducible Recipe")),
+                                                                          # shiny::h4(shiny::tags$strong("Reproducible Recipe")),
                                                                           module_ui_extract_code("extract")))
                          ), #/tabPanel
 

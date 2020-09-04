@@ -43,6 +43,20 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     # Set-up ------------------------------------------------------------------
 
 
+    # hide all tabs until go button is clicked
+    # shiny::hideTab(inputId = "nav", target = "tabFiltering")
+    # shiny::hideTab(inputId = "nav", target = "tabVisualization")
+    # shiny::hideTab(inputId = "nav", target = "tabExtraction")
+    #
+    # shiny::observeEvent(input$gobutton,
+    #                     {
+    #
+    # shiny::showTab(inputId = "nav", target = "tabFiltering")
+    # shiny::showTab(inputId = "nav", target = "tabVisualization")
+    # shiny::showTab(inputId = "nav", target = "tabExtraction")
+    #
+    # })
+
     # handle initialization
     dataset$.dcrkey <- seq_len(nrow(dataset))
     dataset <- dplyr::mutate_if(dataset,
@@ -1074,16 +1088,16 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
     # code_out <- shiny::reactiveVal()
 
-        # shiny::observe({
+    # shiny::observe({
 
-        # shiny::req(datareactive())
+    # shiny::req(datareactive())
 
-        # if(!is.null(input$apply_filter) | nrow(selected_data$df) > 0 ){
-        # if(nrow(filter_df()) >= 0  | nrow(selected_data$df) >= 0 ){
+    # if(!is.null(input$apply_filter) | nrow(selected_data$df) > 0 ){
+    # if(nrow(filter_df()) >= 0  | nrow(selected_data$df) >= 0 ){
 
 
-            # code_out(
-                code_out <- shiny::callModule(module_server_extract_code,
+    # code_out(
+    code_out <- shiny::callModule(module_server_extract_code,
                                   id = "extract",
                                   df_label = df_name,
                                   gvar = gvar,
@@ -1093,8 +1107,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                                   overwrite = shiny::reactive(input$`config-overwrite`),
                                   is_on_disk = is_on_disk,
                                   out_path = out_path)
-            # )
-        # }
+    # )
+    # }
 
     # })
 
@@ -1153,7 +1167,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
         filter_statements_lgl()
 
         if(nrow(selected_data$df) > 0 |
-                nrow(filter_df()[filter_statements_lgl(), ]) > 0){
+           nrow(filter_df()[filter_statements_lgl(), ]) > 0){
 
 
             return(TRUE)
@@ -1169,7 +1183,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                                   df_label = df_name,
                                   is_on_disk = is_on_disk,
                                   has_processed = has_processed
-                                  )
+    )
 
 
     # EXTR - SAVE ACTION ------------------
@@ -1220,13 +1234,10 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
     # Help Texts --------------------------------------------------------------
 
-    text_filtering_overview_panel <- shiny::tagList(
+    text_overview_group_panel <- shiny::tagList(
         shiny::p(
             "Select relevant groups",
             shiny::tags$b("(order matters for plotting)"),
-            "and click",
-            shiny::tags$b("Start!"),
-            "This displays a summary (by columns, and optionally, by groups), and makes the other tabs' functions available",
             shiny::br(),
 
             "The",
@@ -1241,7 +1252,24 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
             ),
 
             "Smart combinations of grouping variables can, e.g. allow to cycle through multiple sensors for a given period with ease."
-        )
+        ))
+
+    text_overview_start_panel <- shiny::tagList(
+        shiny::p(
+            "Click",
+        shiny::tags$b("Start"),
+        "to set groups for subsequent tabs and operations.",
+        "It also displays a summary (by columns, and optionally, by groups), and makes the other tabs' functions available."),
+
+
+        shiny::p(
+            "  If you",
+            shiny::tags$strong("change the grouping"),
+            "make sure to click",
+            shiny::tags$strong("Start"),
+            "and to update your",
+            shiny::tags$strong("filters and plot."),
+            class = "btn btn-default action-button btn-info")
     )
 
 
@@ -1252,21 +1280,23 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
         # "text boxes and add unquoted filter statements."),
         shiny::p(shiny::tags$b("Add/Remove"),
                  "filter statements as necessary. These are passed to",
-                 shiny::tags$b("dplyr::filter()"), "."),
+                 shiny::tags$b(shiny::tags$code("dplyr::filter()")), "."),
         shiny::p("Use", shiny::tags$b("single quotes"), "for values of character/factor variables."),
         shiny::tags$p("For example, valid statements for filtering",
                       shiny::tags$b("iris"),
                       "are:"),
         shiny::tags$ol(
-            shiny::tags$li(shiny::tags$small("Species == 'setosa'")),
-            shiny::tags$li(shiny::tags$small("Species %in% c('setosa','versicolor')")),
-            shiny::tags$li(shiny::tags$small("Sepal.Width > quantile(Sepal.Width, 0.05)"))
+            shiny::tags$li(shiny::tags$small(shiny::tags$code("Species == 'setosa'"))),
+            shiny::tags$li(shiny::tags$small(shiny::tags$code("Species %in% c('setosa','versicolor')"))),
+            shiny::tags$li(shiny::tags$small(shiny::tags$code("Sepal.Width > quantile(Sepal.Width, 0.05)")))
         ),
-        shiny::p("Any function returning a logical vector (i.e. TRUE/FALSE) can be employed here!"),
-        shiny::br(),
+        shiny::p("Any function returning a logical vector (i.e. ",
+        shiny::tags$code("TRUE/FALSE", .noWS = "after"),
+        "), can be employed here!", .noWS = "inside"),
         shiny::p("A dynamic text will inform you which filter statements are
-             viable, and how much of the data will be filtered when they are applied.",
-                 "Adjust the",
+             viable, and how much of the data will be filtered when they are applied."),
+        shiny::br(),
+                 shiny::p("Adjust the",
                  shiny::tags$b("Grouping scope"),
                  "in the drop down next to the text box. This allows to apply the filter statement to:"),
         shiny::tags$ol(
@@ -1279,14 +1309,17 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                  "when you're ready, and",
                  shiny::tags$b("'Reset'"),
                  "to start from scratch."),
-        shiny::p("A table",
-                 shiny::tags$b("Data Overview"),
-                 "will inform you how many data points remain in the data set (by group)"),
-        shiny::p("Note, clicking",
-                 shiny::tags$b("Apply!"),
-                 "generates output in the",
+
+        shiny::p(class = "btn btn-default btn-info",
+                 "Code in the",
                  shiny::tags$b("Extract Tab"),
-                 "if any viable filtering statements have been provided.")
+                 "is generated for viable statements only.")
+        # shiny::br(),
+        # shiny::br(),
+        #
+        # shiny::p("A table",
+        #          shiny::tags$b("Data Overview"),
+        #          "will inform you how many data points remain in the data set (by group)")
     )
 
 
@@ -1295,65 +1328,152 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                  shiny::tags$b("clicking/lasso-selecting"),
                  "the",
                  shiny::tags$b("last selection"),
-                 "can be annotated with a text label.",
+                 "can be annotated with a text label by clicking the",
+                 shiny::tags$b("Annotate"),
+                 "button",
                  shiny::br(),
-                 "These labels are collected and provided as an additional column",
-                 shiny::tags$b("'.annotation'"),
+                 "The annotation for the last selection can be updated or
+                 removed by deleting all characters in the input box and
+                 clicking the button again.",
+                 shiny::br()),
+        shiny::p("When",
+                     shiny::tags$b("Auto-annotate"),
+                          "is selected, every new selection receives the current annotation automatically.",),
+        shiny::p("Labels are collected and provided as an additional column",
+                 shiny::tags$code(".annotation"),
                  "in the table to the right and outputted via the",
                  shiny::tags$b("Extraction Tab.")),
-        shiny::br(),
-        shiny::p("The annotation can be updated or removed by deleting all characters in the input box and clicking the button again."))
+
+        )
 
     text_distribution_side_panel <- shiny::tagList(
         shiny::p("Clicking the",
                  shiny::tags$b("Update"),
-                 "button will generate histograms of all plotted variables",
-                 shiny::tags$b("(X, Y, Z)."),
+                 "button will generate histograms of plotted, numeric variables, i.e",
+                 shiny::tags$code("X, Y, Z", .noWS = "after"),
+                 ".",
+                 shiny::br(),
                  "If any points have been selected via",
                  shiny::tags$b("clicking/lasso-selecting"),
                  "the histograms will show the difference between the raw and cleaned data set."),
-        shiny::p("Note, that this plot mus tbe re-generated manually to visualize any changes."))
+        shiny::p(class = "btn btn-default action-button btn-info",
+            "This plot mus tbe updated manually to visualize any changes."))
 
 
     text_plot_main_panel <- shiny::tagList(
+        shiny::h4(shiny::tags$b("Plotting overview"),
+                  .noWS = c("before")),
         shiny::p("Select at least ",
-                 shiny::tags$b("X and Y"),
+                 shiny::tags$code("X"),
+                 "and",
+                 shiny::tags$code("Y"),
                  "(the ",
-                 shiny::tags$b("Z"),
+                 shiny::tags$code("Z"),
                  "variable adjusts point size)",
                  "and click",
-                 shiny::tags$b("'Plot!'.")),
+                 shiny::tags$b("'Plot'.")),
         shiny::p("The legend entries correspond with the row-numbers (i.e. groups) of the",
                  shiny::tags$b("Data Overview"),
-                 "Table",
+                 "Table.",
                  shiny::tags$b("Groups can be highlighted"),
-                 "for selective display by clicking on the respective rows",
+                 "for selective display by clicking on the respective rows.",
+                 shiny::br(),
                  "Clicking on the plot's legend (single for hide/unhide, double for hide all others/show all) has a similar effect."),
-        shiny::p("Note, that",
-                 shiny::tags$b("'Plot!'"),
-                 "must be clicked after any variable input (X, Y, Z) has been",
-                 shiny::tags$b("clicked or changed."),
-                 shiny::br(),
-                 shiny::br(),
-                 "To mark and exclude outliers, ",
+        shiny::p(shiny::tags$b("'Plot'"),
+                 "must be clicked after any variable input",
+                 shiny::code("(X, Y, Z)"),
+                 "has been",
+                 shiny::tags$b("clicked or changed"),
+                 "to (re-)enable selecting."),
+        shiny::p("The plot's",
+                 shiny::tags$b("control bar"),
+                 "allows to",
+                 shiny::tags$b("zoom and reset views.")),
+        shiny::h4(shiny::tags$b("Selecting outliers")),
+
+        shiny::p("To mark outliers, ",
                  shiny::tags$b("click or lasso/box select"),
                  "individual points.",
                  "Hit the",
                  shiny::tags$b("Undo last selection"),
                  "or",
                  shiny::tags$b("Clear all"),
-                 "button to adjust/remove outliers."),
-        shiny::p(shiny::br(),
-                 "The plot's",
-                 shiny::tags$b("control bar"),
-                 "allows to",
-                 shiny::tags$b("zoom and reset views")),
+                 "button to adjust/remove outliers.",
         shiny::br(),
-
-        shiny::p("Selected points appear in the",
+        "Selected points appear in the",
                  shiny::tags$b(" table below"),
-                 "and can be annotated with the tool (box and button) to the left."))
+                 "and can be annotated with the tool (box and button) to the left."),
 
+        shiny::p(class = "btn btn-default btn-info",
+                 "The",
+                 shiny::tags$b("Extract Tab"),
+                 "will provide code representing the outlier selection (and its removal)."
+                 ),
+
+        shiny::h4(shiny::tags$b("Other features")),
+        shiny::p("If columns",
+                 shiny::tags$code("lon, lat"),
+                 "are selected for",
+                 shiny::tags$code("x, y"),
+                 "an interactive map displays."),
+
+        shiny::p("If a column",
+                 shiny::tags$code(".dcrflag"),
+                 "(logical;",
+                 shiny::tags$code("TRUE, FALSE", .noWS = "after"),
+                 ")",
+                 "is present in the data set, corresponding rows will
+                 be plotted with triangle symbols, not cricles,
+                 enabling e.g. comparison with manual outlier algorithms.",
+        )
+        )
+
+
+
+    text_repro_panel <- shiny::tagList(
+
+        shiny::h4(shiny::tags$b("Principle")),
+        shiny::p(
+            shiny::tags$code("datacleanr"),
+            "allows filtering and visual cleaning/annotating.",
+            "These steps are translated into code (",
+            shiny::tags$b("Reproducible Recipe", .noWS = c("before", "after")),
+            ")."),
+        shiny::h4(shiny::tags$b("Use")),
+        shiny::p(
+            "If",
+            shiny::tags$code("datacleanr"),
+            "is run interactively (i.e. with an object from",
+            shiny::tags$code("R", .noWS = "after"),
+            "s environment)",
+            "the code can be sent back to RStudio or copied into a script where
+            you are actively developing your workflow.",
+            shiny::br(),
+            "If",
+            shiny::tags$code("datacleanr"),
+            "is run with a file from disk, the",
+            shiny::tags$b("Extract Tab"),
+            "offers a range of settings for saving the generated outputs to file.",
+            shiny::br(),
+            "Note, that filters and selected outliers are written to files in this scenario."),
+
+    shiny::h4(shiny::tags$b("On Close")),
+
+    shiny::p("If you click",
+        shiny::tags$b("Close"),
+        "and don't export/save any outputs, the filters, selected data and other meta info is
+        sent back to",
+        shiny::tags$code("R", .noWS = "after"),
+        "s current session invisibly.",
+        shiny::br(),
+        "Using",
+        shiny::tags$code("output <- .Last.value"),
+        "will capture this output (which can also be set-up when you launch",
+        shiny::tags$code("datacleanr", .noWS = "after"),
+        "; see",
+        shiny::tags$code("?datacleanr::dcr_app()", .noWS = "after"),
+        ").")
+        )
     # HELP LINKS --------------------------------------------------------------
 
 
@@ -1361,14 +1481,27 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     shiny::observeEvent(input$`help-ov`, {
 
         shiny::showModal(shiny::modalDialog(
-            text_filtering_overview_panel,
-            title = "Getting started",
+            text_overview_group_panel,
+            title = "Selecting Groups",
             size = "m",
             easyClose = TRUE,
             footer = NULL
         ))
 
     })
+    shiny::observeEvent(input$`help-start`, {
+
+        shiny::showModal(shiny::modalDialog(
+            text_overview_start_panel,
+            title = "Start, summarize and initialize other tabs",
+            size = "m",
+            easyClose = TRUE,
+            footer = NULL
+        ))
+
+    })
+
+
 
 
     ## Filter Tab
@@ -1401,7 +1534,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
         shiny::showModal(shiny::modalDialog(
             text_distribution_side_panel,
-            title = "How to annotate outliers",
+            title = "Assessing outlier impact",
             size = "m",
             easyClose = TRUE,
             footer = NULL
@@ -1413,7 +1546,20 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
         shiny::showModal(shiny::modalDialog(
             text_plot_main_panel,
-            title = "Plotting data and selecting outliers",
+            # title = "Plotting data and selecting outliers",
+            size = "m",
+            easyClose = TRUE,
+            footer = NULL
+        ))
+
+    })
+
+
+    shiny::observeEvent(input$`help-repro`, {
+
+        shiny::showModal(shiny::modalDialog(
+            text_repro_panel,
+            # title = "Plotting data and selecting outliers",
             size = "m",
             easyClose = TRUE,
             footer = NULL
@@ -1468,8 +1614,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     })
     shiny::observeEvent(input$cancel, {
 
-      # Sys.setenv(TZ = old_tz)
-      shiny::stopApp(NULL)
+        # Sys.setenv(TZ = old_tz)
+        shiny::stopApp(NULL)
 
     })
 

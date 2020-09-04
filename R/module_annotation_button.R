@@ -24,7 +24,7 @@ module_ui_text_annotator <- function(id) {
                           shiny::actionButton(inputId = ns('annotate_button'),
                                               icon = shiny::icon("paragraph"),
                                               class = "btn-info",
-                                              label = "Annotate!")))
+                                              label = "Annotate")))
 
     )
 

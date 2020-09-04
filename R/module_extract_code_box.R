@@ -62,9 +62,9 @@ text_out_interactive <- function(sepo, stats, fdf, df_lab, ovt, gv) {
             df_lab_filtered <- df_lab
         }
 
-        if(!is.null(gv())){
+        if(!is.null(gv)){
             group_string <- glue::glue('
-                                 {df_lab} <- dplyr::group_by({df_lab}, {paste(gv(), collapse = ", ")})
+                                 {df_lab} <- dplyr::group_by({df_lab}, {paste(gv, collapse = ", ")})
 
                       ')
         } else {

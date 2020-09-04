@@ -4,12 +4,20 @@
 \alias{module_server_lowercontrol_btn}
 \title{Server Module: box for str filter condition}
 \usage{
-module_server_lowercontrol_btn(input, output, session, selector_inputs)
+module_server_lowercontrol_btn(
+  input,
+  output,
+  session,
+  selector_inputs,
+  action_track
+)
 }
 \arguments{
 \item{input, output, session}{standard \code{shiny} boilerplate}
 
 \item{selector_inputs}{reactive vals from above-plot controls, used to determine if plot is a map (lon/lat)}
+
+\item{action_track}{reactive, logical - has plot been pressed?}
 }
 \value{
 reactive values with input xvar, yvar and actionbutton counter

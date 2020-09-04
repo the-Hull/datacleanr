@@ -16,11 +16,11 @@ datacleanr_ui <- function(request){
     text_grouping_side_panel <- shiny::tagList(shiny::br(),
                                                shiny::p("Select grouping variables for subsequent viewing and cleaning."))
     text_startsummary_side_panel <- shiny::tagList(shiny::br(),
-                                               shiny::p("Clicking",
-                                               shiny::tags$strong("Start"),
-                                               "will set the grouping structure throughout",
-                                               shiny::tags$code("datacleanr"),
-                                               "and generates a summary of the supplied dataset."))
+                                                   shiny::p("Clicking",
+                                                            shiny::tags$strong("Start"),
+                                                            "will set the grouping structure throughout",
+                                                            shiny::tags$code("datacleanr"),
+                                                            "and generates a summary of the supplied dataset."))
 
     # text_filtering_side_panel <- shiny::tagList(
     #     # shiny::p(
@@ -108,7 +108,7 @@ datacleanr_ui <- function(request){
         # TAB GROUPING ------------
         shiny::tabPanel(value = "tabOverview",
                         id = "tabOv",
-            title = "Set-up & Overview",
+                        title = "Set-up & Overview",
                         icon = shiny::icon("layer-group"),
 
                         # panel set-up
@@ -256,72 +256,72 @@ datacleanr_ui <- function(request){
                                                                module_ui_histograms("plotvars")
                             ),
 
-                                             mainPanel = shiny::mainPanel(width = 8,
-                                                                          module_ui_plot_selectorcontrols("selectors"),
-                                                                          shiny::actionLink("help-plot",
-                                                                                            "Click for Help",
-                                                                                            icon = shiny::icon("question-circle")),
-                                                                          module_ui_plot_selectable("plot"),
-                                                                          module_ui_lowercontrol_btn("lwrcontrol"),
-                                                                          module_ui_plot_annotation_table("dt"))
-                                         ) #/sidebarLayout
-                         ) #/tabPanel
+                            mainPanel = shiny::mainPanel(width = 8,
+                                                         module_ui_plot_selectorcontrols("selectors"),
+                                                         shiny::actionLink("help-plot",
+                                                                           "Click for Help",
+                                                                           icon = shiny::icon("question-circle")),
+                                                         module_ui_plot_selectable("plot"),
+                                                         module_ui_lowercontrol_btn("lwrcontrol"),
+                                                         module_ui_plot_annotation_table("dt"))
+                        ) #/sidebarLayout
+        ) #/tabPanel
 
 
-                         ,
-                         # TAB EXTRACT -------------
-                         shiny::tabPanel(value = "tabExtraction",
-                                         title = "Extract",
-                                         icon = shiny::icon("file-export"),
-                                         shiny::sidebarLayout(
+        ,
+        # TAB EXTRACT -------------
+        shiny::tabPanel(value = "tabExtraction",
+                        title = "Extract",
+                        icon = shiny::icon("file-export"),
+                        shiny::sidebarLayout(
 
 
 
-                                             sidebarPanel = shiny::sidebarPanel(width = 4,
+                            sidebarPanel = shiny::sidebarPanel(width = 4,
 
 
-                                                                                shiny::h4(shiny::tags$strong("Reproducible Recipe")),
-                                                                                shiny::actionLink("help-repro",
-                                                                                                  "Click for Help",
-                                                                                                  icon = shiny::icon("question-circle")),
-                                                                                shiny::br(),
-                                                                                shiny::br(),
+                                                               shiny::h4(shiny::tags$strong("Reproducible Recipe")),
+                                                               shiny::actionLink("help-repro",
+                                                                                 "Click for Help",
+                                                                                 icon = shiny::icon("question-circle")),
+                                                               shiny::br(),
+                                                               shiny::br(),
 
-                                                                                shiny::p("All commands and operations in previous tabs are translated to
+                                                               shiny::p("All commands and operations in previous tabs are translated to
                                                                                          code on the right, ensuring reproducibility."),
-                                                                                # shiny::br(""),
-                                                                                # shiny::checkboxInput("overwrite",
-                                                                                #                      label = "Concise code?",
-                                                                                #                      value = FALSE)),
-                                                                                module_ui_extract_code_fileconfig("config")
-                                                                                ),
+                                                               # shiny::br(""),
+                                                               # shiny::checkboxInput("overwrite",
+                                                               #                      label = "Concise code?",
+                                                               #                      value = FALSE)),
+                                                               module_ui_extract_code_fileconfig("config")
+                            ),
 
-                                             mainPanel = shiny::mainPanel(width = 8,
-                                                                          # shiny::h4(shiny::tags$strong("Reproducible Recipe")),
-                                                                          module_ui_extract_code("extract")))
-                         ), #/tabPanel
-
-
-
-                         # HANDLER BUTTONS TOP ------------------
-                         inputs = list(shiny::actionButton("close",
-                                                           "Close",
-                                                           icon = shiny::icon("check-circle"),
-                                                           class = "btn-success"),
-                                       shiny::actionButton("cancel",
-                                                           "Cancel",
-                                                           icon = shiny::icon("window-close"),
-                                                           class = "btn-secondary")
-                                       # shiny::bookmarkButton("bookmark",
-                                                             # label = "Save",
-                                                             # icon = shiny::icon("save"))
-                         ), #inputs
+                            mainPanel = shiny::mainPanel(width = 8,
+                                                         # shiny::h4(shiny::tags$strong("Reproducible Recipe")),
+                                                         module_ui_extract_code("extract")))
+        ), #/tabPanel
 
 
 
+        # HANDLER BUTTONS TOP ------------------
+        inputs = list(shiny::actionButton("close",
+                                          "Close",
+                                          icon = shiny::icon("check-circle"),
+                                          class = "btn-success"),
+                      shiny::actionButton("cancel",
+                                          "Cancel",
+                                          icon = shiny::icon("window-close"),
+                                          class = "btn-secondary")
+                      # shiny::bookmarkButton("bookmark",
+                      # label = "Save",
+                      # icon = shiny::icon("save"))
+        ), #inputs
 
-                         shiny::tags$style(type = "text/css", "body {padding-top: 70px;}"),
-                         position = "fixed-top"
+
+
+
+        shiny::tags$style(type = "text/css", "body {padding-top: 70px;}"),
+        position = "fixed-top"
 
 
 

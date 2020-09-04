@@ -4,7 +4,7 @@
 \alias{filter_scoped}
 \title{Apply filter based on a statement, scoped to \code{dplyr} groups}
 \usage{
-filter_scoped(dframe, statement, scope_at)
+filter_scoped(dframe, statement, scope_at = NULL)
 }
 \arguments{
 \item{dframe}{data.frame/tbl, grouped or ungrouped}

@@ -1019,11 +1019,6 @@ make_save_filepath <- function(save_dir, input_filepath, suffix, ext){
 #' Method for printing dcr_code output
 #'
 #' @param x character, code  output from \code{dcr_app}
-#'
-#' @return
-#' @export
-#'
-#' @examples
 print.dcr_code <- function(x, ...){
     cat(x, ...)
 }

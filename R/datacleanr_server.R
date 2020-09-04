@@ -1257,9 +1257,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     text_overview_start_panel <- shiny::tagList(
         shiny::p(
             "Click",
-        shiny::tags$b("Start"),
-        "to set groups for subsequent tabs and operations.",
-        "It also displays a summary (by columns, and optionally, by groups), and makes the other tabs' functions available."),
+            shiny::tags$b("Start"),
+            "to set groups for subsequent tabs and operations.",
+            "It also displays a summary (by columns, and optionally, by groups), and makes the other tabs' functions available."),
 
 
         shiny::p(
@@ -1291,12 +1291,12 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
             shiny::tags$li(shiny::tags$small(shiny::tags$code("Sepal.Width > quantile(Sepal.Width, 0.05)")))
         ),
         shiny::p("Any function returning a logical vector (i.e. ",
-        shiny::tags$code("TRUE/FALSE", .noWS = "after"),
-        "), can be employed here!", .noWS = "inside"),
+                 shiny::tags$code("TRUE/FALSE", .noWS = "after"),
+                 "), can be employed here!", .noWS = "inside"),
         shiny::p("A dynamic text will inform you which filter statements are
              viable, and how much of the data will be filtered when they are applied."),
         shiny::br(),
-                 shiny::p("Adjust the",
+        shiny::p("Adjust the",
                  shiny::tags$b("Grouping scope"),
                  "in the drop down next to the text box. This allows to apply the filter statement to:"),
         shiny::tags$ol(
@@ -1337,14 +1337,14 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                  clicking the button again.",
                  shiny::br()),
         shiny::p("When",
-                     shiny::tags$b("Auto-annotate"),
-                          "is selected, every new selection receives the current annotation automatically.",),
+                 shiny::tags$b("Auto-annotate"),
+                 "is selected, every new selection receives the current annotation automatically.",),
         shiny::p("Labels are collected and provided as an additional column",
                  shiny::tags$code(".annotation"),
                  "in the table to the right and outputted via the",
                  shiny::tags$b("Extraction Tab.")),
 
-        )
+    )
 
     text_distribution_side_panel <- shiny::tagList(
         shiny::p("Clicking the",
@@ -1357,7 +1357,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                  shiny::tags$b("clicking/lasso-selecting"),
                  "the histograms will show the difference between the raw and cleaned data set."),
         shiny::p(class = "btn btn-default action-button btn-info",
-            "This plot mus tbe updated manually to visualize any changes."))
+                 "This plot mus tbe updated manually to visualize any changes."))
 
 
     text_plot_main_panel <- shiny::tagList(
@@ -1399,8 +1399,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                  "or",
                  shiny::tags$b("Clear all"),
                  "button to adjust/remove outliers.",
-        shiny::br(),
-        "Selected points appear in the",
+                 shiny::br(),
+                 "Selected points appear in the",
                  shiny::tags$b(" table below"),
                  "and can be annotated with the tool (box and button) to the left."),
 
@@ -1408,7 +1408,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                  "The",
                  shiny::tags$b("Extract Tab"),
                  "will provide code representing the outlier selection (and its removal)."
-                 ),
+        ),
 
         shiny::h4(shiny::tags$b("Other features")),
         shiny::p("If columns",
@@ -1426,7 +1426,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                  be plotted with triangle symbols, not cricles,
                  enabling e.g. comparison with manual outlier algorithms.",
         )
-        )
+    )
 
 
 
@@ -1457,23 +1457,23 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
             shiny::br(),
             "Note, that filters and selected outliers are written to files in this scenario."),
 
-    shiny::h4(shiny::tags$b("On Close")),
+        shiny::h4(shiny::tags$b("On Close")),
 
-    shiny::p("If you click",
-        shiny::tags$b("Close"),
-        "and don't export/save any outputs, the filters, selected data and other meta info is
+        shiny::p("If you click",
+                 shiny::tags$b("Close"),
+                 "and don't export/save any outputs, the filters, selected data and other meta info is
         sent back to",
-        shiny::tags$code("R", .noWS = "after"),
-        "s current session invisibly.",
-        shiny::br(),
-        "Using",
-        shiny::tags$code("output <- .Last.value"),
-        "will capture this output (which can also be set-up when you launch",
-        shiny::tags$code("datacleanr", .noWS = "after"),
-        "; see",
-        shiny::tags$code("?datacleanr::dcr_app()", .noWS = "after"),
-        ").")
-        )
+                 shiny::tags$code("R", .noWS = "after"),
+                 "s current session invisibly.",
+                 shiny::br(),
+                 "Using",
+                 shiny::tags$code("output <- .Last.value"),
+                 "will capture this output (which can also be set-up when you launch",
+                 shiny::tags$code("datacleanr", .noWS = "after"),
+                 "; see",
+                 shiny::tags$code("?datacleanr::dcr_app()", .noWS = "after"),
+                 ").")
+    )
     # HELP LINKS --------------------------------------------------------------
 
 

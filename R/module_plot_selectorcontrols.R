@@ -37,28 +37,28 @@ module_server_plot_selectorcontrols  <- function(input, output, session, df){
     output$scatterselectControl <- shiny::renderUI({
         shiny::fluidRow(
             shiny::column(3, shiny::varSelectInput(ns('xvar'),
-                                            label = "X Var",
-                                            data = df[ , !grepl("[.]dcr", colnames(df))])),
+                                                   label = "X Var",
+                                                   data = df[ , !grepl("[.]dcr", colnames(df))])),
             shiny::column(3,
-                   shiny::varSelectInput(ns('yvar'),
-                                         label = "Y Var",
-                                         data = df[ ,!grepl("[.]dcr", colnames(df))])),
+                          shiny::varSelectInput(ns('yvar'),
+                                                label = "Y Var",
+                                                data = df[ ,!grepl("[.]dcr", colnames(df))])),
             # column(3,
             #        shiny::varSelectInput(ns('zvar'),
             #                              label = "Z Var",
             #                              data = df[ , colnames(df)!=".dcrkey"])),
             shiny::column(3,
-                   shiny::selectInput(ns('zvar'),
-                                      label = "Z Var",
-                                      choices = c("", colnames(df)[!grepl("[.]dcr", colnames(df))]),
-                                      selected = NULL)),
+                          shiny::selectInput(ns('zvar'),
+                                             label = "Z Var",
+                                             choices = c("", colnames(df)[!grepl("[.]dcr", colnames(df))]),
+                                             selected = NULL)),
             shiny::column(3,
-                   align = "right",
-                   style = "margin-top: 25px;",
-                   shiny::actionButton(ns('startscatter'),
-                                       label = "Plot",
-                                       icon = shiny::icon("chart-area"),
-                                       class = "btn-info")
+                          align = "right",
+                          style = "margin-top: 25px;",
+                          shiny::actionButton(ns('startscatter'),
+                                              label = "Plot",
+                                              icon = shiny::icon("chart-area"),
+                                              class = "btn-info")
             )
         )
 

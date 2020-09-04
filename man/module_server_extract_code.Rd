@@ -13,7 +13,9 @@ module_server_extract_code(
   gvar,
   statements,
   sel_points,
-  overwrite
+  overwrite,
+  is_on_disk,
+  out_path
 )
 }
 \arguments{
@@ -21,15 +23,19 @@ module_server_extract_code(
 
 \item{df_label}{string, name of original df input}
 
-\item{filter_df}{data frame with filter statements and scoping lvl}
+\item{filter_df}{reactiveValue data frame with filter statements and scoping lvl}
 
-\item{gvar}{character, grouping vars for \code{dplyr::group_by}}
+\item{gvar}{reactive character, grouping vars for \code{dplyr::group_by}}
 
-\item{statements}{lgl, vector of working statements}
+\item{statements}{reactive, lgl, vector of working statements}
 
-\item{sel_points}{data frame with selected point keys, annotations, and selection count}
+\item{sel_points}{reactiveValue, data frame with selected point keys, annotations, and selection count}
 
 \item{overwrite}{reacive value, TRUE/FALSE from checkbox input}
+
+\item{is_on_disk}{Logical, whether df represented by \code{df_label} was on disk or from interactive \code{R} use}
+
+\item{out_path}{reactive, List, with character strings providing directory paths and file names for saving/reading in code output}
 }
 \description{
 Server Module:  Selection Annotator

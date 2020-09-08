@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Interactive data cleaning — dcr_app • datacleanr</title>
+<title>Interactive and reproducible data cleaning — dcr_app • datacleanr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Interactive data cleaning — dcr_app" />
-<meta property="og:description" content="Interactive data cleaning" />
+<meta property="og:title" content="Interactive and reproducible data cleaning — dcr_app" />
+<meta property="og:description" content="Interactive and reproducible data cleaning" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">datacleanr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
       </span>
     </div>
 
@@ -108,13 +108,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Interactive data cleaning</h1>
+    <h1>Interactive and reproducible data cleaning</h1>
     <small class="dont-index">Source: <a href='https://github.com/the-Hull/datacleanr/blob/master/R/datacleanr_app.R'><code>R/datacleanr_app.R</code></a></small>
     <div class="hidden name"><code>dcr_app.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Interactive data cleaning</p>
+    <p>Interactive and reproducible data cleaning</p>
     </div>
 
     <pre class="usage"><span class='fu'>dcr_app</span>(<span class='kw'>dframe</span>, browser = <span class='fl'>TRUE</span>)</pre>
@@ -124,7 +124,8 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>dframe</th>
-      <td><p>dataframe, tbl or data.table with data for viewing and/or cleaning</p></td>
+      <td><p>Character, a string naming a <code>data.frame</code>, <code>tbl</code> or <code>data.table</code> in the environment
+or a path to a <code>.Rds</code> file such an object</p></td>
     </tr>
     <tr>
       <th>browser</th>
@@ -135,19 +136,54 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>datacleanr</code> provides an interactive data overview, and allows
-reproducible subsetting and (manual, interactive) visual outlier detection and annotation.
-The app works with <code>data.frame</code>, <code>tibble</code> and <code>data.table</code> objects.
-Note, that spatial data is supported; this requires that <code>lon</code> and <code>lat</code> columns in degrees
-are present.
-The interactive visualization relies on subsetting (i.e. highlighting) sub-groups of the provided data.
-These groups are composed of unique combinations of columns in the data set (must be <code>factor</code>),
-and are carried through the app for exploratory analyses (tab <strong>Overview</strong>), and plotting
+reproducible filtering and (manual, interactive) visual outlier detection and annotation across multiple app tabs:</p><ul>
+<li><p><strong>Overview and Set-up</strong>: set groups (see below) and generate a exploratory summary of <code>dframe</code></p></li>
+<li><p><strong>Filtering</strong>: Provide and apply filter statements (groupwise, see below and <code><a href='filter_scoped_df.html'>filter_scoped_df</a></code>)</p></li>
+<li><p><strong>Visualization and Annotating</strong>: interactive visualization allowing outlier highlighting, annotating and before/after histograms of displayed (numeric) variables</p></li>
+<li><p><strong>Extraction</strong>: generates <em>Reproducible Recipe</em> and outputs</p></li>
+</ul>
+
+<p>Extensive documentation is provided on each of these tabs for individual procedures in help links.
+<code>datacleanr</code> relies on 1) generating a column of unique IDs (<code>.dcrkey</code>) and subsetting <code>dframe</code> into sub-groups (generated in-app,
+added as column <code>.dcrindex</code>) for filtering and visualization.
+These groups are composed of unique combinations of columns in the data set (must be <code>factor</code>) and are passed to <code><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></code>,
+and are carried through the app for exploratory analyses (tab <strong>Overview and Set-up</strong>), filtering (tab <strong>Filtering</strong>) and plotting
 (tab <strong>Visualization</strong>).
-These groups should ideally be chosen to facilitate a convenient viewing and cleaning process.
+These groups should ideally be chosen to facilitate a convenient filtering and viewing/cleaning process.
 For example, a data set with time series of multiple sensors could be grouped by sensor and/or additional columns,
-such that periods of interest can be visualized and cleaned simultaneously in the interactive plot.
-The tab <strong>Extraction</strong> provides code to reproduce the entire procedure, which can be copied,
-or sent directly to an active <code>RStudio</code> script.</p>
+such that periods of interest can be visualized and cleaned simultaneously in the interactive plot.</p>
+<p>Filtering is achieved by providing expressions that evaluate to <code>TRUE</code>\codeFALSE, and can be applied to the entire
+data set, or individual/all groups via scoped filtering (see <code><a href='filter_scoped_df.html'>filter_scoped_df</a></code>).</p>
+<p>The interactive visualization allows selecting and deselecting points with lasso and box select tools,
+as well as interactive zooming (toolbar or clicking on legend items or group overview table, see tab in-app)
+as well as panning (toolbar and hover over plot's axes).
+Data formats supported are:</p><ol>
+<li><p>Observational (numeric), timeseries (<code>POSIXct</code>) and categorical data in <code>x</code> and <code>y</code> dimensions/axis</p></li>
+<li><p>Observational (numeric) data in <code>z</code> dimension (point size)</p></li>
+<li><p>Spatial data, when <code>lon</code> and <code>lat</code> in decimal degrees are present in <code>x</code> and <code>y</code>.</p></li>
+</ol>
+
+<p>Note, that when a column <code>.dcrflag</code> (logical, <code>TRUE</code>\codeFALSE) is present in <code>dframe``, respective observations are given contrasting symbols (</code>FALSE<code>= circle,</code>TRUE` = star-triangle).
+This column is employed as a cross-referencing tool for e.g.other outlier detection or data-processing algorithms
+that were applied prior.</p>
+<p>The tab <strong>Extraction</strong> provides code to reproduce the entire procedure (a <em>Reproducible Recipe</em>), which</p><ol>
+<li><p>can be copied, or sent directly to an active <code>RStudio</code> script when used interactively (i.e. when <code>dframe</code> is an object in <code>R</code>'s
+environment),</p></li>
+<li><p>can be saved to disk with intermediate outputs (filter statements and selected outliers),
+where file names are based on the input file and configurable suffixes when <code>dframe</code> is a path.</p></li>
+</ol>
+
+<p>@return When <code>datacleanr</code> is ended by clicking on <code>Close</code> in the app's navigation bar, a list is <strong>invisibly</strong> returned
+with the following items:</p><ol>
+<li><p><strong>df_name</strong>: character, object name/file path passed into <code>dcr_app</code></p></li>
+<li><p><strong>dcr_df</strong>: tibble, filtered data set <strong>with</strong> additional columns <code>.dcrkey</code>, <code>.dcrindex</code>, <code>.annotation</code> - the latter
+is <code>NA</code> for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers</p></li>
+<li><p><strong>dcr_selected_outliers</strong>: data.frame, contains the outlier <code>.dcrkey</code>, the <code>.annotation</code> and a <code>selection_count</code> (integer, count incrementer) column</p></li>
+<li><p><strong>dcr_groups</strong>: character, a vector defining the groups (via <code><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></code>) used throughout <code>datacleanr</code></p></li>
+<li><p><strong>dcr_condition_df</strong>: tibble, with columns <code>filter</code> (character, statement used for filtering) and <code>group</code> (list, of integers), defining groups that correspond to <code>.dcrindex</code></p></li>
+<li><p><strong>dcr_code</strong>: character string, containing <em>Reproducible Recipe</em></p></li>
+</ol>
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -160,7 +196,7 @@ or sent directly to an active <code>RStudio</code> script.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by First Last.</p>
+  <p>Developed by Alexander Hurley.</p>
 </div>
 
 <div class="pkgdown">

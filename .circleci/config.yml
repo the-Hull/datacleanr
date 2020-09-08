@@ -31,7 +31,7 @@ jobs:
             Rscript -e 'sessionInfo()'
             Rscript -e 'installed.packages()[, c("Package", "Version")]'
             Rscript -e 'rmarkdown::pandoc_version()'
-            Rscript -e 'tinyex::tinytex_root()'
+            Rscript -e 'tinytex::tinytex_root()'
       - run:
           name: Build package
           command: R CMD build .

@@ -23,6 +23,7 @@ jobs:
           command: |
             R -e 'install.packages("tinytex")'
             R -e 'tinytex::install_tinytex()'
+            R -e 'tinytex::tlmgr_install("ec")'
             R -e 'install.packages("remotes")'
             R -e 'remotes::install_deps(dependencies = TRUE)'
       - run:

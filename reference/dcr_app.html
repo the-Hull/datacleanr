@@ -133,6 +133,18 @@ or a path to a <code>.Rds</code> file such an object</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>When <code>datacleanr</code> is ended by clicking on <code>Close</code> in the app's navigation bar, a list is <strong>invisibly</strong> returned
+with the following items:</p><ol>
+<li><p><strong>df_name</strong>: character, object name/file path passed into <code>dcr_app</code></p></li>
+<li><p><strong>dcr_df</strong>: tibble, filtered data set <strong>with</strong> additional columns <code>.dcrkey</code>, <code>.dcrindex</code>, <code>.annotation</code> - the latter is <code>NA</code> for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers</p></li>
+<li><p><strong>dcr_selected_outliers</strong>: data.frame, contains the outlier <code>.dcrkey</code>, the <code>.annotation</code> and a <code>selection_count</code> (integer, count incrementer) column</p></li>
+<li><p><strong>dcr_groups</strong>: character, a vector defining the groups (via <code><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></code>) used throughout <code>datacleanr</code></p></li>
+<li><p><strong>dcr_condition_df</strong>: tibble, with columns <code>filter</code> (character, statement used for filtering) and <code>group</code> (list, of integers), defining groups that correspond to <code>.dcrindex</code></p></li>
+<li><p><strong>dcr_code</strong>: character string, containing <em>Reproducible Recipe</em></p></li>
+</ol>
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>datacleanr</code> provides an interactive data overview, and allows
@@ -152,7 +164,7 @@ and are carried through the app for exploratory analyses (tab <strong>Overview a
 These groups should ideally be chosen to facilitate a convenient filtering and viewing/cleaning process.
 For example, a data set with time series of multiple sensors could be grouped by sensor and/or additional columns,
 such that periods of interest can be visualized and cleaned simultaneously in the interactive plot.</p>
-<p>Filtering is achieved by providing expressions that evaluate to <code>TRUE</code>\codeFALSE, and can be applied to the entire
+<p>Filtering is achieved by providing expressions that evaluate to <code>TRUE</code> \ <code>FALSE</code>, and can be applied to the entire
 data set, or individual/all groups via scoped filtering (see <code><a href='filter_scoped_df.html'>filter_scoped_df</a></code>).</p>
 <p>The interactive visualization allows selecting and deselecting points with lasso and box select tools,
 as well as interactive zooming (toolbar or clicking on legend items or group overview table, see tab in-app)
@@ -163,7 +175,9 @@ Data formats supported are</p><ol>
 <li><p>Spatial data, when <code>lon</code> and <code>lat</code> in decimal degrees are present in <code>x</code> and <code>y</code>.</p></li>
 </ol>
 
-<p>Note, that when a column <code>.dcrflag</code> (logical, <code>TRUE</code>\codeFALSE) is present in <code>dframe``, respective observations are given contrasting symbols (</code>FALSE<code>= circle,</code>TRUE` = star-triangle).
+<p>Note, that when a column <code>.dcrflag</code> (logical, <code>TRUE</code> \ <code>FALSE</code>) is present in <code>dframe</code>,
+respective observations are given contrasting
+symbols (<code>FALSE</code> = circle, <code>TRUE</code> = star-triangle).
 This column is employed as a cross-referencing tool for e.g.other outlier detection or data-processing algorithms
 that were applied prior.</p>
 <p>The tab <strong>Extraction</strong> provides code to reproduce the entire procedure (a <em>Reproducible Recipe</em>), which</p><ol>
@@ -171,16 +185,6 @@ that were applied prior.</p>
 environment),</p></li>
 <li><p>can be saved to disk with intermediate outputs (filter statements and selected outliers),
 where file names are based on the input file and configurable suffixes when <code>dframe</code> is a path.</p></li>
-</ol>
-
-<p>@return When <code>datacleanr</code> is ended by clicking on <code>Close</code> in the app's navigation bar, a list is <strong>invisibly</strong> returned
-with the following items:</p><ol>
-<li><p><strong>df_name</strong>: character, object name/file path passed into <code>dcr_app</code></p></li>
-<li><p><strong>dcr_df</strong>: tibble, filtered data set <strong>with</strong> additional columns <code>.dcrkey</code>, <code>.dcrindex</code>, <code>.annotation</code> - the latter is <code>NA</code> for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers</p></li>
-<li><p><strong>dcr_selected_outliers</strong>: data.frame, contains the outlier <code>.dcrkey</code>, the <code>.annotation</code> and a <code>selection_count</code> (integer, count incrementer) column</p></li>
-<li><p><strong>dcr_groups</strong>: character, a vector defining the groups (via <code><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></code>) used throughout <code>datacleanr</code></p></li>
-<li><p><strong>dcr_condition_df</strong>: tibble, with columns <code>filter</code> (character, statement used for filtering) and <code>group</code> (list, of integers), defining groups that correspond to <code>.dcrindex</code></p></li>
-<li><p><strong>dcr_code</strong>: character string, containing <em>Reproducible Recipe</em></p></li>
 </ol>
 
 

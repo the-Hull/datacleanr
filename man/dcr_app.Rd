@@ -41,7 +41,7 @@ data set, or individual/all groups via scoped filtering (see \code{\link{filter_
 The interactive visualization allows selecting and deselecting points with lasso and box select tools,
 as well as interactive zooming (toolbar or clicking on legend items or group overview table, see tab in-app)
 as well as panning (toolbar and hover over plot's axes).
-Data formats supported are:
+Data formats supported are
 \enumerate{
 \item Observational (numeric), timeseries (\code{POSIXct}) and categorical data in \code{x} and \code{y} dimensions/axis
 \item Observational (numeric) data in \code{z} dimension (point size)
@@ -64,8 +64,7 @@ where file names are based on the input file and configurable suffixes when \cod
 with the following items:
 \enumerate{
 \item \strong{df_name}: character, object name/file path passed into \code{dcr_app}
-\item \strong{dcr_df}: tibble, filtered data set \strong{with} additional columns \code{.dcrkey}, \code{.dcrindex}, \code{.annotation} - the latter
-is \code{NA} for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers
+\item \strong{dcr_df}: tibble, filtered data set \strong{with} additional columns \code{.dcrkey}, \code{.dcrindex}, \code{.annotation} - the latter is \code{NA} for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers
 \item \strong{dcr_selected_outliers}: data.frame, contains the outlier \code{.dcrkey}, the \code{.annotation} and a \code{selection_count} (integer, count incrementer) column
 \item \strong{dcr_groups}: character, a vector defining the groups (via \code{\link[dplyr]{group_by}}) used throughout \code{datacleanr}
 \item \strong{dcr_condition_df}: tibble, with columns \code{filter} (character, statement used for filtering) and \code{group} (list, of integers), defining groups that correspond to \code{.dcrindex}

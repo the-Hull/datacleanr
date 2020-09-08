@@ -28,7 +28,8 @@
 #'  The interactive visualization allows selecting and deselecting points with lasso and box select tools,
 #'  as well as interactive zooming (toolbar or clicking on legend items or group overview table, see tab in-app)
 #'   as well as panning (toolbar and hover over plot's axes).
-#'  Data formats supported are:
+#'  Data formats supported are
+#'
 #'    1. Observational (numeric), timeseries (`POSIXct`) and categorical data in `x` and `y` dimensions/axis
 #'    2. Observational (numeric) data in `z` dimension (point size)
 #'    3. Spatial data, when `lon` and `lat` in decimal degrees are present in `x` and `y`.
@@ -49,8 +50,7 @@
 #'  with the following items:
 #'
 #'  1. **df_name**: character, object name/file path passed into `dcr_app`
-#'  2. **dcr_df**: tibble, filtered data set **with** additional columns `.dcrkey`, `.dcrindex`, `.annotation` - the latter
-#'    is `NA` for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers
+#'  2. **dcr_df**: tibble, filtered data set **with** additional columns `.dcrkey`, `.dcrindex`, `.annotation` - the latter is `NA` for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers
 #'  3. **dcr_selected_outliers**: data.frame, contains the outlier `.dcrkey`, the `.annotation` and a `selection_count` (integer, count incrementer) column
 #'  4. **dcr_groups**: character, a vector defining the groups (via \code{\link[dplyr]{group_by}}) used throughout `datacleanr`
 #'  5. **dcr_condition_df**: tibble, with columns `filter` (character, statement used for filtering) and `group` (list, of integers), defining groups that correspond to `.dcrindex`

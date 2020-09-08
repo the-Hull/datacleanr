@@ -37,12 +37,11 @@ jobs:
           command: R CMD build .
       - run:
           name: Check package
-          command: R CMD check *tar.gz
+          command: R CMD check *tar.gz --no-manual
       - store_artifacts:
           path: ci4r.Rcheck/
       - save_cache:
           key: cache
           paths:
             - "/usr/local/lib/R/site-library"
-            - "/texmf-dist"
             - "/root/.TinyTeX"

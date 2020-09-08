@@ -1,9 +1,10 @@
 version: 2
 jobs:
   build:
-    branches:
-      only:
-        - master
+    filters:
+      branches:
+        only:
+          - master
     docker:
       - image: rocker/verse:latest
     steps:

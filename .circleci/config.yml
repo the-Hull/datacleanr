@@ -45,3 +45,4 @@ jobs:
           paths:
             - "/usr/local/lib/R/site-library"
             - "/texmf-dist"
+            - "/root/.TinyTeX"

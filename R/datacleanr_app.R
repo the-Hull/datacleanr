@@ -22,7 +22,7 @@
 #'  For example, a data set with time series of multiple sensors could be grouped by sensor and/or additional columns,
 #'  such that periods of interest can be visualized and cleaned simultaneously in the interactive plot.
 #'
-#'  Filtering is achieved by providing expressions that evaluate to `TRUE`\`FALSE`, and can be applied to the entire
+#'  Filtering is achieved by providing expressions that evaluate to `TRUE` \ `FALSE`, and can be applied to the entire
 #'  data set, or individual/all groups via scoped filtering (see \code{\link{filter_scoped_df}}).
 #'
 #'  The interactive visualization allows selecting and deselecting points with lasso and box select tools,
@@ -34,7 +34,8 @@
 #'    2. Observational (numeric) data in `z` dimension (point size)
 #'    3. Spatial data, when `lon` and `lat` in decimal degrees are present in `x` and `y`.
 #'
-#'  Note, that when a column `.dcrflag` (logical, `TRUE`\`FALSE`) is present in `dframe``, respective observations are given contrasting
+#'  Note, that when a column `.dcrflag` (logical, `TRUE` \ `FALSE`) is present in `dframe`,
+#'  respective observations are given contrasting
 #'  symbols (`FALSE` = circle, `TRUE` = star-triangle).
 #'  This column is employed as a cross-referencing tool for e.g.other outlier detection or data-processing algorithms
 #'  that were applied prior.
@@ -46,7 +47,7 @@
 #'  2. can be saved to disk with intermediate outputs (filter statements and selected outliers),
 #'    where file names are based on the input file and configurable suffixes when `dframe` is a path.
 #'
-#'  @return When `datacleanr` is ended by clicking on `Close` in the app's navigation bar, a list is **invisibly** returned
+#' @return When `datacleanr` is ended by clicking on `Close` in the app's navigation bar, a list is **invisibly** returned
 #'  with the following items:
 #'
 #'  1. **df_name**: character, object name/file path passed into `dcr_app`

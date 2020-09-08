@@ -12,6 +12,18 @@ or a path to a \code{.Rds} file such an object}
 
 \item{browser}{logical, should app start in OS's default browser? (default \code{TRUE})}
 }
+\value{
+When \code{datacleanr} is ended by clicking on \code{Close} in the app's navigation bar, a list is \strong{invisibly} returned
+with the following items:
+\enumerate{
+\item \strong{df_name}: character, object name/file path passed into \code{dcr_app}
+\item \strong{dcr_df}: tibble, filtered data set \strong{with} additional columns \code{.dcrkey}, \code{.dcrindex}, \code{.annotation} - the latter is \code{NA} for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers
+\item \strong{dcr_selected_outliers}: data.frame, contains the outlier \code{.dcrkey}, the \code{.annotation} and a \code{selection_count} (integer, count incrementer) column
+\item \strong{dcr_groups}: character, a vector defining the groups (via \code{\link[dplyr]{group_by}}) used throughout \code{datacleanr}
+\item \strong{dcr_condition_df}: tibble, with columns \code{filter} (character, statement used for filtering) and \code{group} (list, of integers), defining groups that correspond to \code{.dcrindex}
+\item \strong{dcr_code}: character string, containing \emph{Reproducible Recipe}
+}
+}
 \description{
 Interactive and reproducible data cleaning
 }
@@ -35,7 +47,7 @@ These groups should ideally be chosen to facilitate a convenient filtering and v
 For example, a data set with time series of multiple sensors could be grouped by sensor and/or additional columns,
 such that periods of interest can be visualized and cleaned simultaneously in the interactive plot.
 
-Filtering is achieved by providing expressions that evaluate to \code{TRUE}\\code{FALSE}, and can be applied to the entire
+Filtering is achieved by providing expressions that evaluate to \code{TRUE} \ \code{FALSE}, and can be applied to the entire
 data set, or individual/all groups via scoped filtering (see \code{\link{filter_scoped_df}}).
 
 The interactive visualization allows selecting and deselecting points with lasso and box select tools,
@@ -48,7 +60,9 @@ Data formats supported are
 \item Spatial data, when \code{lon} and \code{lat} in decimal degrees are present in \code{x} and \code{y}.
 }
 
-Note, that when a column \code{.dcrflag} (logical, \code{TRUE}\\code{FALSE}) is present in \verb{dframe``, respective observations are given contrasting symbols (}FALSE\verb{= circle,}TRUE` = star-triangle).
+Note, that when a column \code{.dcrflag} (logical, \code{TRUE} \ \code{FALSE}) is present in \code{dframe},
+respective observations are given contrasting
+symbols (\code{FALSE} = circle, \code{TRUE} = star-triangle).
 This column is employed as a cross-referencing tool for e.g.other outlier detection or data-processing algorithms
 that were applied prior.
 
@@ -58,16 +72,5 @@ The tab \strong{Extraction} provides code to reproduce the entire procedure (a \
 environment),
 \item can be saved to disk with intermediate outputs (filter statements and selected outliers),
 where file names are based on the input file and configurable suffixes when \code{dframe} is a path.
-}
-
-@return When \code{datacleanr} is ended by clicking on \code{Close} in the app's navigation bar, a list is \strong{invisibly} returned
-with the following items:
-\enumerate{
-\item \strong{df_name}: character, object name/file path passed into \code{dcr_app}
-\item \strong{dcr_df}: tibble, filtered data set \strong{with} additional columns \code{.dcrkey}, \code{.dcrindex}, \code{.annotation} - the latter is \code{NA} for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers
-\item \strong{dcr_selected_outliers}: data.frame, contains the outlier \code{.dcrkey}, the \code{.annotation} and a \code{selection_count} (integer, count incrementer) column
-\item \strong{dcr_groups}: character, a vector defining the groups (via \code{\link[dplyr]{group_by}}) used throughout \code{datacleanr}
-\item \strong{dcr_condition_df}: tibble, with columns \code{filter} (character, statement used for filtering) and \code{group} (list, of integers), defining groups that correspond to \code{.dcrindex}
-\item \strong{dcr_code}: character string, containing \emph{Reproducible Recipe}
 }
 }

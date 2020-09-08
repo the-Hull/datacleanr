@@ -19,7 +19,6 @@ URL: https://github.com/the-Hull/datacleanr
 BugReports: https://github.com/the-Hull/datacleanr/issues
 Imports: 
     shiny,
-    miniUI,
     htmltools,
     summarytools,
     dplyr,

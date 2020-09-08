@@ -43,6 +43,17 @@ dcr_checks <- function(dframe){
 
         stop(msg)
     }
+
+
+    if(utils::hasName(dframe, ".dcrflag")){
+
+        if(!rlang::inherits_only(dframe$.dcrflag, "logical")){
+            msg <- paste0("Detected column .dcrflag - Please ensure it is of class logical (i.e. TRUE/FALSE).")
+
+            stop(msg)
+        }
+
+    }
 #
 #     if(nrow(dframe) > 10000){
 #
@@ -1019,6 +1030,7 @@ make_save_filepath <- function(save_dir, input_filepath, suffix, ext){
 #' Method for printing dcr_code output
 #'
 #' @param x character, code  output from \code{dcr_app}
+#' @param ... additional arguments passed to \code{cat}
 print.dcr_code <- function(x, ...){
     cat(x, ...)
 }

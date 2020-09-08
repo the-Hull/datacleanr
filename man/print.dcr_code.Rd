@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{character, code  output from \code{dcr_app}}
+
+\item{...}{additional arguments passed to \code{cat}}
 }
 \description{
 Method for printing dcr_code output

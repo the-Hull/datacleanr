@@ -2,31 +2,73 @@
 % Please edit documentation in R/datacleanr_app.R
 \name{dcr_app}
 \alias{dcr_app}
-\title{Interactive data cleaning}
+\title{Interactive and reproducible data cleaning}
 \usage{
 dcr_app(dframe, browser = TRUE)
 }
 \arguments{
-\item{dframe}{dataframe, tbl or data.table with data for viewing and/or cleaning}
+\item{dframe}{Character, a string naming a \code{data.frame}, \code{tbl} or \code{data.table} in the environment
+or a path to a \code{.Rds} file such an object}
 
 \item{browser}{logical, should app start in OS's default browser? (default \code{TRUE})}
 }
 \description{
-Interactive data cleaning
+Interactive and reproducible data cleaning
 }
 \details{
 \code{datacleanr} provides an interactive data overview, and allows
-reproducible subsetting and (manual, interactive) visual outlier detection and annotation.
-The app works with \code{data.frame}, \code{tibble} and \code{data.table} objects.
-Note, that spatial data is supported; this requires that \code{lon} and \code{lat} columns in degrees
-are present.
-The interactive visualization relies on subsetting (i.e. highlighting) sub-groups of the provided data.
-These groups are composed of unique combinations of columns in the data set (must be \code{factor}),
-and are carried through the app for exploratory analyses (tab \strong{Overview}), and plotting
+reproducible filtering and (manual, interactive) visual outlier detection and annotation across multiple app tabs:
+\itemize{
+\item \strong{Overview and Set-up}: set groups (see below) and generate a exploratory summary of \code{dframe}
+\item \strong{Filtering}: Provide and apply filter statements (groupwise, see below and \code{\link{filter_scoped_df}})
+\item \strong{Visualization and Annotating}: interactive visualization allowing outlier highlighting, annotating and before/after histograms of displayed (numeric) variables
+\item \strong{Extraction}: generates \emph{Reproducible Recipe} and outputs
+}
+
+Extensive documentation is provided on each of these tabs for individual procedures in help links.
+\code{datacleanr} relies on 1) generating a column of unique IDs (\code{.dcrkey}) and subsetting \code{dframe} into sub-groups (generated in-app,
+added as column \code{.dcrindex}) for filtering and visualization.
+These groups are composed of unique combinations of columns in the data set (must be \code{factor}) and are passed to \code{\link[dplyr]{group_by}},
+and are carried through the app for exploratory analyses (tab \strong{Overview and Set-up}), filtering (tab \strong{Filtering}) and plotting
 (tab \strong{Visualization}).
-These groups should ideally be chosen to facilitate a convenient viewing and cleaning process.
+These groups should ideally be chosen to facilitate a convenient filtering and viewing/cleaning process.
 For example, a data set with time series of multiple sensors could be grouped by sensor and/or additional columns,
 such that periods of interest can be visualized and cleaned simultaneously in the interactive plot.
-The tab \strong{Extraction} provides code to reproduce the entire procedure, which can be copied,
-or sent directly to an active \code{RStudio} script.
+
+Filtering is achieved by providing expressions that evaluate to \code{TRUE}\\code{FALSE}, and can be applied to the entire
+data set, or individual/all groups via scoped filtering (see \code{\link{filter_scoped_df}}).
+
+The interactive visualization allows selecting and deselecting points with lasso and box select tools,
+as well as interactive zooming (toolbar or clicking on legend items or group overview table, see tab in-app)
+as well as panning (toolbar and hover over plot's axes).
+Data formats supported are:
+\enumerate{
+\item Observational (numeric), timeseries (\code{POSIXct}) and categorical data in \code{x} and \code{y} dimensions/axis
+\item Observational (numeric) data in \code{z} dimension (point size)
+\item Spatial data, when \code{lon} and \code{lat} in decimal degrees are present in \code{x} and \code{y}.
+}
+
+Note, that when a column \code{.dcrflag} (logical, \code{TRUE}\\code{FALSE}) is present in \verb{dframe``, respective observations are given contrasting symbols (}FALSE\verb{= circle,}TRUE` = star-triangle).
+This column is employed as a cross-referencing tool for e.g.other outlier detection or data-processing algorithms
+that were applied prior.
+
+The tab \strong{Extraction} provides code to reproduce the entire procedure (a \emph{Reproducible Recipe}), which
+\enumerate{
+\item can be copied, or sent directly to an active \code{RStudio} script when used interactively (i.e. when \code{dframe} is an object in \code{R}'s
+environment),
+\item can be saved to disk with intermediate outputs (filter statements and selected outliers),
+where file names are based on the input file and configurable suffixes when \code{dframe} is a path.
+}
+
+@return When \code{datacleanr} is ended by clicking on \code{Close} in the app's navigation bar, a list is \strong{invisibly} returned
+with the following items:
+\enumerate{
+\item \strong{df_name}: character, object name/file path passed into \code{dcr_app}
+\item \strong{dcr_df}: tibble, filtered data set \strong{with} additional columns \code{.dcrkey}, \code{.dcrindex}, \code{.annotation} - the latter
+is \code{NA} for non-outliers, an empty string for outliers without annotation, and a custom string for annotated outliers
+\item \strong{dcr_selected_outliers}: data.frame, contains the outlier \code{.dcrkey}, the \code{.annotation} and a \code{selection_count} (integer, count incrementer) column
+\item \strong{dcr_groups}: character, a vector defining the groups (via \code{\link[dplyr]{group_by}}) used throughout \code{datacleanr}
+\item \strong{dcr_condition_df}: tibble, with columns \code{filter} (character, statement used for filtering) and \code{group} (list, of integers), defining groups that correspond to \code{.dcrindex}
+\item \strong{dcr_code}: character string, containing \emph{Reproducible Recipe}
+}
 }

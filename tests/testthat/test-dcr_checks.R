@@ -62,6 +62,29 @@ test_that("Initial dcr checks works on iris", {
 })
 
 
+test_that("Initial dcr checks fails with bad .dcrflag column", {
+
+  expect_error(dcr_checks(iris %>% dplyr::mutate(.dcrflag = "A")),
+               regexp = "Detected column .dcrflag - Please ensure it is of class logical (i.e. TRUE/FALSE).",
+               fixed = TRUE)
+})
+
+
+test_that("Initial dcr checks passes with TRUE/FALSE .dcrflag", {
+
+  expect_identical(dcr_checks(iris %>%
+                              dplyr::mutate(
+                                .dcrflag = rep(c(TRUE, FALSE), 75)
+                                )
+                            ),
+                   list(dataset = iris %>%
+                     dplyr::mutate(
+                       .dcrflag = rep(c(TRUE, FALSE), 75)),
+                       file_path = NULL)
+                 )
+
+})
+
 # test_that("User warned about large data set", {
 #
 #

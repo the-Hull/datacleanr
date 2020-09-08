@@ -1,20 +1,8 @@
 version: 2
 jobs:
   build:
-<<<<<<< HEAD
       branches:
         only: master
-=======
-<<<<<<< HEAD
-      branches:
-        only: master
-=======
-    filters:
-      branches:
-        only:
-          - master
->>>>>>> 795a9c46f17b32af96d4eabafa3d2995f4419c7a
->>>>>>> bf60092dbc21748278646b8afd3aa2db5e786bdf
     docker:
       - image: rocker/verse:latest
     steps:

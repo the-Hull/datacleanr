@@ -9,3 +9,4 @@
 ^\.travis\.yml$
 ^\.circleci$
 ^R/_dev\.R$
+^_pkgdown\.yml$

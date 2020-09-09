@@ -2,16 +2,5 @@ pandoc: 2.7.3
 pkgdown: 1.6.0
 pkgdown_sha: ~
 articles: []
-last_built: 2020-09-08T16:32Z
+last_built: 2020-09-09T10:38Z
 
-reference:
-- title: App Use
-  desc: Launches the interactive `datacleanr` app
-- contents:
-  - dcr_app
-- title: Helpers
-  desc: Functions for data cleaning and manipulating.
-  contents:
-  - filter_scoped_df
-  - print
-  

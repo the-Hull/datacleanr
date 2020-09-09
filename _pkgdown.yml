@@ -1,9 +1,3 @@
-pandoc: 2.7.3
-pkgdown: 1.6.0
-pkgdown_sha: ~
-articles: []
-last_built: 2020-09-08T16:32Z
-
 reference:
 - title: App Use
   desc: Launches the interactive `datacleanr` app
@@ -13,5 +7,5 @@ reference:
   desc: Functions for data cleaning and manipulating.
   contents:
   - filter_scoped_df
-  - print
+  - starts_with("print")
 

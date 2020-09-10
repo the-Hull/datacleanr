@@ -14,6 +14,8 @@
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
+> Currently under development.
+
 `datacleanr` is a general-purpose and efficient tool for data cleaning
 (filtering and outlier selection / annotation). It is inherintely
 interoperable, by seamlessly integrating into **reproducible** data
@@ -29,7 +31,7 @@ remotes::install_github("the-hull/datacleanr")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Launch `datacleanr`’s interactive app with the following code:
 
 ``` r
 library(datacleanr)
@@ -37,6 +39,8 @@ dcr_app(iris)
 ## basic example code
 ```
 
-Please note that the ‘datacleanr’ project is released with a
+-----
+
+Please note that the `datacleanr` project is released with a
 [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By
 contributing to this project, you agree to abide by its terms.

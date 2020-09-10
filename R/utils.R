@@ -391,11 +391,11 @@ filter_scoped_df <- function(dframe, condition_df){
 extend_palette <- function(n){
 
     if(n < 3){
-        cols <- RColorBrewer::brewer.pal(3, "Accent")[1:n]}
+        cols <- RColorBrewer::brewer.pal(3, "Dark2")[1:n]}
     else if(n >= 3 & n <= 8){
-        cols <- RColorBrewer::brewer.pal(n, "Accent")
+        cols <- RColorBrewer::brewer.pal(n, "Dark2")
     } else {
-        cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Accent"))(n)
+        cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Dark2"))(n)
 
     }
 
@@ -493,7 +493,7 @@ hide_trace_idx <- function(max_groups, selected_groups){
 handle_restyle_traces <- function(source_id,
                                   session,
                                   dframe,
-                                  scaling = 0.075,
+                                  scaling = 0.05,
                                   xvar,
                                   yvar,
                                   max_id_group_trace,
@@ -987,17 +987,21 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
     }
 
     if(!exists("xlim")){
-        xlim <- range(dframe[group_rows, xvar, drop = TRUE],
-                      na.rm = TRUE) *
-            c(1 - scaling, 1 + scaling)
+        xlim <- (diff(range(dframe[group_rows, xvar, drop = TRUE],
+                      na.rm = TRUE)) * scaling) * c(-1,1) +
+            range(dframe[group_rows, xvar, drop = TRUE],
+                  na.rm = TRUE)
     }
 
     if(!exists("ylim")){
+        ylim <- (diff(range(dframe[group_rows, yvar, drop = TRUE],
+                            na.rm = TRUE)) * scaling) * c(-1,1) +
+            range(dframe[group_rows, yvar, drop = TRUE],
+                  na.rm = TRUE)
 
-
-        ylim <- range(dframe[group_rows, yvar, drop = TRUE],
-                      na.rm = TRUE) *
-            c(1 - scaling, 1 + scaling)
+        # ylim <- range(dframe[group_rows, yvar, drop = TRUE],
+        #               na.rm = TRUE) *
+        #     c(1 - scaling, 1 + scaling)
     }
 
     return(list(xlim = xlim, ylim = ylim))

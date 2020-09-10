@@ -58,6 +58,41 @@ test_that("calculated limits are equal to manual approach (ungrouped iris)", {
 
 })
 
+test_that("calculated limits are equal to manual approach (ungrouped iris) with scaling !=0", {
+
+
+    x <- "Sepal.Length"
+    y <- "Sepal.Width"
+
+    scl <- 0.1
+
+    testdf <- iris %>%
+        dplyr::mutate(group_index = dplyr::cur_group_id())
+
+
+
+    ylim <- (diff(range(testdf[ , y])) * scl) * c(-1,1) +
+        range(testdf[ , y])
+
+    xlim <- (diff(range(testdf[ , x])) * scl) * c(-1,1) +
+        range(testdf[ , x])
+
+    compare_list <- list(xlim = xlim,
+                         ylim = ylim)
+
+
+
+    lim_func <- calc_limits_per_groups(dframe = iris,
+                                       group_index = c(1),
+                                       xvar = x,
+                                       yvar = y,
+                                       scaling = scl)
+    expect_identical(lim_func, compare_list)
+
+
+
+})
+
 
 test_that("calculated limits are equal to manual approach on time series df)", {
 

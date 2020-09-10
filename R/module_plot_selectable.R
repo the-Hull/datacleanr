@@ -99,8 +99,12 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   zvar_toggle <- nchar(shiny::isolate(selector_inputs$zvar))>0
   if(zvar_toggle){
     size_expression <- stats::as.formula(paste("~", shiny::isolate(selector_inputs$zvar)))
+    sizes_expression <- expression(c(5, 100))
+    print("sizes adjusted")
   } else {
-    size_expression <- rlang::quo_squash(NULL)
+    # size_expression <- rlang::quo_squash(NULL)
+    size_expression <- expression(I(10))
+    sizes_expression <- NULL
   }
 
 
@@ -116,14 +120,27 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   if(is_spatial_plot){
     opac <- 1
 
+    zoom <- 0
+
+    # total_range_lon <- diff(range(plot_data[ , as.character(shiny::isolate(selector_inputs$xvar)), drop = TRUE],
+    #                           na.rm = TRUE))
+    #
+    # if(total_range_lon <= 180 & total_range_lon > 90){
+    #   zoom <- 1
+    # } else if(total_range_lon <= 90 & total_range_lon > 45){
+    #   zoom <- 1.5
+    # } else if(total_range_lon <= 45){
+    #   zoom <- 2
+    # }
+
 
     geo_def <-  list(style = ifelse(is.null(mapstyle),
                                     "basic",
                                     mapstyle),
-                     zoom = 2,
+                     zoom = zoom,
                      center = list(
-                       lon = ~ mean(plot_data[ , as.character(shiny::isolate(selector_inputs$xvar)), drop = TRUE]),
-                       lat = ~ mean(plot_data[ , as.character(shiny::isolate(selector_inputs$yvar)), drop = TRUE])
+                       lon = ~ median(plot_data[ , as.character(shiny::isolate(selector_inputs$xvar)), drop = TRUE]),
+                       lat = ~ median(plot_data[ , as.character(shiny::isolate(selector_inputs$yvar)), drop = TRUE])
                      ))
 
   } else {
@@ -155,7 +172,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                 type = 'scattergl',
 
                                 size = eval(size_expression),
-                                sizes = c(25,100),
+                                sizes = eval(sizes_expression),
 
 
 
@@ -168,7 +185,11 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
                                 showlegend = TRUE,
                                 marker = list(opacity = opac,
-                                              allowoverlap = TRUE),
+                                              allowoverlap = TRUE
+                                              # size = eval(size_expression),
+                                              # sizes = c(10, 100)),
+                                              # sizes = eval(sizes_expression)
+                                              ),
                                 unselected = list(marker = list(opacity = opac))
                                 ) %>%
 

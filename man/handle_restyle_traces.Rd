@@ -8,7 +8,7 @@ handle_restyle_traces(
   source_id,
   session,
   dframe,
-  scaling = 0.075,
+  scaling = 0.05,
   xvar,
   yvar,
   max_id_group_trace,

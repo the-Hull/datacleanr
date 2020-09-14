@@ -222,7 +222,7 @@ filter_scoped <- function(dframe, statement, scope_at = NULL){
         # needs ungrouping first
         filtered_df <- dplyr::group_by(
             dplyr::filter(dplyr::ungroup(dframe),
-                          eval(statement)),
+                          eval(statement), na.rm = TRUE),
             !!! var_groups
         )
 
@@ -239,7 +239,7 @@ filter_scoped <- function(dframe, statement, scope_at = NULL){
         # filtered_df <- eval(parse(text = filt_expr))
         #
 
-        filtered_df <- dplyr::filter(dframe, eval(statement))
+        filtered_df <- dplyr::filter(dframe, eval(statement), na.rm = TRUE)
 
     } else if(n_groups > 1 &
               length(scope_at) >= 1 &
@@ -265,7 +265,7 @@ filter_scoped <- function(dframe, statement, scope_at = NULL){
             .x = split_groups(dframe),
             .at = scope_at,
             .f = function(x){dplyr::filter(x,
-                                           eval(statement))
+                                           eval(statement), na.rm = TRUE)
             }
         ))
 

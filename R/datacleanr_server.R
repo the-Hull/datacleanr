@@ -377,13 +377,15 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                               id = "df-filter-tab",
                               df = datareactive,
                               df_label = df_name,
-                              selection = 'none')
+                              selection = 'none',
+                              options = list(scrollX = TRUE))
             # on viz tab
             shiny::callModule(module_server_group_selector_table,
                               id = "df",
                               df = datareactive,
                               df_label = df_name,
-                              selection = 'multiple')
+                              selection = 'multiple',
+                              options = list(scrollX = TRUE))
         }
 
     })

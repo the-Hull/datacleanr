@@ -87,7 +87,8 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
 
 
         output$dtannotation <- DT::renderDT(table_dat,
-                                            options = list(columnDefs = list(list(visible=FALSE,
+                                            options = list(scrollX = TRUE,
+                                                           columnDefs = list(list(visible=FALSE,
                                                                                   targets=columns2hide)),
                                                            order = list(list(columns2sort, "desc"))))
                                             # editable = list(target = "column")

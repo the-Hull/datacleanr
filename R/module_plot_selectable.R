@@ -86,6 +86,10 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   col_value_vector <- extend_palette(
     n_groups_original
   )
+  col_value_vector <- col_value_vector[sample(seq_len(n_groups_original),
+                                              size = n_groups_original,
+                                              replace = TRUE)]
+
   names(col_value_vector) <- seq_len(n_groups_original)
 
   # subset to available groups

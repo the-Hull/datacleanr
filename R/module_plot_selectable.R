@@ -92,7 +92,9 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   groups_available <- names(col_value_vector) %in% unique(plot_data$.dcrindex)
   col_value_vector <- col_value_vector[groups_available]
 
-
+  is_spatial_plot <- identical(c(as.character(selector_inputs$xvar),
+                                 as.character(selector_inputs$yvar)),
+                               c("lon", "lat"))
 
 
   # handler for empty zvar selection
@@ -103,15 +105,18 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     print("sizes adjusted")
   } else {
     # size_expression <- rlang::quo_squash(NULL)
-    size_expression <- expression(I(10))
+
+    sz <- ifelse(is_spatial_plot,
+                 45,
+                 10)
+
+    size_expression <- expression(I(sz))
     sizes_expression <- NULL
   }
 
 
 
-  is_spatial_plot <- identical(c(as.character(selector_inputs$xvar),
-                                 as.character(selector_inputs$yvar)),
-                               c("lon", "lat"))
+
 
 
 

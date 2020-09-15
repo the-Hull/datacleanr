@@ -499,17 +499,17 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                             shiny::validate(shiny::need(datareactive, label = "datareactive"))
                             shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
                             shiny::validate(shiny::need(action_tracking$plot_start, label = "plot_start actiontracking"))
-
-                            if(selected_table_rows()){
-
-                                dtpr <- DT::dataTableProxy(
-                                    outputId = 'df-grouptable',
-                                    deferUntilFlush = TRUE
-                                )
-
-                                DT::selectRows(proxy = dtpr,
-                                               selected = NULL)
-                            }
+#
+#                             if(selected_table_rows()){
+#
+#                                 dtpr <- DT::dataTableProxy(
+#                                     outputId = 'df-grouptable',
+#                                     deferUntilFlush = TRUE
+#                                 )
+#
+#                                 DT::selectRows(proxy = dtpr,
+#                                                selected = NULL)
+#                             }
 
                             shiny::callModule(module_server_plot_selectable,
                                               id = "plot",

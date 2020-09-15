@@ -207,8 +207,13 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                y = 1.2,
                                buttons = list(
                                  list(method = "restyle",
-                                      args = list("mode", "markers",  as.list(seq_len(n_groups_original)-1)),
-                                      args2 = list("mode", "lines+markers", as.list(seq_len(n_groups_original)-1)),
+                                      args = list(list(mode = "markers"),
+                                                  as.list(seq_len(n_groups_original)-1)),
+                                      # args = list(mode = "markers"),
+                                      args2 = list(list(mode = "lines+markers",
+                                                        line = list(width = 1)),
+                                                   as.list(seq_len(n_groups_original)-1)
+                                                   ),
                                       label = "Toggle Lines")
                                )
                              ))

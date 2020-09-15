@@ -692,7 +692,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
             shiny::validate(shiny::need(nrow(selected_data$df) > 0,
                                         label = "need selected data"))
-            print("data cleared on dbl click")
+            print("data cleared on button click")
 
             drop_ind <- which(selected_data$df$selection_count == max(selected_data$df$selection_count, na.rm = TRUE))
 
@@ -705,7 +705,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
             }
             selected_data$df <- selected_data$df[ -drop_ind, ]
-        })
+        }, priority = 1000)
 
 
     # clear on dbl click
@@ -878,6 +878,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
             traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
             indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
 
+
             if(length(indices)>0){
                 plotly::plotlyProxy("plot-scatterselect", session) %>%
                     plotly::plotlyProxyInvoke(
@@ -889,37 +890,78 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                 # z <- zvar_toggle(selector_vals$zvar, df = recover_data()[ selected_data$df$keys, ])
 
 
+                add_points <- recover_data()[selected_data$df$keys, ]
+                # handle plotly - only adds trace for array > 2L
+                if(nrow(add_points) == 1){
+                    add_points <- rbind(add_points, add_points)
+                }
+
+
+
+
+                if(is_spatial_plot){
+
+
+                    add_list <-
+
+                    list(
+                        lon = add_points[ , as.character(selector_vals$xvar), drop = TRUE],
+                        lat = add_points[ , as.character(selector_vals$yvar), drop = TRUE],
+                        customdata = add_points[ , ".dcrkey", drop = TRUE],
+                        text = add_points[ , ".dcrkey", drop = TRUE],
+                        type = "scattermapbox",
+                        mode = "markers",
+                        name = "O",
+                        opacity = 1,
+                        marker = list(
+                            symbol = "hospital",
+                            size = 12,
+                            allowoverlap = TRUE,
+                            color = "black",
+                            opacity = 1),
+                        selected = list(marker = list(opacity = 1)),
+                        unselected = list(marker = list(opacity = 1)),
+                        showlegend = list(TRUE))
+
+                } else {
+
+                    add_list <- list(
+                        x = add_points[ , as.character(selector_vals$xvar), drop = TRUE],
+                        y = add_points[ , as.character(selector_vals$yvar), drop = TRUE],
+                        # size = z,
+                        # sizes = c(25,100),
+                        type = "scattergl",
+                        mode = "markers",
+                        name = "O",
+                        customdata = add_points[ , ".dcrkey" , drop = TRUE],
+                        text = add_points[ , ".dcrkey" , drop = TRUE],
+                        marker = list(
+                            symbol = ifelse(is_spatial_plot,
+                                            "hospital",
+                                            "x"),
+                            size = 12,
+                            color = "black",
+                            opacity = 1),
+                        unselected = list(marker = list(opacity = 1)),
+                        selected = list(marker = list(opacity = 1)),
+                        showlegend = TRUE
+                    )
+
+                }
+
 
                 plotly::plotlyProxy("plot-scatterselect", session) %>%
                     plotly::plotlyProxyInvoke(
                         "addTraces",
-                        list(
-                            x = recover_data()[ selected_data$df$keys, as.character(selector_vals$xvar), drop = TRUE],
-                            y = recover_data()[ selected_data$df$keys, as.character(selector_vals$yvar), drop = TRUE],
-                            # size = z,
-                            # sizes = c(25,100),
-                            type = "scattergl",
-                            mode = "markers",
-                            name = "O",
-                            customdata = recover_data()[selected_data$df$keys, ".dcrkey" , drop = TRUE],
-                            text = recover_data()[selected_data$df$keys, ".dcrkey" , drop = TRUE],
-                            marker = list(
-                                symbol = ifelse(is_spatial_plot,
-                                                "hospital",
-                                                "x"),
-                                size = 12,
-                                color = "black",
-                                opacity = 1),
-                            unselected = list(marker = list(opacity = 1)),
-                            selected = list(marker = list(opacity = 1)),
-                            showlegend = TRUE
-                        ))
+                        add_list
+                        )
 
 
                 print("removed points!!")
             }
             old_keys(NULL)
-        })
+        },
+        priority = 0)
 
     # undo last selection with click
     # shiny::observeEvent({

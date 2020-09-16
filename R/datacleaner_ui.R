@@ -220,7 +220,20 @@ datacleanr_ui <- function(request){
                         shiny::sidebarLayout(
 
                             sidebarPanel = shiny::sidebarPanel(width = 4,
-                                                               shiny::h4(shiny::tags$strong("Data Overview")),
+                                                               # shiny::h4(shiny::tags$strong("Data Overview")),
+
+                                                               shiny::tagList(
+                                                                   shiny::fluidRow(
+                                                                       shiny::column(
+                                                                           4,
+                                                                           shiny::h4(shiny::tags$strong("Data Overview")),
+                                                                       ),
+                                                                       module_ui_group_relayout_buttons("grp_relayout")
+
+                                                                   ) #/fluidRow
+                                                               ),
+
+
                                                                shiny::br(),
                                                                module_ui_group_selector_table("df"),
 

@@ -390,19 +390,33 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
     })
 
+    # selected_table_rows <- shiny::reactive({!is.null(input$`df-grouptable_rows_selected`)})
+
+
+
+    # GROUP TABLE RELAYOUT BTNS---------------------
+
+
+    shiny::callModule(module_server_group_relayout_buttons,
+                      id = "grp_relayout",
+                      startscatter = shiny::reactive(selector_vals$startscatter))
+
+
 
 
     # GROUPTABLE PLOT LIMITS --------------------------------------------------
+    selected_table_rows <- shiny::reactiveVal()
 
-    selected_table_rows <- shiny::reactive({!is.null(input$`df-grouptable_rows_selected`)})
 
-    shiny::observeEvent({selected_table_rows()}, {
+    shiny::observeEvent(input[['grp_relayout-update']], {
 
         shiny::validate(shiny::need(datareactive, label = "datareactive"))
         shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
         shiny::validate(shiny::need(action_tracking$plot_start, label = "plot_start actiontracking"))
         shiny::validate(shiny::need(input[["plot-tracemap"]],
                                     label = "need tracepam"))
+
+        selected_table_rows(input$`df-grouptable_rows_selected`)
 
         handle_restyle_traces(source_id = "plot-scatterselect",
                               session = session,
@@ -411,10 +425,46 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                               xvar = as.character(selector_vals$xvar),
                               yvar = as.character(selector_vals$yvar),
                               max_id_group_trace = max_id_original_traces(),
-                              input_sel_rows = input$`df-grouptable_rows_selected`)
+                              # input_sel_rows = input$`df-grouptable_rows_selected`,
+                              input_sel_rows = selected_table_rows(),
+                              flush = FALSE)
+
+
 
     })
+    shiny::observeEvent(input[['grp_relayout-clear']], {
 
+
+
+        shiny::validate(shiny::need(datareactive, label = "datareactive"))
+        shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
+        shiny::validate(shiny::need(action_tracking$plot_start, label = "plot_start actiontracking"))
+        shiny::validate(shiny::need(input[["plot-tracemap"]],
+                                    label = "need tracepam"))
+
+
+
+        dtpr <- DT::dataTableProxy(
+            outputId = 'df-grouptable',
+            deferUntilFlush = FALSE
+        )
+        DT::selectRows(proxy = dtpr,
+                       selected = NULL)
+
+        selected_table_rows(NULL)
+
+        handle_restyle_traces(source_id = "plot-scatterselect",
+                              session = session,
+                              dframe = datareactive(),
+                              scaling = 0.1,
+                              xvar = as.character(selector_vals$xvar),
+                              yvar = as.character(selector_vals$yvar),
+                              max_id_group_trace = max_id_original_traces(),
+                              # input_sel_rows = input$`df-grouptable_rows_selected`,
+                              input_sel_rows = selected_table_rows(),
+                              flush = FALSE)
+
+})
 
 
 
@@ -560,6 +610,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     #     shiny::isolate({selector_vals$startscatter <- selector_vals$startscatter + 1})
     #   }
     # )
+
+
+
+
+
 
     # PLOT DATA SELECTION ---------------
 
@@ -1420,9 +1475,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                  shiny::tags$b("Data Overview"),
                  "Table.",
                  shiny::tags$b("Groups can be highlighted"),
-                 "for selective display by clicking on the respective rows.",
+                 "for selective display by clicking on the respective rows and updating the plot's groups.",
                  shiny::br(),
-                 "Clicking on the plot's legend (single for hide/unhide, double for hide all others/show all) has a similar effect."),
+                 "Clicking on the plot's legend (single for hide/unhide, double for hide all others/show all) has a similar effect, but does not reset the grouping or zoom."),
         shiny::p(shiny::tags$b("'Plot'"),
                  "must be clicked after any variable input",
                  shiny::code("(X, Y, Z)"),

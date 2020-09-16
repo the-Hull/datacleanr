@@ -86,9 +86,11 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   col_value_vector <- extend_palette(
     n_groups_original
   )
+
+  set.seed(123)
   col_value_vector <- col_value_vector[sample(seq_len(n_groups_original),
                                               size = n_groups_original,
-                                              replace = TRUE)]
+                                              replace = FALSE)]
 
   names(col_value_vector) <- seq_len(n_groups_original)
 

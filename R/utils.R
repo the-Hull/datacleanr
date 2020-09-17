@@ -45,6 +45,11 @@ dcr_checks <- function(dframe){
     }
 
 
+    if(rlang::inherits_any(dframe, "data.table")){
+        dframe <- dplyr::as_tibble(dframe)
+    }
+
+
     if(utils::hasName(dframe, ".dcrflag")){
 
         if(!rlang::inherits_only(dframe$.dcrflag, "logical")){
@@ -711,12 +716,14 @@ handle_add_outlier_trace <- function(sp,
         return(ok)
     }
 
+    pprox <-  plotly::plotlyProxy(source, session)
+
 
 
     # handle case when removing all points from current trace (i.e. going back to normal)
     if(NROW(outidx) > 0 & nrow(sp$df)==0){
-        plotly::plotlyProxy(source, session) %>%
             plotly::plotlyProxyInvoke(
+                pprox,
                 "deleteTraces",
                 outidx)
     }
@@ -755,8 +762,8 @@ handle_add_outlier_trace <- function(sp,
             # for first trace
             if(length(outidx) == 0){
 
-                plotly::plotlyProxy(source, session) %>%
                     plotly::plotlyProxyInvoke(
+                        pprox,
                         "addTraces",
                         list(
                             lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
@@ -781,15 +788,15 @@ handle_add_outlier_trace <- function(sp,
             } else if(length(outidx) > 0){
 
                 # delete initial outlier trace
-                plotly::plotlyProxy(source, session) %>%
                     plotly::plotlyProxyInvoke(
+                        pprox,
                         "deleteTraces",
                         outidx
                     )
 
                 # re-add selected points
-                plotly::plotlyProxy(source, session) %>%
                     plotly::plotlyProxyInvoke(
+                        pprox,
                         "addTraces",
                         list(
                             lon = add_points[ , as.character(selectors$xvar), drop = TRUE],
@@ -820,8 +827,8 @@ handle_add_outlier_trace <- function(sp,
             if(length(outidx) == 0){
 
 
-                plotly::plotlyProxy(source, session) %>%
                     plotly::plotlyProxyInvoke(
+                        pprox,
                         "addTraces",
                         list(
                             x = add_points[ , as.character(selectors$xvar), drop = TRUE],
@@ -847,15 +854,15 @@ handle_add_outlier_trace <- function(sp,
             } else if(length(outidx) > 0){
 
                 # delete initial outlier trace
-                plotly::plotlyProxy(source, session) %>%
                     plotly::plotlyProxyInvoke(
+                        pprox,
                         "deleteTraces",
                         outidx
                     )
 
                 # re-add selected points
-                plotly::plotlyProxy(source, session) %>%
                     plotly::plotlyProxyInvoke(
+                        pprox,
                         "addTraces",
                         list(
                             x = add_points[ , as.character(selectors$xvar), drop = TRUE],

@@ -53,9 +53,18 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
     # table_dat$.annotation <-
 
     if(length(sel_points$df$keys) >= 1){
-        table_dat <- dplyr::left_join(table_dat,
-                                      sel_points$df[ , c("keys", ".annotation", "selection_count")],
-                                      by = c(".dcrkey" = "keys"))
+
+
+
+        table_dat <- cbind(table_dat, sel_points$df[ , c(".annotation", "selection_count")])
+
+#
+#         table_dat <- dplyr::left_join(table_dat,
+#                                       sel_points$df[ , c("keys", ".annotation", "selection_count")],
+#                                       by = c(".dcrkey" = "keys"))
+
+
+
     } else {
 
         table_dat <- cbind(dplyr::ungroup(table_dat[0, ]),

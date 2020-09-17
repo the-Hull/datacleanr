@@ -937,8 +937,11 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
 
             if(length(indices)>0){
-                plotly::plotlyProxy("plot-scatterselect", session) %>%
+
+                pproxy <- plotly::plotlyProxy("plot-scatterselect", session)
+
                     plotly::plotlyProxyInvoke(
+                        pproxy,
                         "deleteTraces",
                         max(indices)
                     )
@@ -1007,8 +1010,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                 }
 
 
-                plotly::plotlyProxy("plot-scatterselect", session) %>%
                     plotly::plotlyProxyInvoke(
+                        pproxy,
                         "addTraces",
                         add_list
                         )

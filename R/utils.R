@@ -397,10 +397,13 @@ extend_palette <- function(n){
 
     if(n < 3){
         cols <- RColorBrewer::brewer.pal(3, "Dark2")[1:n]}
-    else if(n >= 3 & n <= 8){
+    else if(n >= 3 && n <= 8){
         cols <- RColorBrewer::brewer.pal(n, "Dark2")
+        print("3 <= n <= 8")
     } else {
         cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Dark2"))(n)
+
+        print("n greater 8")
 
     }
 
@@ -519,6 +522,8 @@ handle_restyle_traces <- function(source_id,
     deselect_trace_id <- hide_trace_idx(
         max_groups = max_id_group_trace + 1,
         selected_groups = input_sel_rows)
+
+    print(paste("deselect trace is:", deselect_trace_id))
 
 
     if(!is.null(deselect_trace_id)){

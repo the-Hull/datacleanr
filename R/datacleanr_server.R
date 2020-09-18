@@ -427,7 +427,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                               max_id_group_trace = max_id_original_traces(),
                               # input_sel_rows = input$`df-grouptable_rows_selected`,
                               input_sel_rows = selected_table_rows(),
-                              flush = FALSE)
+                              flush = TRUE)
 
 
 
@@ -462,7 +462,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                               max_id_group_trace = max_id_original_traces(),
                               # input_sel_rows = input$`df-grouptable_rows_selected`,
                               input_sel_rows = selected_table_rows(),
-                              flush = FALSE)
+                              flush = TRUE)
 
 })
 

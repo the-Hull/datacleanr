@@ -1,7 +1,7 @@
 #' Interactive and reproducible data cleaning
 #'
 #' @param dframe Character, a string naming a `data.frame`, `tbl` or `data.table` in the environment
-#'   or a path to a `.Rds` file such an object
+#'   or a path to a `.Rds` file. **Note, that `data.table`s are converted to tibbles internally.**`
 #' @param browser logical, should app start in OS's default browser? (default \code{TRUE})
 #'
 #' @details `datacleanr` provides an interactive data overview, and allows

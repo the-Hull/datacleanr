@@ -95,7 +95,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   names(col_value_vector) <- seq_len(n_groups_original)
 
   # subset to available groups
-  groups_available <- names(col_value_vector) %in% unique(plot_data$.dcrindex)
+  groups_available <- names(col_value_vector) %in% seq_len(n_groups_original)
   col_value_vector <- col_value_vector[groups_available]
 
   is_spatial_plot <- identical(c(as.character(selector_inputs$xvar),
@@ -173,6 +173,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                   allowoverlap = TRUE))
           } else {
             plotly::plot_ly(data = plot_data,
+                            type = "scattergl",
+                            mode = "markers",
                             source = "scatterselect",
                             symbols = c("circle", "star-triangle-down"),
                             symbol = if(has_flag_column){
@@ -254,6 +256,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
         plot_data,
         by = c('keys' = '.dcrkey')) %>%
         dplyr::rename(.dcrkey = .data$keys)
+
+      # add_data <- plot_data[plot_data$.dcrkey %in% sel_points$df$keys, ]
 
       add_color <- "black"
 

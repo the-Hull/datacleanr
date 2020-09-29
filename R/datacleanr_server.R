@@ -427,7 +427,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                               max_id_group_trace = max_id_original_traces(),
                               # input_sel_rows = input$`df-grouptable_rows_selected`,
                               input_sel_rows = selected_table_rows(),
-                              flush = FALSE)
+                              flush = TRUE)
 
 
 
@@ -462,7 +462,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                               max_id_group_trace = max_id_original_traces(),
                               # input_sel_rows = input$`df-grouptable_rows_selected`,
                               input_sel_rows = selected_table_rows(),
-                              flush = FALSE)
+                              flush = TRUE)
 
 })
 
@@ -933,12 +933,19 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                                          c("lon", "lat"))
 
             traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
-            indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+            # indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+
+            indices <- as.integer(traces[traces[, 1]=="O" ,2])
+
+
 
 
             if(length(indices)>0){
-                plotly::plotlyProxy("plot-scatterselect", session) %>%
+
+                pproxy <- plotly::plotlyProxy("plot-scatterselect", session)
+
                     plotly::plotlyProxyInvoke(
+                        pproxy,
                         "deleteTraces",
                         max(indices)
                     )
@@ -1007,14 +1014,13 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                 }
 
 
-                plotly::plotlyProxy("plot-scatterselect", session) %>%
                     plotly::plotlyProxyInvoke(
+                        pproxy,
                         "addTraces",
                         add_list
                         )
 
 
-                print("removed points!!")
             }
             old_keys(NULL)
         },
@@ -1055,7 +1061,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                                         label = "need tracepam"))
 
             traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
-            indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+            # indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+            indices <- as.integer(traces[traces[, 1]=="O" ,2])
+
 
             if(length(indices)>0){
                 plotly::plotlyProxy("plot-scatterselect", session) %>%
@@ -1063,7 +1071,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                         "deleteTraces",
                         indices
                     )
-                print("removed trace!!")
             }
             old_keys(NULL)
         })

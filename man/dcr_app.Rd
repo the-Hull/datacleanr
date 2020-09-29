@@ -8,7 +8,7 @@ dcr_app(dframe, browser = TRUE)
 }
 \arguments{
 \item{dframe}{Character, a string naming a \code{data.frame}, \code{tbl} or \code{data.table} in the environment
-or a path to a \code{.Rds} file such an object}
+or a path to a \code{.Rds} file. \strong{Note, that \code{data.table}s are converted to tibbles internally.}`}
 
 \item{browser}{logical, should app start in OS's default browser? (default \code{TRUE})}
 }

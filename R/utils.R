@@ -395,13 +395,17 @@ filter_scoped_df <- function(dframe, condition_df){
 #' @return color vector of length n
 extend_palette <- function(n){
 
+    pal <- "Dark2"
+    # pal <- "Accent"
+    # pal <- "Set1"
+
     if(n < 3){
-        cols <- RColorBrewer::brewer.pal(3, "Dark2")[1:n]}
+        cols <- RColorBrewer::brewer.pal(3, pal)[1:n]}
     else if(n >= 3 && n <= 8){
-        cols <- RColorBrewer::brewer.pal(n, "Dark2")
+        cols <- RColorBrewer::brewer.pal(n, pal)
         print("3 <= n <= 8")
     } else {
-        cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Dark2"))(n)
+        cols <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, pal))(n)
 
         print("n greater 8")
 
@@ -463,20 +467,49 @@ handle_sel_outliers <- function(sel_old_df, sel_new){
 
 
 
+# #' Provide trace ids to set to invisible
+# #' @param max_groups numeric, number of groups in grouptable
+# #' @param selected_groups groups highlighted in grouptable
+# #' @details Provides the indices (JS notation, starting at 0) for indices
+# #' that are set to \code{visible = 'legendonly'} through \code{plotly.restyle}
+# # hide_trace_idx <- function(max_groups, selected_groups){
+#
+#     all_row_ids <- seq_len(max_groups)
+#
+#     if(is.null(selected_groups)){
+#         deselect_ids <- NULL
+#     } else if(length(selected_groups) < max_groups){
+#         # deselect_ids <- all_row_ids[all_row_ids %nin% selected_groups] - 1
+#         deselect_ids <- all_row_ids[all_row_ids %nin% selected_groups]
+#     } else if(length(selected_groups) == max_groups){
+#         deselect_ids <- NULL
+#     }
+#
+#     return(deselect_ids)
+#
+# }
+
+
 #' Provide trace ids to set to invisible
+#' @param trace_map matrix, trace name [ ,1], trace id [ ,2]
 #' @param max_groups numeric, number of groups in grouptable
 #' @param selected_groups groups highlighted in grouptable
 #' @details Provides the indices (JS notation, starting at 0) for indices
 #' that are set to \code{visible = 'legendonly'} through \code{plotly.restyle}
-hide_trace_idx <- function(max_groups, selected_groups){
+hide_trace_idx <- function(trace_map, max_groups, selected_groups){
 
-    all_row_ids <- seq_len(max_groups)
+
+    # grab only non-outlier traces
+
+
+    non_outlier_ids <- seq_len(max_groups)
+    trace_map <-  trace_map[non_outlier_ids, ]
 
     if(is.null(selected_groups)){
         deselect_ids <- NULL
     } else if(length(selected_groups) < max_groups){
         # deselect_ids <- all_row_ids[all_row_ids %nin% selected_groups] - 1
-        deselect_ids <- all_row_ids[all_row_ids %nin% selected_groups]
+        deselect_ids <- trace_map[-selected_groups, 2]
     } else if(length(selected_groups) == max_groups){
         deselect_ids <- NULL
     }
@@ -494,6 +527,7 @@ hide_trace_idx <- function(max_groups, selected_groups){
 #' @param scaling numeric, 1 +/- scaling applied to x lims for xvar and yvar
 #' @param xvar character, name of xvar, must be in dframe
 #' @param yvar character, name of yvar, must be in dframe
+#' @param trace_map matrix, trace name [ ,1], trace id [ ,2]
 #' @param max_id_group_trace numeric, max id of plotly trace from original data (not outlier traces)
 #' @param input_sel_rows numeric, input from DT grouptable
 #' @param flush character, \code{plotlyProxy} settings
@@ -505,6 +539,7 @@ handle_restyle_traces <- function(source_id,
                                   scaling = 0.05,
                                   xvar,
                                   yvar,
+                                  trace_map,
                                   max_id_group_trace,
                                   input_sel_rows,
                                   flush = TRUE){
@@ -520,7 +555,7 @@ handle_restyle_traces <- function(source_id,
 
     # hide/show traces
 
-    deselect_trace_id <- hide_trace_idx(
+    deselect_trace_id <- hide_trace_idx(trace_map,
         # max_groups = max_id_group_trace + 1,
         max_groups = max_id_group_trace,
         selected_groups = input_sel_rows)

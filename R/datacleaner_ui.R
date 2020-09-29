@@ -270,6 +270,9 @@ datacleanr_ui <- function(request){
                             ),
 
                             mainPanel = shiny::mainPanel(width = 8,
+                                                         # diagnostics
+                                                         # shiny::textOutput('show_inputs'),
+                                                         # shiny::verbatimTextOutput("outDF"),
                                                          module_ui_plot_selectorcontrols("selectors"),
                                                          shiny::actionLink("help-plot",
                                                                            "Click for Help",

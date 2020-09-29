@@ -50,6 +50,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
         out.push([name=trace.name, index=trace.index]);
       });
       Shiny.setInputValue(data.ns + data.x, out);
+      console.log(out);
   });
   el.on('plotly_click', function(event) {
       var out = [];
@@ -58,6 +59,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
         out.push([name=trace.name, index=trace.index]);
       });
       Shiny.setInputValue(data.ns + data.x, out);
+      console.log(out);
   });
   el.on('plotly_selected', function(event) {
       var out = [];
@@ -66,6 +68,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
         out.push([name=trace.name, index=trace.index]);
       });
       Shiny.setInputValue(data.ns + data.x, out);
+      console.log(out);
   });
 }"
 
@@ -87,6 +90,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     n_groups_original
   )
 
+
+
   set.seed(123)
   col_value_vector <- col_value_vector[sample(seq_len(n_groups_original),
                                               size = n_groups_original,
@@ -97,6 +102,10 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   # subset to available groups
   groups_available <- names(col_value_vector) %in% seq_len(n_groups_original)
   col_value_vector <- col_value_vector[groups_available]
+
+
+
+
 
   is_spatial_plot <- identical(c(as.character(selector_inputs$xvar),
                                  as.character(selector_inputs$yvar)),
@@ -169,44 +178,52 @@ module_server_plot_selectable <- function(input, output, session, selector_input
           pnew <- { if(is_spatial_plot){
             plotly::plot_mapbox(data = plot_data,
                                 source = "scatterselect",
+                                mode = "markers",
                                 marker = list(
                                   allowoverlap = TRUE))
           } else {
             plotly::plot_ly(data = plot_data,
-                            type = "scattergl",
-                            mode = "markers",
                             source = "scatterselect",
-                            symbols = c("circle", "star-triangle-down"),
-                            symbol = if(has_flag_column){
-                              ~as.numeric(!.dcrflag)}
-                            else{NULL})
+                            type = "scattergl"
+
+            )
           }
           } %>%
-            plotly::add_markers(x = ~ !!shiny::isolate(selector_inputs$xvar),
-                                y = ~ !!shiny::isolate(selector_inputs$yvar),
-                                type = 'scattergl',
+            plotly::add_markers(
 
-                                size = eval(size_expression),
-                                sizes = eval(sizes_expression),
+              x = ~ !!shiny::isolate(selector_inputs$xvar),
+              y = ~ !!shiny::isolate(selector_inputs$yvar),
+
+              symbols = c("circle", "star-triangle-down"),
+              symbol = if(has_flag_column){
+                ~as.numeric(!.dcrflag)}
+              else{NULL},
+
+              size = eval(size_expression),
+              sizes = eval(sizes_expression),
+#
+              colors = as.character(col_value_vector),
+              color = ~as.factor(.dcrindex),
 
 
+              name = ~as.factor(.dcrindex),
 
-                                color = ~as.factor(.dcrindex),
-                                colors = col_value_vector,
 
-                                name = ~as.factor(.dcrindex),
-                                text = ~.dcrkey,
-                                customdata = ~.dcrkey,
+              text = ~.dcrkey,
+              customdata = ~.dcrkey,
 
-                                showlegend = TRUE,
-                                marker = list(opacity = opac,
-                                              allowoverlap = TRUE
-                                              # size = eval(size_expression),
-                                              # sizes = c(10, 100)),
-                                              # sizes = eval(sizes_expression)
-                                              ),
-                                unselected = list(marker = list(opacity = opac))
-                                ) %>%
+              showlegend = TRUE,
+              marker = list(
+                opacity = opac
+                # allowoverlap = TRUE
+                # size = eval(size_expression),
+                # sizes = c(10, 100)),
+                # sizes = eval(sizes_expression)
+              ),
+              unselected = list(marker = list(opacity = opac))
+
+
+            ) %>%
 
             plotly::layout(showlegend = TRUE,
                            dragmode = "lasso",
@@ -223,12 +240,13 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                                buttons = list(
                                  list(method = "restyle",
                                       args = list(list(mode = "markers"),
-                                                  as.list(seq_len(n_groups_original)-1)),
+                                                  # as.list(seq_len(n_groups_original)-1)),
+                                                  as.list(seq_len(n_groups_original))),
                                       # args = list(mode = "markers"),
                                       args2 = list(list(mode = "lines+markers",
                                                         line = list(width = 1)),
-                                                   as.list(seq_len(n_groups_original)-1)
-                                                   ),
+                                                   as.list(seq_len(n_groups_original))
+                                      ),
                                       label = "Toggle Lines")
                                )
                              ))

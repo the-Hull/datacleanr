@@ -24,18 +24,18 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
 
     # DIAGNOSTICS ----------------------
-
-    # AllInputs <- shiny::reactive({
-    #   x <- unlist(shiny::reactiveValuesToList(input))
-    #   paste(names(x),
-    #         x)
-    #
-    #
-    # })
-    #
-    # output$show_inputs <- shiny::renderText({
-    #   AllInputs()
-    # })
+#
+#     AllInputs <- shiny::reactive({
+#       x <- unlist(shiny::reactiveValuesToList(input))
+#       paste(names(x),
+#             x)
+#
+#
+#     })
+#
+#     output$show_inputs <- shiny::renderText({
+#       AllInputs()
+#     })
 
 
 
@@ -411,6 +411,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
     shiny::observeEvent(input[['grp_relayout-update']], {
 
+
+
+
         shiny::validate(shiny::need(datareactive, label = "datareactive"))
         shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
         shiny::validate(shiny::need(action_tracking$plot_start, label = "plot_start actiontracking"))
@@ -418,6 +421,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                                     label = "need tracepam"))
 
         selected_table_rows(input$`df-grouptable_rows_selected`)
+        trace_map <-  matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
+
+
 
         handle_restyle_traces(source_id = "plot-scatterselect",
                               session = session,
@@ -426,6 +432,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                               xvar = as.character(selector_vals$xvar),
                               yvar = as.character(selector_vals$yvar),
                               max_id_group_trace = max_id_original_traces(),
+                              trace_map = trace_map,
                               # input_sel_rows = input$`df-grouptable_rows_selected`,
                               input_sel_rows = selected_table_rows(),
                               flush = TRUE)
@@ -453,6 +460,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                        selected = NULL)
 
         selected_table_rows(NULL)
+        trace_map <-  matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
+
 
         handle_restyle_traces(source_id = "plot-scatterselect",
                               session = session,
@@ -460,6 +469,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                               scaling = 0.1,
                               xvar = as.character(selector_vals$xvar),
                               yvar = as.character(selector_vals$yvar),
+                              trace_map = trace_map,
                               max_id_group_trace = max_id_original_traces(),
                               # input_sel_rows = input$`df-grouptable_rows_selected`,
                               input_sel_rows = selected_table_rows(),
@@ -935,6 +945,9 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
             traces <- matrix(input[["plot-tracemap"]], ncol = 2, byrow = TRUE)
             # indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
+
+
+            print(traces)
 
             indices <- as.integer(traces[traces[, 1]=="O" ,2])
 

@@ -91,7 +91,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                         stringsAsFactors = FALSE)
     )
 
-    max_id_original_traces <- shiny::reactive({dplyr::n_groups(datareactive()) - 1})
+    # max_id_original_traces <- shiny::reactive({dplyr::n_groups(datareactive()) - 1})
+    max_id_original_traces <- shiny::reactive({dplyr::n_groups(datareactive())})
 
 
 

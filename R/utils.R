@@ -475,7 +475,8 @@ hide_trace_idx <- function(max_groups, selected_groups){
     if(is.null(selected_groups)){
         deselect_ids <- NULL
     } else if(length(selected_groups) < max_groups){
-        deselect_ids <- all_row_ids[all_row_ids %nin% selected_groups] - 1
+        # deselect_ids <- all_row_ids[all_row_ids %nin% selected_groups] - 1
+        deselect_ids <- all_row_ids[all_row_ids %nin% selected_groups]
     } else if(length(selected_groups) == max_groups){
         deselect_ids <- NULL
     }
@@ -520,7 +521,8 @@ handle_restyle_traces <- function(source_id,
     # hide/show traces
 
     deselect_trace_id <- hide_trace_idx(
-        max_groups = max_id_group_trace + 1,
+        # max_groups = max_id_group_trace + 1,
+        max_groups = max_id_group_trace,
         selected_groups = input_sel_rows)
 
     print(paste("deselect trace is:", deselect_trace_id))

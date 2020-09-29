@@ -168,7 +168,9 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
           pnew <- { if(is_spatial_plot){
             plotly::plot_mapbox(data = plot_data,
-                                source = "scatterselect")
+                                source = "scatterselect",
+                                marker = list(
+                                  allowoverlap = TRUE))
           } else {
             plotly::plot_ly(data = plot_data,
                             source = "scatterselect",

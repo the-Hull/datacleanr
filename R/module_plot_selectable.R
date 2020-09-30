@@ -82,7 +82,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
   # n_groups <- dplyr::n_groups(plot_data)
-  n_groups_original <- max(plot_data$.dcrindex)
+  n_groups_original <- max(plot_data$.dcrindex, na.rm = TRUE)
 
 
   # prepare named value-vector for plotly scale
@@ -99,9 +99,12 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
   names(col_value_vector) <- seq_len(n_groups_original)
 
+  print(col_value_vector)
+  print(unique(plot_data$.dcrindex))
+
   # subset to available groups
-  groups_available <- names(col_value_vector) %in% seq_len(n_groups_original)
-  col_value_vector <- col_value_vector[groups_available]
+  # groups_available <- names(col_value_vector) %in% seq_len(n_groups_original)
+  # col_value_vector <- col_value_vector[groups_available]
 
 
 
@@ -123,7 +126,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
     sz <- ifelse(is_spatial_plot,
                  45,
-                 10)
+                 15)
 
     size_expression <- expression(I(sz))
     sizes_expression <- NULL
@@ -179,12 +182,15 @@ module_server_plot_selectable <- function(input, output, session, selector_input
             plotly::plot_mapbox(data = plot_data,
                                 source = "scatterselect",
                                 mode = "markers",
+                                colors = col_value_vector,
                                 marker = list(
                                   allowoverlap = TRUE))
           } else {
             plotly::plot_ly(data = plot_data,
                             source = "scatterselect",
-                            type = "scattergl"
+                            type = "scattergl",
+                            mode = "markers",
+                            colors = col_value_vector
 
             )
           }
@@ -202,11 +208,10 @@ module_server_plot_selectable <- function(input, output, session, selector_input
               size = eval(size_expression),
               sizes = eval(sizes_expression),
 #
-              colors = as.character(col_value_vector),
               color = ~as.factor(.dcrindex),
 
 
-              name = ~as.factor(.dcrindex),
+              # name = ~as.factor(.dcrindex),
 
 
               text = ~.dcrkey,
@@ -214,8 +219,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
               showlegend = TRUE,
               marker = list(
-                opacity = opac
-                # allowoverlap = TRUE
+                opacity = opac,
+                allowoverlap = TRUE
                 # size = eval(size_expression),
                 # sizes = c(10, 100)),
                 # sizes = eval(sizes_expression)
@@ -254,7 +259,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
             plotly::config(displaylogo = FALSE,
                            modeBarButtonsToRemove = list("hoverCompareCartesian")) %>%
             plotly::event_register(event = "plotly_afterplot") %>%
-            plotly::event_register(event = "plotly_deselect") %>%
+            # plotly::event_register(event = "plotly_deselect") %>%
             plotly::event_register(event = "plotly_click") %>%
             plotly::event_register(event = "plotly_selected") %>%
             htmlwidgets::onRender(jsfull,

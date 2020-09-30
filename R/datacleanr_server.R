@@ -777,28 +777,28 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
 
     # clear on dbl click
-    shiny::observeEvent(
-        plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
-        , {
-
-
-            shiny::validate(shiny::need(nrow(selected_data$df) > 0,
-                                        label = "need selected data"))
-            print("data cleared on dbl click")
-
-            drop_ind <- which(selected_data$df$selection_count == max(selected_data$df$selection_count, na.rm = TRUE))
-
-            if(length(drop_ind) == nrow(selected_data$df)){
-
-                selected_data$df <- data.frame(keys = integer(0),
-                                               selection_count = integer(0),
-                                               .annotation = character(0),
-                                               stringsAsFactors = FALSE)
-
-            }
-            selected_data$df <- selected_data$df[ -drop_ind, ]
-        })
-
+    # shiny::observeEvent(
+    #     plotly::event_data("plotly_deselect", source = "scatterselect", priority = "event")
+    #     , {
+    #
+    #
+    #         shiny::validate(shiny::need(nrow(selected_data$df) > 0,
+    #                                     label = "need selected data"))
+    #         print("data cleared on dbl click")
+    #
+    #         drop_ind <- which(selected_data$df$selection_count == max(selected_data$df$selection_count, na.rm = TRUE))
+    #
+    #         if(length(drop_ind) == nrow(selected_data$df)){
+    #
+    #             selected_data$df <- data.frame(keys = integer(0),
+    #                                            selection_count = integer(0),
+    #                                            .annotation = character(0),
+    #                                            stringsAsFactors = FALSE)
+    #
+    #         }
+    #         selected_data$df <- selected_data$df[ -drop_ind, ]
+    #     })
+    #
 
 
     shiny::observeEvent(

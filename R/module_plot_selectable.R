@@ -99,12 +99,10 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
   names(col_value_vector) <- seq_len(n_groups_original)
 
-  print(col_value_vector)
-  print(unique(plot_data$.dcrindex))
 
   # subset to available groups
-  # groups_available <- names(col_value_vector) %in% seq_len(n_groups_original)
-  # col_value_vector <- col_value_vector[groups_available]
+  groups_available <- names(col_value_vector) %in% seq_len(n_groups_original)
+  col_value_vector <- col_value_vector[groups_available]
 
 
 

@@ -89,7 +89,6 @@ module_server_plot_annotation_table <- function(input, output, session, dframe, 
 
 
     # disable_cols <- which(colnames(table_dat) != ".annotation")
-    #print(paste("disable", disable_cols))
 
 
     # columns2hide <- base::match(".dcrkey", colnames(table_dat))

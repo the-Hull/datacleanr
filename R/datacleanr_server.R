@@ -214,7 +214,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
         # # diagnostic df
         # output$outDF <- shiny::renderPrint({
-        #   print(add.filter$df)
         # })
 
 
@@ -526,7 +525,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
         action_tracking$plot_start <- FALSE
         action_tracking$controls <- TRUE
 
-        print("used controls - disable selecting")
     })
 
 
@@ -542,7 +540,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     #   action_tracking$plot_start <- FALSE
     #   action_tracking$controls <- TRUE
     #
-    #   print("used controls - disable selecting")
     # }
     #                     )
 
@@ -557,7 +554,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                         {
                             action_tracking$plot_start <- TRUE
                             action_tracking$controls <- FALSE
-                            print("pressed start - enable selecting")
 
                             shiny::validate(shiny::need(datareactive, label = "datareactive"))
                             shiny::validate(shiny::need(input[["selectors-startscatter"]], label = "PlotStartbutton"))
@@ -583,7 +579,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
                             # if(selected_table_rows()){
                             #
-                            #   print("GROUP TABLE SELECTED")
                             #
                             #
                             #   handle_restyle_traces(
@@ -636,7 +631,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     # handle selections
     shiny::observeEvent({
         plotly::event_data("plotly_selected", priority = "event", source = "scatterselect")}, {
-            print("selected!")
+            # print("selected!")
 
             shiny::validate(shiny::need(action_tracking$plot_start,
                                         label = "PlotStarter"))
@@ -656,7 +651,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
     shiny::observeEvent({
         plotly::event_data("plotly_click", priority = "event", source = "scatterselect")}, {
-            print("clicked!")
+            # print("clicked!")
 
             shiny::validate(shiny::need(action_tracking$plot_start,
                                         label = "PlotStarter"))
@@ -706,8 +701,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     #                           stringsAsFactors = FALSE)
     #         selected_data$df <- new
     #     }
-    #     print(paste("orig selection:"))
-    #     print(selected_data$df)
     # })
     #
     #
@@ -719,7 +712,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     #     shiny::validate(shiny::need(action_tracking$plot_start,
     #                                 label = "PlotStarter"))
     #
-    #     print("selected!")
     #
     #     # selected <- shiny::reactiveVal()
     #     selected <- plotly::event_data("plotly_selected",
@@ -746,8 +738,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     #             selected_data$df <- new
     #         }
     #
-    #         print(paste("orig selection:"))
-    #         print(selected_data$df)
     #     }
     #
     # })
@@ -760,7 +750,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
             shiny::validate(shiny::need(nrow(selected_data$df) > 0,
                                         label = "need selected data"))
-            print("data cleared on button click")
+            # print("data cleared on button click")
 
             drop_ind <- which(selected_data$df$selection_count == max(selected_data$df$selection_count, na.rm = TRUE))
 
@@ -784,7 +774,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     #
     #         shiny::validate(shiny::need(nrow(selected_data$df) > 0,
     #                                     label = "need selected data"))
-    #         print("data cleared on dbl click")
     #
     #         drop_ind <- which(selected_data$df$selection_count == max(selected_data$df$selection_count, na.rm = TRUE))
     #
@@ -814,7 +803,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
                                            .annotation = character(0),
                                            stringsAsFactors = FALSE)
 
-            print("DELETED IT ALL!")
 
         })
 
@@ -884,7 +872,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     #                         traces <- matrix(input[[ns("plot-tracemap")]], ncol = 2, byrow = TRUE)
     #                         indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
     #
-    #                         print(paste("indices are:", indices))
     #
     #                         if(length(indices)>0){
     #                             plotly::plotlyProxy(ns("plot-scatterselect"), session) %>%
@@ -892,10 +879,8 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     #                                     "deleteTraces",
     #                                     max(indices)
     #                                 )
-    #                             print("removed trace!!")
     #                         }
     #                         old_keys(NULL)
-    #                         print(traces)
     #                     })
 
 
@@ -947,7 +932,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
             # indices <-  as.integer(traces[ as.integer(traces[, 2]) > max_id_original_traces(), 2])
 
 
-            print(traces)
 
             indices <- as.integer(traces[traces[, 1]=="O" ,2])
 
@@ -1060,7 +1044,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     #           "deleteTraces",
     #           max(indices)
     #         )
-    #       print("removed trace!!")
     #     }
     #     old_keys(NULL)
     #   })
@@ -1692,8 +1675,6 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
     # OUTLIST
     # shiny::observeEvent(input[["selectors-startscatter"]], {
     #     outs <- outputOptions(output)
-    #     print(outs)
-    #     print("ya")
     #     lapply(names(outs), function(name) {
     #         outputOptions(output, name, suspendWhenHidden = FALSE)
     #     })

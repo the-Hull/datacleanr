@@ -502,14 +502,26 @@ hide_trace_idx <- function(trace_map, max_groups, selected_groups){
     # grab only non-outlier traces
 
 
-    non_outlier_ids <- seq_len(max_groups)
-    trace_map <-  trace_map[non_outlier_ids, ]
+    # if exists, drop outlier trace
+    outlier_id <- which(trace_map[,1] == "O")
+
+    if(length(outlier_id) > 0){
+        trace_map <- trace_map[-outlier_id, ]
+
+    }
+
 
     if(is.null(selected_groups)){
         deselect_ids <- NULL
     } else if(length(selected_groups) < max_groups){
         # deselect_ids <- all_row_ids[all_row_ids %nin% selected_groups] - 1
-        deselect_ids <- trace_map[-selected_groups, 2]
+        # deselect_ids <- trace_map[-selected_groups, 2]
+
+        # match group ids with index ids (important when NA groups present)
+        selected_index_in_tracemap_lgl <- trace_map[,1] %nin% selected_groups
+        deselect_ids <- trace_map[selected_index_in_tracemap_lgl, 2]
+
+
     } else if(length(selected_groups) == max_groups){
         deselect_ids <- NULL
     }
@@ -1038,18 +1050,30 @@ calc_limits_per_groups <- function(dframe, group_index, xvar, yvar, scaling = 0.
     }
 
     if(!exists("xlim")){
+
+        if(rlang::inherits_any(dframe[, xvar, drop = TRUE], c("character", "factor"))){
+            xlim <- NULL}
+        else {
+
+
         xlim <- (diff(range(dframe[group_rows, xvar, drop = TRUE],
                       na.rm = TRUE)) * scaling) * c(-1,1) +
             range(dframe[group_rows, xvar, drop = TRUE],
                   na.rm = TRUE)
+        }
     }
 
     if(!exists("ylim")){
-        ylim <- (diff(range(dframe[group_rows, yvar, drop = TRUE],
-                            na.rm = TRUE)) * scaling) * c(-1,1) +
-            range(dframe[group_rows, yvar, drop = TRUE],
-                  na.rm = TRUE)
 
+        if(rlang::inherits_any(dframe[, yvar, drop = TRUE], c("character", "factor"))){
+            ylim <- NULL}
+        else {
+
+            ylim <- (diff(range(dframe[group_rows, yvar, drop = TRUE],
+                                na.rm = TRUE)) * scaling) * c(-1,1) +
+                range(dframe[group_rows, yvar, drop = TRUE],
+                      na.rm = TRUE)
+        }
         # ylim <- range(dframe[group_rows, yvar, drop = TRUE],
         #               na.rm = TRUE) *
         #     c(1 - scaling, 1 + scaling)

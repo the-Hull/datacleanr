@@ -8,8 +8,8 @@ Authors@R:
            email = "agl.hurley@gmail.com",
            comment = c(ORCID = "0000-0002-9641-2805"))
 Description: datacleanr is a flexible and efficient tool for interactive data
-cleaning, while enabling best practices in data analyses and reproducibility. 
-It is designed for interoperability, and so seamlessly fits into reproducible analyses pipelines in `R`.
+  cleaning, while enabling best practices in data analyses and reproducibility. 
+  It is designed for interoperability, and so seamlessly fits into reproducible analyses pipelines in R.
 License: GPL-3
 Suggests: 
     testthat (>= 2.1.0)

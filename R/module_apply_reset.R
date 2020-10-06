@@ -38,7 +38,6 @@ module_server_apply_reset <- function(input, output, session, df_filtered, df_or
 
 
         output$data <- df_filtered$df
-                    "filter output is:", nrow(output$data)))
     })
 
     shiny::observeEvent(input$resetfilter, {

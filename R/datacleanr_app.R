@@ -82,17 +82,19 @@ dcr_app <- function(dframe, browser = TRUE){
 
 
 
-    shiny::runApp(appDir =
+    base::suppressWarnings(
+        shiny::runApp(appDir =
 
-                      shiny::shinyApp(ui     = datacleanr_ui,
-                                      server = function(input, output, session){
-                                          datacleanr_server(input,
-                                                            output,
-                                                            session,
-                                                            dataset = use_data$dataset,
-                                                            df_name = df_name,
-                                                            is_on_disk = !is.null(use_data$file_path))},
-                                      options = opts_list)
+                          shiny::shinyApp(ui     = datacleanr_ui,
+                                          server = function(input, output, session){
+                                              datacleanr_server(input,
+                                                                output,
+                                                                session,
+                                                                dataset = use_data$dataset,
+                                                                df_name = df_name,
+                                                                is_on_disk = !is.null(use_data$file_path))},
+                                          options = opts_list)
+        )
     )
 
 

@@ -117,11 +117,15 @@
     <p>Provide trace ids to set to invisible</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hide_trace_idx</span><span class='op'>(</span><span class='va'>max_groups</span>, <span class='va'>selected_groups</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>hide_trace_idx</span><span class='op'>(</span><span class='va'>trace_map</span>, <span class='va'>max_groups</span>, <span class='va'>selected_groups</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>trace_map</th>
+      <td><p>matrix, with cols trace name (col 1), trace id (col 2)</p></td>
+    </tr>
     <tr>
       <th>max_groups</th>
       <td><p>numeric, number of groups in grouptable</p></td>

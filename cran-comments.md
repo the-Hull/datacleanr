@@ -1,10 +1,8 @@
 ## Test environments
-* local OS X install, R 3.6.3
-* ubuntu 14.04 (on travis-ci), R 3.6.3
-* win-builder (devel and release)
+* local win 10 install (release, old-rel)
+* x86_64-pc-linux-gnu 64-bit (release; on CircleCI)
 
 ## R CMD check results
-
-0 errors | 0 warnings | 1 note
+0 errors v | 0 warnings v | 0 notes v
 
 * This is a new release.

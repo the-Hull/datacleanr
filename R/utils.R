@@ -489,7 +489,7 @@ handle_sel_outliers <- function(sel_old_df, sel_new){
 
 
 #' Provide trace ids to set to invisible
-#' @param trace_map matrix, trace name [ ,1], trace id [ ,2]
+#' @param trace_map matrix, with cols trace name (col 1), trace id (col 2)
 #' @param max_groups numeric, number of groups in grouptable
 #' @param selected_groups groups highlighted in grouptable
 #' @details Provides the indices (JS notation, starting at 0) for indices
@@ -537,7 +537,7 @@ hide_trace_idx <- function(trace_map, max_groups, selected_groups){
 #' @param scaling numeric, 1 +/- scaling applied to x lims for xvar and yvar
 #' @param xvar character, name of xvar, must be in dframe
 #' @param yvar character, name of yvar, must be in dframe
-#' @param trace_map matrix, trace name [ ,1], trace id [ ,2]
+#' @param trace_map matrix, with columns for trace name (col 1) and trace id (col 2)
 #' @param max_id_group_trace numeric, max id of plotly trace from original data (not outlier traces)
 #' @param input_sel_rows numeric, input from DT grouptable
 #' @param flush character, \code{plotlyProxy} settings

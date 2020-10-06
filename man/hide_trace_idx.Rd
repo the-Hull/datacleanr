@@ -4,9 +4,11 @@
 \alias{hide_trace_idx}
 \title{Provide trace ids to set to invisible}
 \usage{
-hide_trace_idx(max_groups, selected_groups)
+hide_trace_idx(trace_map, max_groups, selected_groups)
 }
 \arguments{
+\item{trace_map}{matrix, with cols trace name (col 1), trace id (col 2)}
+
 \item{max_groups}{numeric, number of groups in grouptable}
 
 \item{selected_groups}{groups highlighted in grouptable}

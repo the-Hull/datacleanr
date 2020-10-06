@@ -11,6 +11,7 @@ handle_restyle_traces(
   scaling = 0.05,
   xvar,
   yvar,
+  trace_map,
   max_id_group_trace,
   input_sel_rows,
   flush = TRUE
@@ -28,6 +29,8 @@ handle_restyle_traces(
 \item{xvar}{character, name of xvar, must be in dframe}
 
 \item{yvar}{character, name of yvar, must be in dframe}
+
+\item{trace_map}{matrix, with columns for trace name (col 1) and trace id (col 2)}
 
 \item{max_id_group_trace}{numeric, max id of plotly trace from original data (not outlier traces)}
 

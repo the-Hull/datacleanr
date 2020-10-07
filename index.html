@@ -146,7 +146,7 @@
 <div id="2-filtering" class="section level3">
 <h3 class="hasAnchor">
 <a href="#2-filtering" class="anchor"></a>2. Filtering</h3>
-<p>Filtering relies on <code>R</code> expressions passed to <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code>. For example, valid statements for <code>iris</code> are:</p>
+<p>Add/Remove filter statement boxes, and apply (valid) expressions - either to the entire data set, or scoped to individual groups. Filtering relies on <code>R</code> expressions passed to <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code>, so, for example, valid statements for <code>iris</code> are:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
     <span class="va">Species</span> <span class="op">==</span> <span class="st">'setosa'</span>
     <span class="va">Species</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'setosa'</span>,<span class="st">'versicolor'</span><span class="op">)</span>
@@ -183,6 +183,7 @@
 <div id="33-time-series" class="section level4">
 <h4 class="hasAnchor">
 <a href="#33-time-series" class="anchor"></a>3.3 Time Series</h4>
+<p>Any <code>numeric</code> or <code>POSIXct</code> column (in X or Y dimension) can be used to visualize time series. Use the <code>Toggle Lines</code> button above the plot to facilitate exploration.</p>
 <p><strong>Example 1</strong>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>

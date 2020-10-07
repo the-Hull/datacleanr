@@ -14,8 +14,6 @@
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
-> Currently under development.
-
 `datacleanr` is a flexible and efficient tool for **interactive** data
 cleaning, and is inherently interoperable, as it seamlessly integrates
 into **reproducible** data analyses pipelines in `R`.

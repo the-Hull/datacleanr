@@ -23,7 +23,6 @@ knitr::opts_chunk$set(
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
-> Currently under development. 
 
 
 
@@ -182,7 +181,7 @@ dcr_app(tree_data)
 
 
 
-**Example 2**:
+**Example 2**:  
 
 > No GIF
 

@@ -188,7 +188,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                             source = "scatterselect",
                             type = "scattergl",
                             mode = "markers",
-                            colors = col_value_vector
+                            colors = col_value_vector,
+                            symbols = c("star-triangle-down","circle")
 
             )
           }
@@ -198,7 +199,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
               x = ~ !!shiny::isolate(selector_inputs$xvar),
               y = ~ !!shiny::isolate(selector_inputs$yvar),
 
-              symbols = c("circle", "star-triangle-down"),
+              # symbols = c("circle", "star-triangle-down"),
               symbol = if(has_flag_column){
                 ~as.numeric(!.dcrflag)}
               else{NULL},

@@ -54,7 +54,7 @@ There are **four tabs** in the app for these tasks:
 - **Visual Cleaning and Annotating**: generate bivarirate (time series) plots and maps, as well as highlight and annotate individual observations. Cycle through nested groups to expedite exploration and cleaning. Histograms of original vs. 'cleaned' data can be generated.
 - **Extract**: generate reproducible recipe and define outputs.
 
-Note, maps require columns *lon* and *lat* (X and Y) in decimal degrees in the data set to render.
+Note, maps require columns `lon` and `lat` (X and Y) in decimal degrees in the data set to render.
 
 ## Additional features
 
@@ -71,6 +71,98 @@ Launch `datacleanr`'s interactive app with the following code:
 library(datacleanr)
 dcr_app(iris)
 ## basic example code
+```
+
+
+
+### Visualizing and annotating
+
+#### Time Series
+
+**Example 1**:
+
+
+```{r}
+library(dplyr)
+
+dplyr::glimpse(treering)
+tree_df <- data.frame(year = -6000:1979,
+           val = treering)
+
+# make synthetic data
+tree_data <- list(tree_A = tree_df,
+                  tree_B = tree_df %>% 
+                      mutate(val = val + rnorm(nrow(.), 0.5, 0.2)),
+                  tree_C = tree_df %>% 
+                      mutate(val = val + rnorm(nrow(.), mean = -0.03, 0.1))) %>% 
+    bind_rows(.id = "tree")
+
+# group by tree and inspect
+dcr_app(tree_data)
+
+
+```
+
+
+(Arbitrary Selections)
+
+# datacleanr  <img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_select_timeseries.gif" width = "150"/>
+
+
+**Example 2**:
+
+```{r}
+
+library(dplyr)
+library(lubridate)
+data("storms", package = "dplyr")
+
+storms_mod <- storms %>% 
+    mutate(timestamp = lubridate::ymd_h(paste(year, month, day, hour)))
+
+# Group by name (198 groups)
+# Check "Emily"
+dcr_app(storms_mod)
+
+```
+
+
+#### Spatial
+
+Select columns `lon` and `lat` for plotting.
+
+**Example 1**
+
+```{r}
+library(datacleanr)
+library(dplyr)
+
+airport_data <- read.csv('https://plotly-r.com/data-raw/airport_locations.csv') %>%
+    rename(lon = long)
+
+# group by state
+dcr_app(airport_data)
+
+
+```
+
+
+**Example 2**
+
+```{r}
+
+library(dplyr)
+library(lubridate)
+data("storms", package = "dplyr")
+
+
+storms_mod <- storms %>% 
+    rename(lon = long)
+
+# Group by name (198 groups)
+# Check "Bonnie"
+dcr_app(storms_mod)
+
 ```
 
 

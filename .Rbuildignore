@@ -10,3 +10,9 @@
 ^\.circleci$
 ^R/_dev\.R$
 ^_pkgdown\.yml$
+^man/figures/readme_filter\.gif$
+^man/figures/readme_select\.gif$
+^man/figures/readme_select_dcrflag\.gif$
+^man/figures/readme_select_spatial\.gif$
+^man/figures/readme_select_timeseries\.gif$
+^man/figures/readme_setup\.gif$

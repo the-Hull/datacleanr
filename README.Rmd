@@ -100,7 +100,17 @@ dcr_app(iris)
 
 ### 2. Filtering
 
-Add/Remove filter statement boxes, and apply (valid) expressions - either to the entire data set, or scoped to individual groups.
+Filtering relies on `R` expressions passed to `dplyr::filter()`.
+For example, valid statements for `iris` are:
+
+```{r}
+    Species == 'setosa'
+    Species %in% c('setosa','versicolor')
+    Sepal.Width > quantile(Sepal.Width, 0.05)
+```
+
+Any function returning a logical vector (i.e. `TRUE`/`FALSE`), can be employed here!
+
 
 <img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_filter.gif" width = "1000" align = "center"/>
 
@@ -211,6 +221,7 @@ dcr_app(airport_data)
 <img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_select_spatial.gif" width = "1000" align = "center"/>
 
 **Example 2**
+
 > No GIF
 
 

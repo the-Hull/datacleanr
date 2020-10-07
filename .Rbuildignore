@@ -18,3 +18,4 @@
 ^man/figures/readme_setup\.gif$
 ^man/figures/readme_extract\.gif$
 ^man/figures/readme_extract_file\.gif$
+^CRAN-RELEASE$

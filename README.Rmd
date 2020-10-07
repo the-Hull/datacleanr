@@ -100,8 +100,9 @@ dcr_app(iris)
 
 ### 2. Filtering
 
-Filtering relies on `R` expressions passed to `dplyr::filter()`.
-For example, valid statements for `iris` are:
+	
+Add/Remove filter statement boxes, and apply (valid) expressions - either to the entire data set, or scoped to individual groups.
+Filtering relies on `R` expressions passed to `dplyr::filter()`, so, for example, valid statements for `iris` are:
 
 ```{r}
     Species == 'setosa'
@@ -145,6 +146,9 @@ dcr_app(iris_mod)
 <img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_select_dcrflag.gif" width = "1000" align = "center"/>
 
 #### 3.3 Time Series
+
+Any `numeric` or `POSIXct` column (in X or Y dimension) can be used to visualize time series. 
+Use the `Toggle Lines` button above the plot to facilitate exploration.
 
 **Example 1**:
 

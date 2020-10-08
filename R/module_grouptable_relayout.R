@@ -28,23 +28,37 @@ module_server_group_relayout_buttons  <- function(input, output, session, starts
 
 
 
+    # relayout_buttons_tl <- shiny::tagList(
+    #         shiny::actionButton(
+    #             inputId = ns('update'),
+    #             label = "Update Plot Groups",
+    #             icon = shiny::icon("paragraph"),
+    #             class = "btn-info"),
+    #         shiny::br(),
+    #         shiny::actionButton(
+    #             inputId = ns('clear'),
+    #             icon = shiny::icon("paragraph"),
+    #             class = "btn-danger",
+    #             label = "Clear all Plot Groups")
+    #     )
+
     relayout_buttons_tl <- shiny::tagList(
         shiny::column(
             4,
             align = "right",
             shiny::actionButton(
                 inputId = ns('update'),
-                label = "Update Plot Groups",
-                icon = shiny::icon("paragraph"),
+                label = "Update",
+                icon = shiny::icon("sync-alt"),
                 class = "btn-info")),
         shiny::column(
             4,
             align = "right",
             shiny::actionButton(
                 inputId = ns('clear'),
-                icon = shiny::icon("paragraph"),
-                class = "btn-danger",
-                label = "Clear all Plot Groups")
+                icon = shiny::icon("window-close"),
+                class = "btn-warning",
+                label = "Reset")
         )
     )
 

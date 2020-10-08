@@ -226,7 +226,7 @@ datacleanr_ui <- function(request){
                                                                    shiny::fluidRow(
                                                                        shiny::column(
                                                                            4,
-                                                                           shiny::h4(shiny::tags$strong("Data Overview")),
+                                                                           shiny::h4(shiny::tags$strong("Plot Groups")),
                                                                        ),
                                                                        module_ui_group_relayout_buttons("grp_relayout")
 

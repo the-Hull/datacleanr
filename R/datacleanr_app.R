@@ -34,6 +34,9 @@
 #'    2. Observational (numeric) data in `z` dimension (point size)
 #'    3. Spatial data, when `lon` and `lat` in decimal degrees are present in `x` and `y`.
 #'
+#'  Displaying spatial data requires a [Mapbox](https://www.mapbox.com/) account, from which an access token needs
+#'  to be copied into your `.Renviron` (e.g. `MAPBOX_TOKEN=your_copied_token`).
+#'
 #'  Note, that when a column `.dcrflag` (logical, `TRUE` \ `FALSE`) is present in `dframe`,
 #'  respective observations are given contrasting
 #'  symbols (`FALSE` = circle, `TRUE` = star-triangle).

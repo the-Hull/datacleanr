@@ -118,7 +118,6 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   if(zvar_toggle){
     size_expression <- stats::as.formula(paste("~", shiny::isolate(selector_inputs$zvar)))
     sizes_expression <- expression(c(5, 100))
-    print("sizes adjusted")
   } else {
     # size_expression <- rlang::quo_squash(NULL)
 

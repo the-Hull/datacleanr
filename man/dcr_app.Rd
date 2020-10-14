@@ -60,6 +60,9 @@ Data formats supported are
 \item Spatial data, when \code{lon} and \code{lat} in decimal degrees are present in \code{x} and \code{y}.
 }
 
+Displaying spatial data requires a \href{https://www.mapbox.com/}{Mapbox} account, from which an access token needs
+to be copied into your \code{.Renviron} (e.g. \code{MAPBOX_TOKEN=your_copied_token}).
+
 Note, that when a column \code{.dcrflag} (logical, \code{TRUE} \ \code{FALSE}) is present in \code{dframe},
 respective observations are given contrasting
 symbols (\code{FALSE} = circle, \code{TRUE} = star-triangle).

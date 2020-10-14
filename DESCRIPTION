@@ -2,11 +2,21 @@ Package: datacleanr
 Title: Interactive and Reproducible Data Cleaning
 Version: 1.0.0
 Authors@R: 
+  c(
     person(given = "Alexander",
            family = "Hurley",
-           role = c("aut", "cre"),
+           role = c("cre", "aut", "cph"),
            email = "agl.hurley@gmail.com",
-           comment = c(ORCID = "0000-0002-9641-2805"))
+           comment = c(ORCID = "0000-0002-9641-2805")),
+    person('Richard',
+            'Peters',
+            role = c("ctb"),
+            comment=c(ORCID = '0000-0002-7441-1297')),
+    person('Christoforos',
+           'Pappas',
+           role = c("ctb"),
+           comment=c(ORCID = '0000-0001-5721-557X'))
+      )
 Description: Flexible and efficient cleaning of data with interactivity.
   datacleanr facilitates best practices in data analyses and reproducibility with built-in features and by translating interactive/manual operations to code. 
   The package is designed for interoperability, and so seamlessly fits into reproducible analyses pipelines in R.

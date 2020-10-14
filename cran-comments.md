@@ -21,4 +21,12 @@ The Note can safely be ignored.
 >    interoperability (12:31)
 >    reproducibility (11:62)
 
-* This is a new release.
+## Re-Submission
+
+* This is a new release, and resubmitted due to the following issue: 
+
+ >Found the following (possibly) invalid file URI:
+ >    URI: .github/CODE_OF_CONDUCT.md
+ >      From: README.md
+
+The issue was fixed. 

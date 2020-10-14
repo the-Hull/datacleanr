@@ -23,6 +23,12 @@ series** data.
 
 ## Installation
 
+The latest release on CRAN can be installed using:
+
+``` r
+install.packages("datacleanr")
+```
+
 You can install the development version of `datacleanr` with:
 
 ``` r
@@ -311,5 +317,6 @@ dcr_app("./testiris.Rds")
 -----
 
 Please note that the `datacleanr` project is released with a
-[Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By
-contributing to this project, you agree to abide by its terms.
+[Contributor Code of
+Conduct](https://raw.githubusercontent.com/the-Hull/datacleanr/master/.github/CODE_OF_CONDUCT.md).
+By contributing to this project, you agree to abide by its terms.

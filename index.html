@@ -84,8 +84,11 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the development version of <code>datacleanr</code> with:</p>
+<p>The latest release on CRAN can be installed using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"datacleanr"</span><span class="op">)</span></pre></div>
+<p>You can install the development version of <code>datacleanr</code> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"the-hull/datacleanr"</span><span class="op">)</span></pre></div>
 </div>
 <div id="design" class="section level2">
@@ -117,7 +120,7 @@
 <li>
 <strong>Batching</strong>: If data sets are too large, or too deeply nested (e.g. individual, plot, site, region, etc.), we recommend a split-combine approach to expedite the processing.</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb2"><pre class="downlit">
+<!-- end list --><div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="va">iris_split</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">iris</span>, <span class="va">iris</span><span class="op">$</span><span class="va">Species</span><span class="op">)</span> 
 
 <span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">iris_split</span>, 
@@ -136,7 +139,7 @@
 <h3 class="hasAnchor">
 <a href="#1-set-up--overview" class="anchor"></a>1. Set-up &amp; Overview</h3>
 <p>Define the grouping structure (used throughout app for scoping filters and plotting), and generate an informative overview.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
+<div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
 
 <span class="co"># group by species</span>
@@ -147,7 +150,7 @@
 <h3 class="hasAnchor">
 <a href="#2-filtering" class="anchor"></a>2. Filtering</h3>
 <p>Add/Remove filter statement boxes, and apply (valid) expressions - either to the entire data set, or scoped to individual groups. Filtering relies on <code>R</code> expressions passed to <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code>, so, for example, valid statements for <code>iris</code> are:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
+<div class="sourceCode" id="cb5"><pre class="downlit">
     <span class="va">Species</span> <span class="op">==</span> <span class="st">'setosa'</span>
     <span class="va">Species</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'setosa'</span>,<span class="st">'versicolor'</span><span class="op">)</span>
     <span class="va">Sepal.Width</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="fl">0.05</span><span class="op">)</span></pre></div>
@@ -166,7 +169,7 @@
 <div id="32-using-dcrflag-to-interface-with-external-qaqc" class="section level4">
 <h4 class="hasAnchor">
 <a href="#32-using-dcrflag-to-interface-with-external-qaqc" class="anchor"></a>3.2 Using <code>.dcrflag</code> to interface with external QA/QC</h4>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 
@@ -185,7 +188,7 @@
 <a href="#33-time-series" class="anchor"></a>3.3 Time Series</h4>
 <p>Any <code>numeric</code> or <code>POSIXct</code> column (in X or Y dimension) can be used to visualize time series. Use the <code>Toggle Lines</code> button above the plot to facilitate exploration.</p>
 <p><strong>Example 1</strong>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
+<div class="sourceCode" id="cb7"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">treering</span><span class="op">)</span>
@@ -210,7 +213,7 @@
 <blockquote>
 <p>No GIF</p>
 </blockquote>
-<div class="sourceCode" id="cb7"><pre class="downlit">
+<div class="sourceCode" id="cb8"><pre class="downlit">
 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span>
@@ -228,7 +231,7 @@
 <a href="#34-spatial" class="anchor"></a>3.4 Spatial</h4>
 <p>Select columns <code>lon</code> and <code>lat</code> for plotting.</p>
 <p><strong>Example 1</strong></p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
+<div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 
@@ -242,7 +245,7 @@
 <blockquote>
 <p>No GIF</p>
 </blockquote>
-<div class="sourceCode" id="cb9"><pre class="downlit">
+<div class="sourceCode" id="cb10"><pre class="downlit">
 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span>
@@ -263,12 +266,12 @@
 <p>All grouping, filtering and selections/annotations are translated to <code>R</code> code, which can be sent to an <code>RStudio</code> script, copied to the clipboard, or - when <code>dcr_app</code> is launched with a file path - save options are made available. For large selections/annotations we recommend saving the script separately, and sourcing it (i.e. <code><a href="https://rdrr.io/r/base/source.html">source("your_datacleanr_script.R")</a></code>) during later analyses.</p>
 <p><strong>Example 1</strong></p>
 <p>Launching with an object from <code>R</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
+<div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></pre></div>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_extract.gif" width="1000" align="center"></p>
 <p>And output from extract tab:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
+<div class="sourceCode" id="cb12"><pre class="downlit">
 <span class="co"># datacleaning with datacleanr (0.0.1)</span>
 <span class="co"># ##------ Wed Oct 07 12:54:03 2020 ------##</span>
 
@@ -299,7 +302,7 @@
 <span class="co"># iris  &lt;- iris %&gt;% dplyr::filter(is.na(.annotation))</span></pre></div>
 <p><strong>Example 2</strong></p>
 <p>Launching with an <code>.RDS</code> from disk:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
+<div class="sourceCode" id="cb13"><pre class="downlit">
 
 <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">iris</span>, file <span class="op">=</span> <span class="st">"./testiris.Rds"</span><span class="op">)</span>
 
@@ -307,7 +310,7 @@
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="st">"./testiris.Rds"</span><span class="op">)</span></pre></div>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_extract_file.gif" width="1000" align="center"></p>
 <hr>
-<p>Please note that the <code>datacleanr</code> project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<p>Please note that the <code>datacleanr</code> project is released with a <a href="https://raw.githubusercontent.com/the-Hull/datacleanr/master/.github/CODE_OF_CONDUCT.md">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
 </div>
@@ -340,7 +343,8 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Alexander Hurley <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-9641-2805" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Alexander Hurley <br><small class="roles"> Maintainer, author, copyright holder </small> <a href="https://orcid.org/0000-0002-9641-2805" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html">All authors...</a></li>
 </ul>
 </div>
 

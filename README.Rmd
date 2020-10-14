@@ -334,7 +334,7 @@ dcr_app("./testiris.Rds")
 ### 1. Exploring soil respiration with **COSORE**:
 
 **COSORE** is a community-driven soil respiration database, recently introduced with a manuscript published [here]( https://doi.org/10.1111/gcb.15353) by Bond-Lamberty *et al.*.
-The database has provides soil respiration flux estimates, as well as meta data across multiple data sets. 
+The database provides soil respiration flux estimates, as well as meta data across multiple data sets. 
 Let's explore!
 
 
@@ -367,17 +367,19 @@ datacleanr::dcr_app(db_info)
 
 ```
 
+> No GIF
+
 **Explore nested data sets**:
 
 ```{r}
 # grab all data from ZHANG
-all_data <- cosore::csr_table("data", c("d20190424_ZHANG_maple",
+zhang <- cosore::csr_table("data", c("d20190424_ZHANG_maple",
                                         "d20190424_ZHANG_oak")) %>%
   # adjust for grouping
   mutate(CSR_PORT = as.factor(CSR_PORT))
 
 # group by CSR_DATASET and CSR_PORT
-datacleanr::dcr_app(all_data)
+datacleanr::dcr_app(zhang)
 
 ```
 

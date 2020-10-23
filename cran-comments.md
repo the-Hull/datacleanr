@@ -25,8 +25,29 @@ The Note can safely be ignored.
 
 * This is a new release, and resubmitted due to the following issue: 
 
- >Found the following (possibly) invalid file URI:
- >    URI: .github/CODE_OF_CONDUCT.md
- >      From: README.md
 
-The issue was fixed. 
+
+1. Please always write package names, software names and API (application
+programming interface) names in single quotes in title and description.
+e.g: --> 'datacleanr'
+
+- FIXED
+
+
+2. Please do not modify the global environment (e.g. by using <<-) in your
+functions. This is not allowed by the CRAN policies.
+
+- The call to `<<-` sits within a non-exported, `shiny` module function, i.e. server side. 
+The global environment is not affected when this code executes.
+(see function `module_server_summary` in `module_data_summary.R` , lines 27 - 70)
+
+
+
+3. Please always add all authors, contributors and copyright holders in the
+Authors@R field with the appropriate roles.
+e.g.: Dean Attali
+
+- Dean Attali is not a package author, but developed a function (available on GitHub), which I use. 
+I removed the author tag from the function, and added an appropriate copyright statement (MIT License) in the LICENSE file of the package instead.
+
+

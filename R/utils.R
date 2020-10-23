@@ -93,7 +93,6 @@ get_factor_cols_idx <- function(x){
 #' @param ... Regular Navbar elements, like tabPanel
 #' @param inputs shiny ui inputs
 #' @return Navbar function that allows adding inputs
-#' @author Dean Attali
 #' @source \url{https://github.com/daattali/advanced-shiny/tree/master/navbar-add-text}
 navbarPageWithInputs <- function(..., inputs) {
     navbar <- shiny::navbarPage(...)

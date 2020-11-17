@@ -51,7 +51,7 @@ remotes::install_github("the-hull/datacleanr")
 
 ## Design
 
-`datacleanr` is developed using the [shiny](https://shiny.rstudio.com/) package, and relies on informative summaries, visual cues and interactive data selection and anntoation.
+`datacleanr` is developed using the [shiny](https://shiny.rstudio.com/) package, and relies on informative summaries, visual cues and interactive data selection and annotation.
 All data-altering operations are documented, and converted to valid `R` code (**reproducible recipe**), that can be copied, sent to an active `RStudio` script, or saved to disk.
 
 There are **four tabs** in the app for these tasks:

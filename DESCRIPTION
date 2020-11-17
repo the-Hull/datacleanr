@@ -1,6 +1,6 @@
 Package: datacleanr
 Title: Interactive and Reproducible Data Cleaning
-Version: 1.0.0
+Version: 1.0.0.9000
 Authors@R: 
   c(
     person(given = "Alexander",

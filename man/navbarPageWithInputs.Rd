@@ -21,6 +21,3 @@ Navbar function that allows adding inputs
 Call this function with an input (such as \code{textInput("text", NULL, "Search")}) if you
 want to add an input to the navbar
 }
-\author{
-Dean Attali
-}

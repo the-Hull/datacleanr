@@ -49,6 +49,9 @@ test_that("Initial dcr checks works on iris from filepath", {
     expect_identical(dcr_checks(tmpfile),
                      list(dataset = iris,
                           file_path = tmpfile))
+    expect_identical(dcr_checks(fs::path(tmpfile)),
+                     list(dataset = iris,
+                          file_path =fs::path(tmpfile)))
     unlink(tmpfile)
 
 })

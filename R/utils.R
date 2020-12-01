@@ -4,12 +4,12 @@ dcr_checks <- function(dframe){
 
     # check if dframe is string or tibble
 
-    classes <- c("character", "tbl", "data.frame", "data.table")
+    classes <- c("fs_path", "character", "tbl", "data.frame", "data.table")
 
     from_file <- FALSE
     file_path <- NULL
 
-    if(rlang::inherits_only(dframe, classes[1])){
+    if(rlang::inherits_any(dframe, classes[c(1,2)])){
 
 
         if(!identical("rds",
@@ -35,7 +35,7 @@ dcr_checks <- function(dframe){
 
 
 
-    if(!rlang::inherits_any(dframe, classes[-1])){
+    if(!rlang::inherits_any(dframe, classes[-c(1,2)])){
 
         msg <- paste0("Please provide a data.frame, tibble, or data.table",
                      ifelse(from_file, " in your file path", ""),

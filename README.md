@@ -13,6 +13,7 @@
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![](https://cranlogs.r-pkg.org/badges/datacleanr)](https://cran.r-project.org/package=datacleanr)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/datacleanr?color=brightgreen)](https://cran.r-project.org/package=datacleanr)
 <!-- badges: end -->
 
 `datacleanr` is a flexible and efficient tool for **interactive** data

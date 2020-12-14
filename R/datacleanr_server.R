@@ -1395,7 +1395,7 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
         ),
         shiny::p("Any function returning a logical vector (i.e. ",
                  shiny::tags$code("TRUE/FALSE", .noWS = "after"),
-                 "), can be employed here!", .noWS = "inside"),
+                 "), can be employed here!", .noWS = c("before", "after")),
         shiny::p("A dynamic text will inform you which filter statements are
              viable, and how much of the data will be filtered when they are applied."),
         shiny::br(),

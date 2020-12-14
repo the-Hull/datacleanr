@@ -30,26 +30,28 @@ RoxygenNote: 7.1.1
 URL: https://github.com/the-Hull/datacleanr
 BugReports: https://github.com/the-Hull/datacleanr/issues
 Imports: 
-    shiny,
-    htmltools,
-    summarytools,
+    shiny (>= 1.5.0),
+    htmltools (>= 0.5),
+    summarytools (>= 0.9.6),
     dplyr,
     rlang,
-    DT,
+    DT (>= 0.16),
     magrittr,
-    plotly,
+    plotly (>= 4.9.2.1),
     grDevices,
     stats,
     purrr,
     glue,
-    formatR,
+    formatR (>= 1.7),
     RColorBrewer,
     clipr,
     rstudioapi,
     utils,
     lubridate,
-    shinyWidgets,
-    htmlwidgets,
+    shinyWidgets (>= 0.5.4),
+    htmlwidgets (>= 1.5.2),
     tools,
     fs,
-    shinyFiles
+    shinyFiles (>= 0.8.0)
+Depends: 
+    R (>= 3.6)

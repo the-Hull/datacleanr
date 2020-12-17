@@ -36,7 +36,7 @@ Imports:
     dplyr (>= 1.0.2),
     rlang (>= 0.4.9),
     DT (>= 0.16),
-    magrittr (>=2.0.1),
+    magrittr (>= 2.0.1),
     plotly (>= 4.9.2.1),
     grDevices,
     stats,
@@ -49,7 +49,7 @@ Imports:
     utils,
     lubridate (>= 1.7.9.2),
     shinyWidgets (>= 0.5.4),
-    htmlwidgets (>= 1.5.2),
+    htmlwidgets (>= 1.5.3),
     tools,
     fs (>= 1.5.0),
     shinyFiles (>= 0.8.0)

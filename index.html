@@ -267,6 +267,7 @@
 <h3 class="hasAnchor">
 <a href="#4-extract-reproducible-recipe" class="anchor"></a>4. Extract (Reproducible Recipe)</h3>
 <p>All grouping, filtering and selections/annotations are translated to <code>R</code> code, which can be sent to an <code>RStudio</code> script, copied to the clipboard, or - when <code>dcr_app</code> is launched with a file path - save options are made available. For large selections/annotations we recommend saving the script separately, and sourcing it (i.e. <code><a href="https://rdrr.io/r/base/source.html">source("your_datacleanr_script.R")</a></code>) during later analyses.</p>
+<p><strong>Caution: When selections / annotations are greater than ~ 1000 points, it is recommended to use datacleanr with an <code>*.RDS</code> file (see below). This is because the resulting Reprudicble Recipe (script) can slow down the RStudio IDE, if it has more than a few thousand lines. The next version of <code>datacleanr</code> will allow choosing between script-only recipes, and the option with an the intermediate file for storing annotations. Both approaches with their current implementation are shown shown below.</strong></p>
 <p><strong>Example 1</strong></p>
 <p>Launching with an object from <code>R</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">

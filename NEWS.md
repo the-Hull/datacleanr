@@ -1,7 +1,8 @@
-# datacleanr (development version)
+# datacleanr 1.0.1
 
 * Added support for `fs_path`-type filepaths (from `fs` package) when launching `dcr_app()` with a path to an
  `*.Rds` file.
+* Updated minimum dependencies for `R` and dependencies
 
 # datacleanr 1.0.0
 

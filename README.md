@@ -12,8 +12,6 @@
 [![CircleCI](https://circleci.com/gh/Appsilon/ci.example.svg?style=svg)](https://circleci.com/gh/the-Hull/datacleanr)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![](https://cranlogs.r-pkg.org/badges/datacleanr)](https://cran.r-project.org/package=datacleanr)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/datacleanr?color=brightgreen)](https://cran.r-project.org/package=datacleanr)
 <!-- badges: end -->
 
 `datacleanr` is a flexible and efficient tool for **interactive** data
@@ -41,7 +39,7 @@ remotes::install_github("the-hull/datacleanr")
 
 `datacleanr` is developed using the [shiny](https://shiny.rstudio.com/)
 package, and relies on informative summaries, visual cues and
-interactive data selection and anntoation. All data-altering operations
+interactive data selection and annotation. All data-altering operations
 are documented, and converted to valid `R` code (**reproducible
 recipe**), that can be copied, sent to an active `RStudio` script, or
 saved to disk.

@@ -155,44 +155,30 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
 
 
+    # shiny::observeEvent(input$gobutton, {
+    # shiny::observe({
+
+
         shiny::callModule(module_server_summary,
                           "summary",
-
-                          df =  {if(!is.null(datareactive()) &&
-                                    !grouping_check()){
-
-                              dplyr::ungroup(datareactive())
-
-                          } else if(!is.null(datareactive()) &&
-                                    grouping_check()){
-
-                              datareactive()
-                          }},
+                          dframe = datareactive,
+                          group_var_check = grouping_check,
+#
+#                           df =  {if(!is.null(datareactive()) &&
+#                                     !grouping_check()){
+#
+#                               dplyr::ungroup(datareactive())
+#
+#                           } else if(!is.null(datareactive()) &&
+#                                     grouping_check()){
+#
+#                               datareactive()
+#                           }},
                           df_label = df_name,
                           start_clicked = gobutton_reactive
         )
+    # })
 
-
-    # shiny::observeEvent(input$gobutton, {
-
-
-        # shiny::callModule(module_server_summary,
-        #                   "summary",
-        #
-        #                   df =  {if(!is.null(datareactive()) &&
-        #                             !grouping_check()){
-        #
-        #                       dplyr::ungroup(datareactive())
-        #
-        #                   } else if(!is.null(datareactive()) &&
-        #                             grouping_check()){
-        #
-        #                       datareactive()
-        #                   }},
-        #                   df_label = df_name)
-
-    # },
-    # priority = 0)
 
 
     # // ----------------------------------------------------------------------
@@ -1425,8 +1411,10 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
     text_overview_start_panel_summarize <- shiny::tagList(
         shiny::p(
-            "Click",
-            shiny::tags$b("Summarize"),
+
+            shiny::tags$strong("After setting the grouping structure"),
+            ", click",
+            shiny::tags$b("Generate Overview"),
             "to generate an informative overview summary (by columns, and optionally, by groups)."
             ),
 

@@ -17,10 +17,12 @@ datacleanr_ui <- function(request){
                                                shiny::p("Select grouping variables for subsequent viewing and cleaning."))
     text_startsummary_side_panel <- shiny::tagList(shiny::br(),
                                                    shiny::p("Clicking",
-                                                            shiny::tags$strong("Start"),
+                                                            shiny::tags$strong("Set and Start"),
                                                             "will set the grouping structure throughout",
                                                             shiny::tags$code("datacleanr"),
-                                                            "and generates a summary of the supplied dataset."))
+                                                            ". After changing the structure",
+                                                            shiny::tags$strong("please click again.")
+                                                   ))
 
     # text_filtering_side_panel <- shiny::tagList(
     #     # shiny::p(
@@ -129,17 +131,17 @@ datacleanr_ui <- function(request){
                                 module_ui_checkbox(id = "grouptick",
                                                    cond_id = "group-groupvar"),
                                 # shiny::br(),
-                                shiny::h4(shiny::tags$strong("Start and Summarize")),
-                                shiny::actionLink("help-start",
-                                                  "Click for Help",
-                                                  icon = shiny::icon("question-circle")),
+                                # shiny::h4(shiny::tags$strong("Start and Summarize")),
+                                shiny::actionButton("gobutton",
+                                                    "Set and Start",
+                                                    icon = shiny::icon("rocket"),
+                                                    class = "btn-info"),
+                                # shiny::actionLink("help-start",
+                                #                   "Click for Help",
+                                #                   icon = shiny::icon("question-circle")),
                                 shiny::br(),
 
                                 text_startsummary_side_panel,
-                                shiny::actionButton("gobutton",
-                                                    "Start",
-                                                    icon = shiny::icon("rocket"),
-                                                    class = "btn-info"),
                                 width = 3
                             ), #/sidebarPanel
 
@@ -151,11 +153,11 @@ datacleanr_ui <- function(request){
                                 #                     class = "btn-info"),
 
                                 # shiny::uiOutput("gosummarybutton"),
-                                shiny::actionLink("help-summarize",
+                                shiny::tagList(shiny::actionLink("help-summarize",
                                                   "Click for Help",
                                                   icon = shiny::icon("question-circle")),
 
-                                module_ui_summary(id = "summary")
+                                module_ui_summary(id = "summary"))
                             ) #/mainPanel
                         ) #/sidebarLayout
 

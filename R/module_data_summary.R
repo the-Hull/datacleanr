@@ -29,16 +29,18 @@ module_ui_summary <- function(id){
 #' Server Module: data summary
 #'
 #' @param input,output,session standard \code{shiny} boilerplate
-#' @param df input data frame, pass into function with \code{df = reactive({data})}
+#' @param dframe reactive, input data frame
 #' @param df_label character, name of initial data set
-#' @param start_clicked reactivVal holding start action button
+#' @param start_clicked reactive holding start action button
+#' @param group_var_check reactive holding group check output
 #'
 module_server_summary <- function(input,
                                   output,
                                   session,
-                                  df,
+                                  dframe,
                                   df_label,
-                                  start_clicked){
+                                  start_clicked,
+                                  group_var_check ){
 
     ns <- session$ns
 
@@ -46,11 +48,11 @@ module_server_summary <- function(input,
 
 
         shiny::validate(shiny::need(start_clicked(),
-                                    "Click Start to enable Overview Summary"))
+                                    'Click "Set and Start" to enable Overview Summary'))
 
 
         shiny::actionButton(ns("gosummary"),
-                        "Summarize",
+                        "Generate Overview",
                         icon = shiny::icon("rocket"),
                         class = "btn-info")
         })
@@ -58,6 +60,18 @@ module_server_summary <- function(input,
     shiny::observeEvent(input$gosummary, {
 
 
+
+
+        df <-   {if(!is.null(dframe()) &&
+                  !group_var_check()){
+
+            dplyr::ungroup(dframe())
+
+        } else if(!is.null(dframe()) &&
+                  group_var_check()){
+
+            dframe()
+        }}
 
 
 

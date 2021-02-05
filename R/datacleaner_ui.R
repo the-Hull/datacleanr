@@ -19,7 +19,7 @@ datacleanr_ui <- function(request){
                                                    shiny::p("Clicking",
                                                             shiny::tags$strong("Set and Start"),
                                                             "will set the grouping structure throughout",
-                                                            shiny::tags$code("datacleanr"),
+                                                            shiny::tags$code("datacleanr", .noWS = "after"),
                                                             ". After changing the structure",
                                                             shiny::tags$strong("please click again.")
                                                    ))

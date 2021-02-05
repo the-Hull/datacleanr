@@ -31,21 +31,23 @@ module_ui_summary <- function(id){
 #' @param input,output,session standard \code{shiny} boilerplate
 #' @param df input data frame, pass into function with \code{df = reactive({data})}
 #' @param df_label character, name of initial data set
+#' @param start_clicked reactivVal holding start action button
 #'
 module_server_summary <- function(input,
                                   output,
                                   session,
                                   df,
-                                  df_label){
-
-
-
+                                  df_label,
+                                  start_clicked){
 
     ns <- session$ns
 
-
-
     output$gosummarybutton<- shiny::renderUI({
+
+
+        shiny::validate(shiny::need(start_clicked(),
+                                    "Click Start to enable Overview Summary"))
+
 
         shiny::actionButton(ns("gosummary"),
                         "Summarize",

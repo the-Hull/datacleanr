@@ -132,41 +132,46 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
 
 
+    gobutton_reactive <- shiny::reactive({input$gobutton})
 
 
     # handle summary operations when go button is hit
     shiny::observeEvent(input$gobutton,
                         {
 
-
                             dframe <- apply_data_set_up(df = dplyr::ungroup(dataset), gvar())
                             dframe <- dplyr::mutate(dframe,
                                                     .dcrindex = dplyr::cur_group_id())
-
 
                             datareactive(dframe)
                             recover_data(dframe)
 
 
-                            shiny::callModule(module_server_summary,
-                                              "summary",
-
-                                              df =  {if(!is.null(datareactive()) &&
-                                                        !grouping_check()){
-
-                                                  dplyr::ungroup(datareactive())
-
-                                              } else if(!is.null(datareactive()) &&
-                                                        grouping_check()){
-
-                                                  datareactive()
-                                              }},
-                                              df_label = df_name)
 
 
 
                         }, priority = 100
     )
+
+
+
+        shiny::callModule(module_server_summary,
+                          "summary",
+
+                          df =  {if(!is.null(datareactive()) &&
+                                    !grouping_check()){
+
+                              dplyr::ungroup(datareactive())
+
+                          } else if(!is.null(datareactive()) &&
+                                    grouping_check()){
+
+                              datareactive()
+                          }},
+                          df_label = df_name,
+                          start_clicked = gobutton_reactive
+        )
+
 
     # shiny::observeEvent(input$gobutton, {
 
@@ -1418,6 +1423,23 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
             class = "btn btn-default action-button btn-info")
     )
 
+    text_overview_start_panel_summarize <- shiny::tagList(
+        shiny::p(
+            "Click",
+            shiny::tags$b("Summarize"),
+            "to generate an informative overview summary (by columns, and optionally, by groups)."
+            ),
+
+        shiny::p(
+            "  If you",
+            shiny::tags$strong("change the grouping"),
+            "make sure to click",
+            shiny::tags$strong("Start"),
+            "and to update your",
+            shiny::tags$strong("filters and plot."),
+            class = "btn btn-default action-button btn-info")
+    )
+
 
 
     text_filtering_side_panel <- shiny::tagList(
@@ -1646,6 +1668,20 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
         ))
 
     })
+
+    shiny::observeEvent(input$`help-summarize`, {
+
+        shiny::showModal(shiny::modalDialog(
+            text_overview_start_panel_summarize,
+            title = "Summarize data set",
+            size = "m",
+            easyClose = TRUE,
+            footer = NULL
+        ))
+
+    })
+
+
 
 
 

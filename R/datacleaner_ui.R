@@ -151,6 +151,9 @@ datacleanr_ui <- function(request){
                                 #                     class = "btn-info"),
 
                                 # shiny::uiOutput("gosummarybutton"),
+                                shiny::actionLink("help-summarize",
+                                                  "Click for Help",
+                                                  icon = shiny::icon("question-circle")),
 
                                 module_ui_summary(id = "summary")
                             ) #/mainPanel

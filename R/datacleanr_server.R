@@ -114,37 +114,80 @@ datacleanr_server <- function(input, output, session, dataset, df_name, is_on_di
 
     #  START + SUMMARY -------------------
 
+    # summary-button
+
+    # output$gosummarybutton <- shiny::renderUI({
+    #
+    #     # shiny::observeEvent(selected_data, {
+    #     shiny::validate(shiny::need(input[["gobutton"]],
+    #                                 label = "",
+    #                                 message = ""))
+    #
+    #     shiny::tagList(shiny::actionButton(inputId = "gosummary",
+    #                                        label = "Generate Summary",
+    #                                        icon = shiny::icon("rocket"),
+    #                                        class = "btn-info"))
+    #
+    # })
+
+
+
+
+
     # handle summary operations when go button is hit
-    shiny::observeEvent(input$gobutton, {
+    shiny::observeEvent(input$gobutton,
+                        {
 
 
-        dframe <- apply_data_set_up(df = dplyr::ungroup(dataset), gvar())
-        dframe <- dplyr::mutate(dframe,
-                                .dcrindex = dplyr::cur_group_id())
+                            dframe <- apply_data_set_up(df = dplyr::ungroup(dataset), gvar())
+                            dframe <- dplyr::mutate(dframe,
+                                                    .dcrindex = dplyr::cur_group_id())
 
 
-        datareactive(dframe)
-        recover_data(dframe)
-
-        shiny::callModule(module_server_summary,
-                          "summary",
-
-                          df =  {if(!is.null(datareactive()) &&
-                                    !grouping_check()){
-
-                              dplyr::ungroup(datareactive())
-
-                          } else if(!is.null(datareactive()) &&
-                                    grouping_check()){
-
-                              datareactive()
-                          }},
-                          df_label = df_name)
+                            datareactive(dframe)
+                            recover_data(dframe)
 
 
+                            shiny::callModule(module_server_summary,
+                                              "summary",
+
+                                              df =  {if(!is.null(datareactive()) &&
+                                                        !grouping_check()){
+
+                                                  dplyr::ungroup(datareactive())
+
+                                              } else if(!is.null(datareactive()) &&
+                                                        grouping_check()){
+
+                                                  datareactive()
+                                              }},
+                                              df_label = df_name)
 
 
-    }, priority = 100)
+
+                        }, priority = 100
+    )
+
+    # shiny::observeEvent(input$gobutton, {
+
+
+        # shiny::callModule(module_server_summary,
+        #                   "summary",
+        #
+        #                   df =  {if(!is.null(datareactive()) &&
+        #                             !grouping_check()){
+        #
+        #                       dplyr::ungroup(datareactive())
+        #
+        #                   } else if(!is.null(datareactive()) &&
+        #                             grouping_check()){
+        #
+        #                       datareactive()
+        #                   }},
+        #                   df_label = df_name)
+
+    # },
+    # priority = 0)
 
 
     # // ----------------------------------------------------------------------

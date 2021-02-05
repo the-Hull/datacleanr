@@ -11,8 +11,16 @@ module_ui_summary <- function(id){
     ns <- shiny::NS(id)
 
 
-        # shiny::uiOutput(ns("summary"))
+    shiny::tagList(
+
+        shiny::uiOutput(ns("gosummarybutton")),
         shiny::htmlOutput(ns("summary"))
+    )
+
+        # shiny::htmlOutput(ns("summary"))
+
+
+
 
 }
 
@@ -32,7 +40,26 @@ module_server_summary <- function(input,
 
 
 
-    #
+
+    ns <- session$ns
+
+
+
+    output$gosummarybutton<- shiny::renderUI({
+
+        shiny::actionButton(ns("gosummary"),
+                        "Summarize",
+                        icon = shiny::icon("rocket"),
+                        class = "btn-info")
+        })
+
+    shiny::observeEvent(input$gosummary, {
+
+
+
+
+
+
     # shiny::req(need(df(), message = "Click on Start!"))
 
     dfs <- summarytools::dfSummary(df[, !grepl("[.]dcr", colnames(df))])
@@ -56,6 +83,7 @@ module_server_summary <- function(input,
         }
 
 
+
         html_summary <- shiny::renderUI(print(
             dfs,
             method = "render",
@@ -65,6 +93,7 @@ module_server_summary <- function(input,
 
 
 
+    })
 
 
 }

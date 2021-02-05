@@ -1,5 +1,8 @@
 #' Interactive and reproducible data cleaning
 #'
+#' Launches the `datacleanr` app for interactive and reproducible cleaning.
+#' See Details for more information.
+#'
 #' @param dframe Character, a string naming a `data.frame`, `tbl` or `data.table` in the environment
 #'   or a path to a `.Rds` file. **Note, that `data.table`s are converted to tibbles internally.**`
 #' @param browser logical, should app start in OS's default browser? (default \code{TRUE})
@@ -12,7 +15,19 @@
 #'    - **Visualization and Annotating**: interactive visualization allowing outlier highlighting, annotating and before/after histograms of displayed (numeric) variables
 #'    - **Extraction**: generates *Reproducible Recipe* and outputs
 #'
-#'  Extensive documentation is provided on each of these tabs for individual procedures in help links.
+#'  For data sets exceeding 1.5 million rows, we suggest splitting the data, if possible, by a grouping factor.
+#'  This is because at this volume interactive visualizations using \code{\link{plotly}} stretch the limits of what modern web browsers can handle.
+#'  A simple example using \code{\link{iris}} is:
+#'
+#'   ```
+#'   iris_split <- split(iris, iris$Species)
+#'   dcr_app(iris_split[[1]])
+#'   # or
+#'   lapply(iris_split, dcr_app)
+#'
+#'    ```
+#'
+#'  Extensive documentation is provided on each of the tabs for individual procedures in help links.
 #'  `datacleanr` relies on 1) generating a column of unique IDs (`.dcrkey`) and subsetting `dframe` into sub-groups (generated in-app,
 #'  added as column `.dcrindex`) for filtering and visualization.
 #'  These groups are composed of unique combinations of columns in the data set (must be `factor`) and are passed to \code{\link[dplyr]{group_by}},

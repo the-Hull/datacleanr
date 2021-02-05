@@ -88,6 +88,28 @@ test_that("Initial dcr checks passes with TRUE/FALSE .dcrflag", {
 
 })
 
+
+
+
+
+# new ---------------------------------------------------------------------
+
+test_that("Initial dcr checks fails when .annotation column exists", {
+
+  expect_error(dcr_checks(iris %>% dplyr::mutate(.annotation = "A")),
+               regexp = "A .annotation column already exists. Please rename it (e.g., to .dcrflag) to prevent any clashes and try again.",
+               fixed = TRUE)
+})
+
+test_that("Dataset >= 1.5e6 notifies user", {
+
+  expect_message(dcr_checks(data.frame(x = seq_len(1.5e6))),
+               regexp = "Consider breaking it up into smaller chunks with a split-check-combine approach.\n ",
+               fixed = TRUE)
+})
+
+
+
 # test_that("User warned about large data set", {
 #
 #

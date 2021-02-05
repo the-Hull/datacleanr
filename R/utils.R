@@ -59,12 +59,32 @@ dcr_checks <- function(dframe){
         }
 
     }
-#
-#     if(nrow(dframe) > 10000){
-#
-#         warning(paste("Data set has over", nrow(dframe), "observations. Consider breaking it up into smaller chunks."))
-#
-#     }
+
+
+
+    if(utils::hasName(dframe, ".annotation")){
+
+            msg <- paste0("A .annotation column already exists. Please rename it (e.g., to .dcrflag) to prevent any clashes and try again.")
+
+            stop(msg)
+
+    }
+
+
+
+
+    n_points_warn <- 1.5e6
+    if(nrow(dframe) >= n_points_warn){
+
+
+        message(paste("Data has more than", n_points_warn, "observations. \n"))
+        message("Consider breaking it up into smaller chunks with a split-check-combine approach.\n ")
+        message("See ?dcr_app() for details.\n ")
+        message(".. delaying launch (5s) \n")
+        if(interactive()){
+        Sys.sleep(5)
+        }
+    }
 
 
     return(list(dataset = dframe,

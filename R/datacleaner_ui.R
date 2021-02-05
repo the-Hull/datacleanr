@@ -144,6 +144,14 @@ datacleanr_ui <- function(request){
                             ), #/sidebarPanel
 
                             mainPanel = shiny::mainPanel(
+
+                                # shiny::actionButton("gosummary",
+                                #                     "Summarize",
+                                #                     icon = shiny::icon("rocket"),
+                                #                     class = "btn-info"),
+
+                                # shiny::uiOutput("gosummarybutton"),
+
                                 module_ui_summary(id = "summary")
                             ) #/mainPanel
                         ) #/sidebarLayout

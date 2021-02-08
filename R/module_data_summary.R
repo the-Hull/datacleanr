@@ -7,21 +7,16 @@
 #' @param id shiny standard
 #'
 #'
-module_ui_summary <- function(id){
-    ns <- shiny::NS(id)
+module_ui_summary <- function(id) {
+  ns <- shiny::NS(id)
 
 
-    shiny::tagList(
+  shiny::tagList(
+    shiny::uiOutput(ns("gosummarybutton")),
+    shiny::htmlOutput(ns("summary"))
+  )
 
-        shiny::uiOutput(ns("gosummarybutton")),
-        shiny::htmlOutput(ns("summary"))
-    )
-
-        # shiny::htmlOutput(ns("summary"))
-
-
-
-
+  # shiny::htmlOutput(ns("summary"))
 }
 
 # Server ------------------------------------------------------------------
@@ -40,38 +35,33 @@ module_server_summary <- function(input,
                                   dframe,
                                   df_label,
                                   start_clicked,
-                                  group_var_check ){
+                                  group_var_check) {
+  ns <- session$ns
 
-    ns <- session$ns
-
-    output$gosummarybutton<- shiny::renderUI({
-
-
-        shiny::validate(shiny::need(start_clicked(),
-                                    'Click "Set and Start" to enable Overview Summary'))
-
-
-        shiny::actionButton(ns("gosummary"),
-                        "Generate Overview",
-                        icon = shiny::icon("rocket"),
-                        class = "btn-info")
-        })
-
-    shiny::observeEvent(input$gosummary, {
+  output$gosummarybutton <- shiny::renderUI({
+    shiny::validate(shiny::need(
+      start_clicked(),
+      'Click "Set and Start" to enable Overview Summary'
+    ))
 
 
+    shiny::actionButton(ns("gosummary"),
+      "Generate Overview",
+      icon = shiny::icon("rocket"),
+      class = "btn-info"
+    )
+  })
 
-
-        df <-   {if(!is.null(dframe()) &&
-                  !group_var_check()){
-
-            dplyr::ungroup(dframe())
-
-        } else if(!is.null(dframe()) &&
-                  group_var_check()){
-
-            dframe()
-        }}
+  shiny::observeEvent(input$gosummary, {
+    df <- {
+      if (!is.null(dframe()) &&
+        !group_var_check()) {
+        dplyr::ungroup(dframe())
+      } else if (!is.null(dframe()) &&
+        group_var_check()) {
+        dframe()
+      }
+    }
 
 
 
@@ -80,36 +70,22 @@ module_server_summary <- function(input,
 
     dfs <- summarytools::dfSummary(df[, !grepl("[.]dcr", colnames(df))])
 
-    if(all(class(dfs) == "stby")){
-
-        invisible(lapply(seq_along(dfs), function(x) {
-
-            attr(dfs[[x]], "data_info")$Data.frame <<- df_label
-
-        }))
-
-
-    } else if(class(dfs)[1] == "summarytools"){
-
-        attr(dfs, "data_info")$Data.frame <- df_label
+    if (all(class(dfs) == "stby")) {
+      invisible(lapply(seq_along(dfs), function(x) {
+        attr(dfs[[x]], "data_info")$Data.frame <<- df_label
+      }))
+    } else if (class(dfs)[1] == "summarytools") {
+      attr(dfs, "data_info")$Data.frame <- df_label
+    }
 
 
 
+    html_summary <- shiny::renderUI(print(
+      dfs,
+      method = "render",
+      bootstrap.css = FALSE
+    ))
 
-        }
-
-
-
-        html_summary <- shiny::renderUI(print(
-            dfs,
-            method = "render",
-            bootstrap.css = FALSE))
-
-        output$summary <- html_summary
-
-
-
-    })
-
-
+    output$summary <- html_summary
+  })
 }

@@ -7,9 +7,9 @@
 module_ui_plot_selectable <- function(id) {
   ns <- shiny::NS(id)
 
-  plotly::plotlyOutput(ns('scatterselect'),
-                       height = "500px")
-
+  plotly::plotlyOutput(ns("scatterselect"),
+    height = "500px"
+  )
 }
 
 #------------------------------------------------------------------------------#
@@ -28,8 +28,8 @@ module_ui_plot_selectable <- function(id) {
 #' @importFrom rlang .data
 #'
 #' @details provides plot, note, that data set needs a column .dcrkey, added in initial processing step
-module_server_plot_selectable <- function(input, output, session, selector_inputs, df, sel_points, mapstyle){
-  ns = session$ns
+module_server_plot_selectable <- function(input, output, session, selector_inputs, df, sel_points, mapstyle) {
+  ns <- session$ns
   sessionval <- session$ns("")
 
 
@@ -94,8 +94,9 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
   set.seed(123)
   col_value_vector <- col_value_vector[sample(seq_len(n_groups_original),
-                                              size = n_groups_original,
-                                              replace = FALSE)]
+    size = n_groups_original,
+    replace = FALSE
+  )]
 
   names(col_value_vector) <- seq_len(n_groups_original)
 
@@ -108,22 +109,27 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
 
-  is_spatial_plot <- identical(c(as.character(selector_inputs$xvar),
-                                 as.character(selector_inputs$yvar)),
-                               c("lon", "lat"))
+  is_spatial_plot <- identical(
+    c(
+      as.character(selector_inputs$xvar),
+      as.character(selector_inputs$yvar)
+    ),
+    c("lon", "lat")
+  )
 
 
   # handler for empty zvar selection
-  zvar_toggle <- nchar(shiny::isolate(selector_inputs$zvar))>0
-  if(zvar_toggle){
+  zvar_toggle <- nchar(shiny::isolate(selector_inputs$zvar)) > 0
+  if (zvar_toggle) {
     size_expression <- stats::as.formula(paste("~", shiny::isolate(selector_inputs$zvar)))
     sizes_expression <- expression(c(5, 100))
   } else {
     # size_expression <- rlang::quo_squash(NULL)
 
     sz <- ifelse(is_spatial_plot,
-                 45,
-                 15)
+      45,
+      15
+    )
 
     size_expression <- expression(I(sz))
     sizes_expression <- NULL
@@ -137,7 +143,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
   opac <- 0.7
 
-  if(is_spatial_plot){
+  if (is_spatial_plot) {
     opac <- 1
 
     zoom <- 0
@@ -154,15 +160,17 @@ module_server_plot_selectable <- function(input, output, session, selector_input
     # }
 
 
-    geo_def <-  list(style = ifelse(is.null(mapstyle),
-                                    "basic",
-                                    mapstyle),
-                     zoom = zoom,
-                     center = list(
-                       lon = ~ median(plot_data[ , as.character(shiny::isolate(selector_inputs$xvar)), drop = TRUE]),
-                       lat = ~ median(plot_data[ , as.character(shiny::isolate(selector_inputs$yvar)), drop = TRUE])
-                     ))
-
+    geo_def <- list(
+      style = ifelse(is.null(mapstyle),
+        "basic",
+        mapstyle
+      ),
+      zoom = zoom,
+      center = list(
+        lon = ~ median(plot_data[, as.character(shiny::isolate(selector_inputs$xvar)), drop = TRUE]),
+        lat = ~ median(plot_data[, as.character(shiny::isolate(selector_inputs$yvar)), drop = TRUE])
+      )
+    )
   } else {
     geo_def <- list()
   }
@@ -170,43 +178,48 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
 
   output$scatterselect <- plotly::renderPlotly({
-
-    p <-  rlang::eval_tidy(
+    p <- rlang::eval_tidy(
       rlang::quo_squash(
         rlang::quo({
-
-          pnew <- { if(is_spatial_plot){
-            plotly::plot_mapbox(data = plot_data,
-                                source = "scatterselect",
-                                mode = "markers",
-                                colors = col_value_vector,
-                                marker = list(
-                                  allowoverlap = TRUE))
-          } else {
-            plotly::plot_ly(data = plot_data,
-                            source = "scatterselect",
-                            type = "scattergl",
-                            mode = "markers",
-                            colors = col_value_vector,
-                            symbols = c("star-triangle-down","circle")
-
-            )
-          }
-          } %>%
+          pnew <-
+            {
+              if (is_spatial_plot) {
+                plotly::plot_mapbox(
+                  data = plot_data,
+                  source = "scatterselect",
+                  mode = "markers",
+                  colors = col_value_vector,
+                  marker = list(
+                    allowoverlap = TRUE
+                  )
+                )
+              } else {
+                plotly::plot_ly(
+                  data = plot_data,
+                  source = "scatterselect",
+                  type = "scattergl",
+                  mode = "markers",
+                  colors = col_value_vector,
+                  symbols = c("star-triangle-down", "circle")
+                )
+              }
+            } %>%
             plotly::add_markers(
-
               x = ~ !!shiny::isolate(selector_inputs$xvar),
               y = ~ !!shiny::isolate(selector_inputs$yvar),
 
               # symbols = c("circle", "star-triangle-down"),
-              symbol = if(has_flag_column){
-                ~as.numeric(!.dcrflag)}
-              else{NULL},
+              symbol = if (has_flag_column) {
+                ~ as.numeric(!.dcrflag)
+              }
+              else {
+                NULL
+              },
 
               size = eval(size_expression),
               sizes = eval(sizes_expression),
-#
-              color = ~as.factor(.dcrindex),
+              #
+              color = ~ as.factor(.dcrindex),
 
 
               # name = ~as.factor(.dcrindex),
@@ -224,58 +237,68 @@ module_server_plot_selectable <- function(input, output, session, selector_input
                 # sizes = eval(sizes_expression)
               ),
               unselected = list(marker = list(opacity = opac))
-
-
             ) %>%
-
-            plotly::layout(showlegend = TRUE,
-                           dragmode = "lasso",
-                           mapbox = geo_def,
-                           updatemenus = list(
-                             list(
-                               type = "buttons",
-                               direction = "right",
-                               xanchor = 'center',
-                               yanchor = "top",
-                               pad = list('r'= 0, 't'= 10, 'b' = 10),
-                               x = 0.5,
-                               y = 1.2,
-                               buttons = list(
-                                 list(method = "restyle",
-                                      args = list(list(mode = "markers"),
-                                                  # as.list(seq_len(n_groups_original)-1)),
-                                                  as.list(seq_len(n_groups_original))),
-                                      # args = list(mode = "markers"),
-                                      args2 = list(list(mode = "lines+markers",
-                                                        line = list(width = 1)),
-                                                   as.list(seq_len(n_groups_original))
-                                      ),
-                                      label = "Toggle Lines")
-                               )
-                             ))
-            )  %>%
-            plotly::config(displaylogo = FALSE,
-                           modeBarButtonsToRemove = list("hoverCompareCartesian")) %>%
+            plotly::layout(
+              showlegend = TRUE,
+              dragmode = "lasso",
+              mapbox = geo_def,
+              updatemenus = list(
+                list(
+                  type = "buttons",
+                  direction = "right",
+                  xanchor = "center",
+                  yanchor = "top",
+                  pad = list("r" = 0, "t" = 10, "b" = 10),
+                  x = 0.5,
+                  y = 1.2,
+                  buttons = list(
+                    list(
+                      method = "restyle",
+                      args = list(
+                        list(mode = "markers"),
+                        # as.list(seq_len(n_groups_original)-1)),
+                        as.list(seq_len(n_groups_original))
+                      ),
+                      # args = list(mode = "markers"),
+                      args2 = list(
+                        list(
+                          mode = "lines+markers",
+                          line = list(width = 1)
+                        ),
+                        as.list(seq_len(n_groups_original))
+                      ),
+                      label = "Toggle Lines"
+                    )
+                  )
+                )
+              )
+            ) %>%
+            plotly::config(
+              displaylogo = FALSE,
+              modeBarButtonsToRemove = list("hoverCompareCartesian")
+            ) %>%
             plotly::event_register(event = "plotly_afterplot") %>%
             # plotly::event_register(event = "plotly_deselect") %>%
             plotly::event_register(event = "plotly_click") %>%
             plotly::event_register(event = "plotly_selected") %>%
             htmlwidgets::onRender(jsfull,
-                                  data = list(x = "tracemap",
-                                              ns = sessionval)) %>%
+              data = list(
+                x = "tracemap",
+                ns = sessionval
+              )
+            ) %>%
             plotly::toWebGL()
-
         })
       )
-    ) #\ eval_tidy
+    ) # \ eval_tidy
 
     # re-add outlier traces on "Plot!" click
-    if(length(shiny::isolate(sel_points$df$keys)) > 0){
-
+    if (length(shiny::isolate(sel_points$df$keys)) > 0) {
       add_data <- dplyr::left_join(
         shiny::isolate(sel_points$df),
         plot_data,
-        by = c('keys' = '.dcrkey')) %>%
+        by = c("keys" = ".dcrkey")
+      ) %>%
         dplyr::rename(.dcrkey = .data$keys)
 
       # add_data <- plot_data[plot_data$.dcrkey %in% sel_points$df$keys, ]
@@ -285,31 +308,33 @@ module_server_plot_selectable <- function(input, output, session, selector_input
       p <- rlang::eval_tidy(
         rlang::quo_squash(
           rlang::quo({
-
             plotly::add_trace(p,
-                              data = add_data,
-                              x = ~ !!shiny::isolate(selector_inputs$xvar),
-                              y = ~ !!shiny::isolate(selector_inputs$yvar),
-                              name = "O",
-                              mode = "markers",
-                              customdata = ~.dcrkey,
-                              text = ~.dcrkey,
-                              showlegend = TRUE,
-                              marker =
-                                if(is_spatial_plot){
-                                  list(
-                                    symbol = "hospital",
-                                    size = 12,
-                                    allowoverlap = TRUE)
+              data = add_data,
+              x = ~ !!shiny::isolate(selector_inputs$xvar),
+              y = ~ !!shiny::isolate(selector_inputs$yvar),
+              name = "O",
+              mode = "markers",
+              customdata = ~.dcrkey,
+              text = ~.dcrkey,
+              showlegend = TRUE,
+              marker =
+                if (is_spatial_plot) {
+                  list(
+                    symbol = "hospital",
+                    size = 12,
+                    allowoverlap = TRUE
+                  )
 
-                                  # size = 12)
-                                } else {
-                                  list(color = add_color,
-                                       symbol = "x",
-                                       size = 12
-                                  )
-                                },
-                              unselected = list(marker = list(opacity = 1)))
+                  # size = 12)
+                } else {
+                  list(
+                    color = add_color,
+                    symbol = "x",
+                    size = 12
+                  )
+                },
+              unselected = list(marker = list(opacity = 1))
+            )
 
             #
             #       purrr::reduce(.x = split(add_data, f = add_data$selection_count),
@@ -345,9 +370,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
             # )
           })
         )
-      ) #\ eval_tidy
+      ) # \ eval_tidy
     } # /if
     return(p)
-
   }) # / renderPlotly
 }

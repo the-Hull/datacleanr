@@ -39,17 +39,22 @@ this function interactively.
 \examples{
 # set-up condition_df
 cdf <- dplyr::tibble(
-   statement = c(
+  statement = c(
     "Sepal.Width > quantile(Sepal.Width, 0.1)",
     "Petal.Width > quantile(Petal.Width, 0.1)",
-    "Petal.Length > quantile(Petal.Length, 0.8)"),
-    scope_at = list(NULL, NULL, c(1,2)))
+    "Petal.Length > quantile(Petal.Length, 0.8)"
+  ),
+  scope_at = list(NULL, NULL, c(1, 2))
+)
 
 
 fdf <- filter_scoped_df(
-   dplyr::group_by(iris,
-                   Species),
-   condition_df = cdf)
+  dplyr::group_by(
+    iris,
+    Species
+  ),
+  condition_df = cdf
+)
 
 # Example of invalid expression:
 # column 'Spec' does not exist in iris

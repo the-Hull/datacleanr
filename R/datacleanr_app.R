@@ -77,47 +77,43 @@
 #'
 #'
 #' @export
-dcr_app <- function(dframe, browser = TRUE){
+dcr_app <- function(dframe, browser = TRUE) {
+  use_data <- dcr_checks(dframe)
 
 
 
-    use_data <- dcr_checks(dframe)
+  opts_list <- if (browser) {
+    list(launch.browser = browser)
+  } else {
+    list()
+  }
+
+
+  if (is.null(use_data$file_path)) {
+    df_name <- deparse(substitute(dframe))
+  } else {
+    df_name <- use_data$file_path
+  }
 
 
 
-    opts_list <- if(browser) {
-        list(launch.browser = browser)
-    } else {
-        list()
-    }
+  base::suppressWarnings(
+    shiny::runApp(
+      appDir =
 
-
-    if(is.null(use_data$file_path)){
-        df_name <- deparse(substitute(dframe))
-    } else {
-        df_name <- use_data$file_path
-    }
-
-
-
-    base::suppressWarnings(
-        shiny::runApp(appDir =
-
-                          shiny::shinyApp(ui     = datacleanr_ui,
-                                          server = function(input, output, session){
-                                              datacleanr_server(input,
-                                                                output,
-                                                                session,
-                                                                dataset = use_data$dataset,
-                                                                df_name = df_name,
-                                                                is_on_disk = !is.null(use_data$file_path))},
-                                          options = opts_list)
+        shiny::shinyApp(
+          ui = datacleanr_ui,
+          server = function(input, output, session) {
+            datacleanr_server(input,
+              output,
+              session,
+              dataset = use_data$dataset,
+              df_name = df_name,
+              is_on_disk = !is.null(use_data$file_path)
+            )
+          },
+          options = opts_list
         )
     )
-
-
-
+  )
 }
-
-
-

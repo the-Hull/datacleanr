@@ -119,9 +119,18 @@
 <a href="#datacleanr-101" class="anchor"></a>datacleanr 1.0.1<small> Unreleased </small>
 </h1>
 <ul>
-<li><p>Added support for <code>fs_path</code>-type filepaths (from <code>fs</code> package) when launching <code><a href="../reference/dcr_app.html">dcr_app()</a></code> with a path to an <code>*.Rds</code> file.</p></li>
-<li><p>Updated minimum versions for <code>R</code> and dependencies</p></li>
-<li><p>changed <code><a href="https://rdrr.io/pkg/summarytools/man/view.html">summarytools::view()</a></code> to <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> for data overview (dropping dependency on X11 / XQuartz) launch</p></li>
+<li>
+<code>dcr_checks:</code>
+<ul>
+<li>Added support for <code>fs_path</code>-type filepaths (from <code>fs</code> package) when launching <code><a href="../reference/dcr_app.html">dcr_app()</a></code> with a path to an<code>*.Rds</code> file.</li>
+<li>Added check for existing <code>.annotation</code> column, which produces useful error when present.<br>
+</li>
+<li>Added check for data sets above 1.5 million observations (rows) - this threshold is at the limit of modern browsers for visualizing points with D3/plotly.</li>
+</ul>
+</li>
+<li>Updated minimum versions for <code>R</code> and dependencies</li>
+<li>Changed <code><a href="https://rdrr.io/pkg/summarytools/man/view.html">summarytools::view()</a></code> to <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> for data overview (dropping dependency on X11 / XQuartz)</li>
+<li>Separated setting grouping structure and enabling filtering, plotting, and extracting from data frame summary. This saves significant time for larger data sets. Help links and panel texts were adjusted accordingly.</li>
 </ul>
 </div>
     <div id="datacleanr-100" class="section level1">

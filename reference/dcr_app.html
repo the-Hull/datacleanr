@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="Interactive and reproducible data cleaning — dcr_app" />
-<meta property="og:description" content="Interactive and reproducible data cleaning" />
+<meta property="og:description" content="Launches the datacleanr app for interactive and reproducible cleaning.
+See Details for more information." />
 
 
 
@@ -117,7 +118,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Interactive and reproducible data cleaning</p>
+    <p>Launches the <code>datacleanr</code> app for interactive and reproducible cleaning.
+See Details for more information.</p>
     </div>
 
     <pre class="usage"><span class='fu'>dcr_app</span><span class='op'>(</span><span class='va'>dframe</span>, browser <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
@@ -158,7 +160,16 @@ reproducible filtering and (manual, interactive) visual outlier detection and an
 <li><p><strong>Extraction</strong>: generates <em>Reproducible Recipe</em> and outputs</p></li>
 </ul>
 
-<p>Extensive documentation is provided on each of these tabs for individual procedures in help links.
+<p>For data sets exceeding 1.5 million rows, we suggest splitting the data, if possible, by a grouping factor.
+This is because at this volume interactive visualizations using <code>plotly</code> stretch the limits of what modern web browsers can handle.
+A simple example using <code><a href='https://rdrr.io/r/datasets/iris.html'>iris</a></code> is:</p><pre><span class='va'>iris_split</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>iris</span><span class='op'>$</span><span class='va'>Species</span><span class='op'>)</span>
+<span class='fu'>dcr_app</span><span class='op'>(</span><span class='va'>iris_split</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
+<span class='co'># or</span>
+<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>iris_split</span>, <span class='va'>dcr_app</span><span class='op'>)</span>
+
+</pre>
+
+<p>Extensive documentation is provided on each of the tabs for individual procedures in help links.
 <code>datacleanr</code> relies on 1) generating a column of unique IDs (<code>.dcrkey</code>) and subsetting <code>dframe</code> into sub-groups (generated in-app,
 added as column <code>.dcrindex</code>) for filtering and visualization.
 These groups are composed of unique combinations of columns in the data set (must be <code>factor</code>) and are passed to <code><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></code>,

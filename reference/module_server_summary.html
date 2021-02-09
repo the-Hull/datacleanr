@@ -120,7 +120,15 @@
     <p>Server Module: data summary</p>
     </div>
 
-    <pre class="usage"><span class='fu'>module_server_summary</span><span class='op'>(</span><span class='va'>input</span>, <span class='va'>output</span>, <span class='va'>session</span>, <span class='va'>df</span>, <span class='va'>df_label</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>module_server_summary</span><span class='op'>(</span>
+  <span class='va'>input</span>,
+  <span class='va'>output</span>,
+  <span class='va'>session</span>,
+  <span class='va'>dframe</span>,
+  <span class='va'>df_label</span>,
+  <span class='va'>start_clicked</span>,
+  <span class='va'>group_var_check</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -130,12 +138,20 @@
       <td><p>standard <code>shiny</code> boilerplate</p></td>
     </tr>
     <tr>
-      <th>df</th>
-      <td><p>input data frame, pass into function with <code>df = reactive({data})</code></p></td>
+      <th>dframe</th>
+      <td><p>reactive, input data frame</p></td>
     </tr>
     <tr>
       <th>df_label</th>
       <td><p>character, name of initial data set</p></td>
+    </tr>
+    <tr>
+      <th>start_clicked</th>
+      <td><p>reactive holding start action button</p></td>
+    </tr>
+    <tr>
+      <th>group_var_check</th>
+      <td><p>reactive holding group check output</p></td>
     </tr>
     </table>
 

@@ -6,12 +6,10 @@
 * ubuntu 18.04, 64-bit (release)
 
 ## R CMD check results
-0 errors v | 0 warnings v | 1 notes x
+0 errors v | 0 warnings v | 0 notes
 
-* Current CRAN Checks have:
-  - 1 NOTE: checking dependencies in R code ... NOTE
-    No protocol specified
-    (can be ignored)
-  - 1 WARN: using `plotly` - currently orphaned, but according to https://github.com/ropensci/plotly/issues/1906 (issue due to holiday interfering with package fix)
-  
+
+* This is a package update (2nd attempt)
+* 1st attempt showed NOTES in CRAN check logs due to html link forwarding (now removed link) and expect NOTE to disappear
+
   

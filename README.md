@@ -34,6 +34,8 @@ You can install the development version of `datacleanr` with:
 ``` r
 remotes::install_github("the-hull/datacleanr")
 ```
+**If you are using macOS, please make sure you have `XQuartz` installed, especially if you've recently updated your system.**
+**See these instructions here: [https://cloud.r-project.org/bin/macosx/](https://cloud.r-project.org/bin/macosx/)**
 
 ## Design
 

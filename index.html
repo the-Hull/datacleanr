@@ -90,6 +90,7 @@
 <p>You can install the development version of <code>datacleanr</code> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"the-hull/datacleanr"</span><span class="op">)</span></code></pre></div>
+<p><strong>If you are using macOS, please make sure you have <code>XQuartz</code> installed, especially if you’ve recently updated your system.</strong> <strong>See these instructions here: <a href="https://cloud.r-project.org/bin/macosx/">https://cloud.r-project.org/bin/macosx/</a></strong></p>
 </div>
 <div id="design" class="section level2">
 <h2 class="hasAnchor">
@@ -191,7 +192,7 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">treering</span><span class="op">)</span>
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">treering</span><span class="op">)</span>
 <span class="va">tree_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>year <span class="op">=</span> <span class="op">-</span><span class="fl">6000</span><span class="op">:</span><span class="fl">1979</span>,
            val <span class="op">=</span> <span class="va">treering</span><span class="op">)</span>
 
@@ -329,12 +330,12 @@
 
 <span class="co"># check data base info</span>
 <span class="va">db_info</span> <span class="op">&lt;-</span> <span class="fu">cosore</span><span class="fu">::</span><span class="fu">csr_database</span><span class="op">(</span><span class="op">)</span>
-<span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">db_info</span><span class="op">)</span>
+<span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">db_info</span><span class="op">)</span>
 
 <span class="co"># grab one data set and explore in detail</span>
 <span class="va">dset</span> <span class="op">&lt;-</span> <span class="st">"d20190409_ANJILELI"</span>
 <span class="va">anjilleli</span> <span class="op">&lt;-</span> <span class="fu">cosore</span><span class="fu">::</span><span class="fu">csr_dataset</span><span class="op">(</span><span class="va">dset</span><span class="op">)</span>
-<span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">anjilleli</span><span class="op">$</span><span class="va">description</span><span class="op">)</span>
+<span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">anjilleli</span><span class="op">$</span><span class="va">description</span><span class="op">)</span>
 
 
 <span class="fu">datacleanr</span><span class="fu">::</span><span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">anjilleli</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></code></pre></div>

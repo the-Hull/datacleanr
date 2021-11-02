@@ -8,5 +8,6 @@
 
 
 * This is a package update
+* Fixed permanent link redirects
 
   

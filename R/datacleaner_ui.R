@@ -106,281 +106,288 @@ datacleanr_ui <- function(request) {
   #              shiny::tags$b(" table below"),
   #              "and can be annotated with the tool to the left."))
 
-
-  navbarPageWithInputs(
-    # theme = shinythemes::shinytheme("sandstone"),
-    "datacleanr",
-    id = "nav",
-
-    # TAB GROUPING ------------
-    shiny::tabPanel(
-      value = "tabOverview",
-      id = "tabOv",
-      title = "Set-up & Overview",
-      icon = shiny::icon("layer-group"),
-
-      # panel set-up
-      shiny::sidebarLayout(
-        sidebarPanel = shiny::sidebarPanel(
-          shiny::h4(shiny::tags$strong("Grouping")),
-
-          shiny::actionLink("help-ov",
-            "Click for Help",
-            icon = shiny::icon("question-circle")
-          ),
-          shiny::br(),
-
-          text_grouping_side_panel,
+  shiny::tagList(
 
 
-          module_ui_group_select(id = "group"),
-          module_ui_checkbox(
-            id = "grouptick",
-            cond_id = "group-groupvar"
-          ),
-          # shiny::br(),
-          # shiny::h4(shiny::tags$strong("Start and Summarize")),
-          shiny::actionButton("gobutton",
-            "Set and Start",
-            icon = shiny::icon("rocket"),
-            class = "btn-info"
-          ),
-          # shiny::actionLink("help-start",
-          #                   "Click for Help",
-          #                   icon = shiny::icon("question-circle")),
-          shiny::br(),
+    shiny::navbarPage(
+      "datacleanr",
+      id = "nav",
 
-          text_startsummary_side_panel,
-          width = 3
-        ), # /sidebarPanel
+      # TAB GROUPING ------------
+      shiny::tabPanel(
+        value = "tabOverview",
+        id = "tabOv",
+        title = "Set-up & Overview",
+        icon = shiny::icon("layer-group"),
 
-        mainPanel = shiny::mainPanel(
+        # panel set-up
+        shiny::sidebarLayout(
+          sidebarPanel = shiny::sidebarPanel(
+            shiny::h4(shiny::tags$strong("Grouping")),
 
-          # shiny::actionButton("gosummary",
-          #                     "Summarize",
-          #                     icon = shiny::icon("rocket"),
-          #                     class = "btn-info"),
-
-          # shiny::uiOutput("gosummarybutton"),
-          shiny::tagList(
-            shiny::actionLink("help-summarize",
-              "Click for Help",
-              icon = shiny::icon("question-circle")
+            shiny::actionLink("help-ov",
+                              "Click for Help",
+                              icon = shiny::icon("question-circle")
             ),
+            shiny::br(),
 
-            module_ui_summary(id = "summary")
-          )
-        ) # /mainPanel
-      ) # /sidebarLayout
-    ), # /tabPanel
-
-    # TAB FILTERING -----------
-    shiny::tabPanel(
-      value = "tabFiltering",
-      id = "tabFil",
-      title = "Filtering",
-      icon = shiny::icon("sliders-h"),
+            text_grouping_side_panel,
 
 
-      shiny::sidebarLayout(
-        sidebarPanel = shiny::sidebarPanel(
-          shiny::h4(shiny::tags$strong("Filter Statements")),
-
-          shiny::actionLink("help-filter",
-            "Click for Help",
-            icon = shiny::icon("question-circle")
-          ),
-
-          shiny::br(),
-          shiny::br(),
-
-          shiny::actionButton("addbutton",
-            "Add",
-            icon = shiny::icon("plus-circle")
-          ),
-          shiny::actionButton("removebutton",
-            "Remove",
-            icon = shiny::icon("trash")
-          ),
-          shiny::br(),
-          # text_filtering_side_panel,
-          shiny::br(),
-
-          module_ui_df_filter("check"),
-
-          shiny::br(),
-
-          shiny::tagList(
-            shiny::actionButton(
-              inputId = "apply_filter",
-              label = "Apply",
-              icon = shiny::icon("check-double"),
-              class = "btn-info"
+            module_ui_group_select(id = "group"),
+            module_ui_checkbox(
+              id = "grouptick",
+              cond_id = "group-groupvar"
             ),
-            shiny::actionButton(
-              inputId = "reset_filter",
-              label = "Reset",
-              icon = shiny::icon("undo"),
-              class = "btn-danger"
+            # shiny::br(),
+            # shiny::h4(shiny::tags$strong("Start and Summarize")),
+            shiny::actionButton("gobutton",
+                                "Set and Start",
+                                icon = shiny::icon("rocket"),
+                                class = "btn-info"
+            ),
+            # shiny::actionLink("help-start",
+            #                   "Click for Help",
+            #                   icon = shiny::icon("question-circle")),
+            shiny::br(),
+
+            text_startsummary_side_panel,
+            width = 3
+          ), # /sidebarPanel
+
+          mainPanel = shiny::mainPanel(
+
+            # shiny::actionButton("gosummary",
+            #                     "Summarize",
+            #                     icon = shiny::icon("rocket"),
+            #                     class = "btn-info"),
+
+            # shiny::uiOutput("gosummarybutton"),
+            shiny::tagList(
+              shiny::actionLink("help-summarize",
+                                "Click for Help",
+                                icon = shiny::icon("question-circle")
+              ),
+
+              module_ui_summary(id = "summary")
+            )
+          ) # /mainPanel
+        ) # /sidebarLayout
+      ), # /tabPanel
+
+      # TAB FILTERING -----------
+      shiny::tabPanel(
+        value = "tabFiltering",
+        id = "tabFil",
+        title = "Filtering",
+        icon = shiny::icon("sliders-h"),
+
+
+        shiny::sidebarLayout(
+          sidebarPanel = shiny::sidebarPanel(
+            shiny::h4(shiny::tags$strong("Filter Statements")),
+
+            shiny::actionLink("help-filter",
+                              "Click for Help",
+                              icon = shiny::icon("question-circle")
             ),
 
             shiny::br(),
+            shiny::br(),
+
+            shiny::actionButton("addbutton",
+                                "Add",
+                                icon = shiny::icon("plus-circle")
+            ),
+            shiny::actionButton("removebutton",
+                                "Remove",
+                                icon = shiny::icon("trash")
+            ),
+            shiny::br(),
+            # text_filtering_side_panel,
+            shiny::br(),
+
+            module_ui_df_filter("check"),
+
+            shiny::br(),
+
+            shiny::tagList(
+              shiny::actionButton(
+                inputId = "apply_filter",
+                label = "Apply",
+                icon = shiny::icon("check-double"),
+                class = "btn-info"
+              ),
+              shiny::actionButton(
+                inputId = "reset_filter",
+                label = "Reset",
+                icon = shiny::icon("undo"),
+                class = "btn-danger"
+              ),
+
+              shiny::br(),
+              shiny::br(),
+              # shiny::hr(style = "border-top: 1px solid #A0A0A0;"),
+
+              shiny::h4(shiny::tags$strong("Data Overview")),
+              shiny::br(),
+              module_ui_group_selector_table("df-filter-tab")
+            ),
+            width = 3
+          ), # /sidebarLayout
+
+          mainPanel = shiny::mainPanel(
+            # Diagnostics
+            # shiny::textOutput('show_inputs'),
+            # shiny::verbatimTextOutput("outDF"),
+            shiny::tags$div(id = "placeholder")
+          ) # /mainPanel
+        ) # /sidebarLayout
+      ), # /tabPanel
+
+      # TAB VIS -----------------
+      shiny::tabPanel(
+        value = "tabVisualization",
+        title = "Visual Cleaning & Annotating",
+        icon = shiny::icon("chart-area"),
+        shiny::sidebarLayout(
+          sidebarPanel = shiny::sidebarPanel(
+            width = 4,
+            # shiny::h4(shiny::tags$strong("Data Overview")),
+
+            shiny::tagList(
+              shiny::fluidRow(
+                shiny::column(
+                  4,
+                  shiny::h4(shiny::tags$strong("Plot Groups")),
+                ),
+                module_ui_group_relayout_buttons("grp_relayout")
+              ) # /fluidRow
+            ),
+
+
+            shiny::br(),
+            module_ui_group_selector_table("df"),
+
             shiny::br(),
             # shiny::hr(style = "border-top: 1px solid #A0A0A0;"),
 
-            shiny::h4(shiny::tags$strong("Data Overview")),
+            shiny::h4(shiny::tags$strong("Annotate last selection")),
+            shiny::actionLink("help-annotator",
+                              "Click for Help",
+                              icon = shiny::icon("question-circle")
+            ),
             shiny::br(),
-            module_ui_group_selector_table("df-filter-tab")
-          ),
-          width = 3
-        ), # /sidebarLayout
+            module_ui_text_annotator("annotator"),
 
-        mainPanel = shiny::mainPanel(
-          # Diagnostics
-          # shiny::textOutput('show_inputs'),
-          # shiny::verbatimTextOutput("outDF"),
-          shiny::tags$div(id = "placeholder")
-        ) # /mainPanel
-      ) # /sidebarLayout
-    ), # /tabPanel
+            shiny::br(),
 
-    # TAB VIS -----------------
-    shiny::tabPanel(
-      value = "tabVisualization",
-      title = "Visual Cleaning & Annotating",
-      icon = shiny::icon("chart-area"),
-      shiny::sidebarLayout(
-        sidebarPanel = shiny::sidebarPanel(
-          width = 4,
-          # shiny::h4(shiny::tags$strong("Data Overview")),
+            # shiny::h4(shiny::tags$strong("Impact on distribution")),
 
-          shiny::tagList(
-            shiny::fluidRow(
-              shiny::column(
-                4,
-                shiny::h4(shiny::tags$strong("Plot Groups")),
-              ),
-              module_ui_group_relayout_buttons("grp_relayout")
-            ) # /fluidRow
+
+            shiny::tagList(
+              shiny::fluidRow(
+                shiny::column(
+                  8,
+                  shiny::h4(shiny::tags$strong("Impact on distribution")),
+                ),
+                shiny::column(
+                  4,
+                  shiny::uiOutput("histogramupdatebutton")
+                )
+              ) # /fluidRow
+            ), # /taglist
+            shiny::actionLink("help-hist",
+                              "Click for Help",
+                              icon = shiny::icon("question-circle")
+            ),
+
+            module_ui_histograms("plotvars")
           ),
 
-
-          shiny::br(),
-          module_ui_group_selector_table("df"),
-
-          shiny::br(),
-          # shiny::hr(style = "border-top: 1px solid #A0A0A0;"),
-
-          shiny::h4(shiny::tags$strong("Annotate last selection")),
-          shiny::actionLink("help-annotator",
-            "Click for Help",
-            icon = shiny::icon("question-circle")
-          ),
-          shiny::br(),
-          module_ui_text_annotator("annotator"),
-
-          shiny::br(),
-
-          # shiny::h4(shiny::tags$strong("Impact on distribution")),
+          mainPanel = shiny::mainPanel(
+            width = 8,
+            # diagnostics
+            # shiny::textOutput('show_inputs'),
+            # shiny::verbatimTextOutput("outDF"),
+            module_ui_plot_selectorcontrols("selectors"),
+            shiny::actionLink("help-plot",
+                              "Click for Help",
+                              icon = shiny::icon("question-circle")
+            ),
+            module_ui_plot_selectable("plot"),
+            module_ui_lowercontrol_btn("lwrcontrol"),
+            module_ui_plot_annotation_table("dt")
+          )
+        ) # /sidebarLayout
+      ) # /tabPanel
 
 
-          shiny::tagList(
-            shiny::fluidRow(
-              shiny::column(
-                8,
-                shiny::h4(shiny::tags$strong("Impact on distribution")),
-              ),
-              shiny::column(
-                4,
-                shiny::uiOutput("histogramupdatebutton")
-              )
-            ) # /fluidRow
-          ), # /taglist
-          shiny::actionLink("help-hist",
-            "Click for Help",
-            icon = shiny::icon("question-circle")
-          ),
-
-          module_ui_histograms("plotvars")
-        ),
-
-        mainPanel = shiny::mainPanel(
-          width = 8,
-          # diagnostics
-          # shiny::textOutput('show_inputs'),
-          # shiny::verbatimTextOutput("outDF"),
-          module_ui_plot_selectorcontrols("selectors"),
-          shiny::actionLink("help-plot",
-            "Click for Help",
-            icon = shiny::icon("question-circle")
-          ),
-          module_ui_plot_selectable("plot"),
-          module_ui_lowercontrol_btn("lwrcontrol"),
-          module_ui_plot_annotation_table("dt")
-        )
-      ) # /sidebarLayout
-    ) # /tabPanel
+      ,
+      # TAB EXTRACT -------------
+      shiny::tabPanel(
+        value = "tabExtraction",
+        title = "Extract",
+        icon = shiny::icon("file-export"),
+        shiny::sidebarLayout(
+          sidebarPanel = shiny::sidebarPanel(
+            width = 4,
 
 
-    ,
-    # TAB EXTRACT -------------
-    shiny::tabPanel(
-      value = "tabExtraction",
-      title = "Extract",
-      icon = shiny::icon("file-export"),
-      shiny::sidebarLayout(
-        sidebarPanel = shiny::sidebarPanel(
-          width = 4,
+            shiny::h4(shiny::tags$strong("Reproducible Recipe")),
+            shiny::actionLink("help-repro",
+                              "Click for Help",
+                              icon = shiny::icon("question-circle")
+            ),
+            shiny::br(),
+            shiny::br(),
 
-
-          shiny::h4(shiny::tags$strong("Reproducible Recipe")),
-          shiny::actionLink("help-repro",
-            "Click for Help",
-            icon = shiny::icon("question-circle")
-          ),
-          shiny::br(),
-          shiny::br(),
-
-          shiny::p("All commands and operations in previous tabs are translated to
+            shiny::p("All commands and operations in previous tabs are translated to
                                                                                          code on the right, ensuring reproducibility."),
-          # shiny::br(""),
-          # shiny::checkboxInput("overwrite",
-          #                      label = "Concise code?",
-          #                      value = FALSE)),
-          module_ui_extract_code_fileconfig("config")
-        ),
+            # shiny::br(""),
+            # shiny::checkboxInput("overwrite",
+            #                      label = "Concise code?",
+            #                      value = FALSE)),
+            module_ui_extract_code_fileconfig("config")
+          ),
 
-        mainPanel = shiny::mainPanel(
-          width = 8,
-          # shiny::h4(shiny::tags$strong("Reproducible Recipe")),
-          module_ui_extract_code("extract")
+          mainPanel = shiny::mainPanel(
+            width = 8,
+            # shiny::h4(shiny::tags$strong("Reproducible Recipe")),
+            module_ui_extract_code("extract")
+          )
         )
       )
-    ), # /tabPanel
+      , # /tabPanel
 
 
 
-    # HANDLER BUTTONS TOP ------------------
-    inputs = list(
-      shiny::actionButton("close",
-        "Close",
-        icon = shiny::icon("check-circle"),
-        class = "btn-success"
-      ),
-      shiny::actionButton("cancel",
-        "Cancel",
-        icon = shiny::icon("window-close"),
-        class = "btn-secondary"
-      )
-      # shiny::bookmarkButton("bookmark",
-      # label = "Save",
-      # icon = shiny::icon("save"))
-    ), # inputs
+      # HANDLER BUTTONS TOP ------------------
+      bslib::nav_item(
+        shiny::actionButton("close",
+                            "Close",
+                            icon = shiny::icon("check-circle"),
+                            class = "btn-success",
+                            style = "padding: 8px; margin: 6px;"
+        ),
+        style = "padding-left: 40px;"
+        ),
+      bslib::nav_item(
+        shiny::actionButton("cancel",
+                            "Cancel",
+                            icon = shiny::icon("window-close"),
+                            class = "btn-secondary",
+                            style = "padding: 8px; margin: 6px;"
+        )
+                          ),
 
 
-
+      position = "fixed-top"
+      ), # /navbarPage
 
     shiny::tags$style(type = "text/css", "body {padding-top: 70px;}"),
-    position = "fixed-top"
-  ) # /navbarPageWithInputs
+    shiny::tags$script(src = c(href = "https://d3js.org/d3-selection.v2.js"))
+    # shiny::tags$script(src = c(href = "https://cdnjs.cloudflare.com/ajax/libs/d3/7.1.1/d3.min.js")),
+
+  )
 }

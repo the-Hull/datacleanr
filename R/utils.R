@@ -98,23 +98,7 @@ get_factor_cols_idx <- function(x) {
 }
 
 
-#' Navbar with Input
-#'
-#' Call this function with an input (such as `textInput("text", NULL, "Search")`) if you
-#' want to add an input to the navbar
-#'
-#' @param ... Regular Navbar elements, like tabPanel
-#' @param inputs shiny ui inputs
-#' @return Navbar function that allows adding inputs
-#' @source \url{https://github.com/daattali/advanced-shiny/tree/master/navbar-add-text}
-navbarPageWithInputs <- function(..., inputs) {
-  navbar <- shiny::navbarPage(...)
-  form <- shiny::tags$form(class = "navbar-form", inputs)
-  navbar[[3]][[1]]$children[[1]] <- htmltools::tagAppendChild(
-    navbar[[3]][[1]]$children[[1]], form
-  )
-  navbar
-}
+
 
 #' Applies grouping to data set conditionally
 #' @param df data frame
@@ -1100,6 +1084,42 @@ make_save_filepath <- function(save_dir, input_filepath, suffix, ext) {
   out_filepath <- fs::path(save_dir, file_name, ext = ext)
 
   return(out_filepath)
+}
+
+
+# add_d3_dep <- function(g){
+#
+#
+#   dep <- htmltools::htmlDependency(
+#     name = "d3",
+#     version = "7.1.1",
+#     src = c(href = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.1.1/'),
+#     script = "d3.min.js"
+#   )
+#
+#   # append dependency
+#   g$dependencies <- append(g$dependencies, list(dep))
+#
+#   return(g)
+#
+# }
+
+
+#' Check for internet connection
+#'
+#' @param url character, valid path to url - user responsible
+#'
+#' @return logical - TRUE or FALSE
+can_internet <- function(url = "http://www.google.com") {
+
+  # test the http capabilities of the current R build
+  if (!capabilities(what = "http/ftp")) return(FALSE)
+
+  # test connection by trying to read first line of url
+  test <- try(suppressWarnings(readLines(url, n = 1)), silent = TRUE)
+
+  # return FALSE if test inherits 'try-error' class
+  return(!inherits(test, "try-error"))
 }
 
 # methods -----------------------------------------------------------------

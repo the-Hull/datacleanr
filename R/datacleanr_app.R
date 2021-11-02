@@ -78,7 +78,14 @@
 #'
 #' @export
 dcr_app <- function(dframe, browser = TRUE) {
-  use_data <- dcr_checks(dframe)
+
+
+
+  if(!can_internet()){
+    stop("Please connec to the internet. datacleanr currently relies on an internet connection to provide d3 methods for plotting and data selection. \n These will be packaged into an upcoming version to allow offline use.\n")
+  }
+
+    use_data <- dcr_checks(dframe)
 
 
 

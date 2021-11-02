@@ -40,13 +40,15 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   # vector created on click or lasso event
   # and tide to x and ns arguments in "onRender"
   # e.g. data.x, data.nx
+  # var d3 = Plotly.d3;
+  # var d3 = d3;
+        # var trace = d3.select(this)[0][0].__data__[0].trace;
   jsfull <- "function(el, x, data){
   var id = el.getAttribute('id');
-  var d3 = Plotly.d3;
    el.on('plotly_afterplot', function(event) {
       var out = [];
       d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
-        var trace = d3.select(this)[0][0].__data__[0].trace;
+        var trace = Object.values(d3.select(this))[0][0][0].__data__[0].trace;
         out.push([name=trace.name, index=trace.index]);
       });
       Shiny.setInputValue(data.ns + data.x, out);
@@ -55,7 +57,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   el.on('plotly_click', function(event) {
       var out = [];
       d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
-        var trace = d3.select(this)[0][0].__data__[0].trace;
+        var trace = Object.values(d3.select(this))[0][0][0].__data__[0].trace;
         out.push([name=trace.name, index=trace.index]);
       });
       Shiny.setInputValue(data.ns + data.x, out);
@@ -64,7 +66,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
   el.on('plotly_selected', function(event) {
       var out = [];
       d3.select('#' + id + ' g.legend').selectAll('.traces').each(function(){
-        var trace = d3.select(this)[0][0].__data__[0].trace;
+        var trace = Object.values(d3.select(this))[0][0][0].__data__[0].trace;
         out.push([name=trace.name, index=trace.index]);
       });
       Shiny.setInputValue(data.ns + data.x, out);
@@ -288,6 +290,7 @@ module_server_plot_selectable <- function(input, output, session, selector_input
               )
             ) %>%
             plotly::toWebGL()
+
         })
       )
     ) # \ eval_tidy

@@ -3,5 +3,6 @@
 export("%>%")
 export(dcr_app)
 export(filter_scoped_df)
+importFrom(bslib,nav_item)
 importFrom(magrittr,"%>%")
 importFrom(rlang,.data)

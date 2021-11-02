@@ -153,7 +153,7 @@
 <p>Add/Remove filter statement boxes, and apply (valid) expressions - either to the entire data set, or scoped to individual groups. Filtering relies on <code>R</code> expressions passed to <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code>, so, for example, valid statements for <code>iris</code> are:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R">    <span class="va">Species</span> <span class="op">==</span> <span class="st">'setosa'</span>
-    <span class="va">Species</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'setosa'</span>,<span class="st">'versicolor'</span><span class="op">)</span>
+    <span class="va">Species</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'setosa'</span>,<span class="st">'versicolor'</span><span class="op">)</span>
     <span class="va">Sepal.Width</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="fl">0.05</span><span class="op">)</span></code></pre></div>
 <p>Any function returning a logical vector (i.e. <code>TRUE</code>/<code>FALSE</code>), can be employed here!</p>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_filter.gif" width="1000" align="center"></p>
@@ -174,8 +174,8 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 
-<span class="va">iris_mod</span> <span class="op">&lt;-</span> <span class="va">iris</span> <span class="op">%&gt;%</span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Species</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">iris_mod</span> <span class="op">&lt;-</span> <span class="va">iris</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Species</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
   <span class="co"># .dcrflag provides additional visual cue in visualization tab</span>
   <span class="co"># based on TRUE/FALSE </span>
 <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.dcrflag <span class="op">=</span> <span class="va">Sepal.Width</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span>
@@ -198,10 +198,10 @@
 
 <span class="co"># make synthetic data</span>
 <span class="va">tree_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>tree_A <span class="op">=</span> <span class="va">tree_df</span>,
-                  tree_B <span class="op">=</span> <span class="va">tree_df</span> <span class="op">%&gt;%</span> 
+                  tree_B <span class="op">=</span> <span class="va">tree_df</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
                       <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>val <span class="op">=</span> <span class="va">val</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span>,
-                  tree_C <span class="op">=</span> <span class="va">tree_df</span> <span class="op">%&gt;%</span> 
-                      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>val <span class="op">=</span> <span class="va">val</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, mean <span class="op">=</span> <span class="op">-</span><span class="fl">0.03</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                  tree_C <span class="op">=</span> <span class="va">tree_df</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
+                      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>val <span class="op">=</span> <span class="va">val</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, mean <span class="op">=</span> <span class="op">-</span><span class="fl">0.03</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="st">"tree"</span><span class="op">)</span>
 
 <span class="co"># group by tree and inspect</span>
@@ -220,8 +220,8 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"storms"</span>, package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span>
 
-<span class="va">storms_mod</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op">%&gt;%</span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>timestamp <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/ymd_hms.html">ymd_h</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">month</span>, <span class="va">day</span>, <span class="va">hour</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">storms_mod</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>timestamp <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd_hms.html">ymd_h</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">month</span>, <span class="va">day</span>, <span class="va">hour</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># Group by name (198 groups)</span>
 <span class="co"># Check "Emily"</span>
@@ -239,7 +239,7 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 
-<span class="va">airport_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">'https://plotly-r.com/data-raw/airport_locations.csv'</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">airport_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">'https://plotly-r.com/data-raw/airport_locations.csv'</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">long</span><span class="op">)</span>
 
 <span class="co"># group by state</span>
@@ -256,7 +256,7 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"storms"</span>, package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span>
 
 
-<span class="va">storms_mod</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op">%&gt;%</span> 
+<span class="va">storms_mod</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">long</span><span class="op">)</span>
 
 <span class="co"># Group by name (198 groups)</span>
@@ -267,7 +267,7 @@
 <div id="4-extract-reproducible-recipe" class="section level3">
 <h3 class="hasAnchor">
 <a href="#4-extract-reproducible-recipe" class="anchor"></a>4. Extract (Reproducible Recipe)</h3>
-<p>All grouping, filtering and selections/annotations are translated to <code>R</code> code, which can be sent to an <code>RStudio</code> script, copied to the clipboard, or - when <code>dcr_app</code> is launched with a file path - save options are made available. For large selections/annotations we recommend saving the script separately, and sourcing it (i.e. <code><a href="https://rdrr.io/r/base/source.html">source("your_datacleanr_script.R")</a></code>) during later analyses.</p>
+<p>All grouping, filtering and selections/annotations are translated to <code>R</code> code, which can be sent to an <code>RStudio</code> script, copied to the clipboard, or - when <code>dcr_app</code> is launched with a file path - save options are made available. For large selections/annotations we recommend saving the script separately, and sourcing it (i.e. <code>source("your_datacleanr_script.R")</code>) during later analyses.</p>
 <p><strong>Caution: When selections / annotations are greater than ~ 1000 points, it is recommended to use <code>datacleanr</code> with an <code>*.RDS</code> file (see below). This is because the resulting Reproducible Recipe (script) can slow down the RStudio IDE, if it has more than a few thousand lines.The next version of <code>datacleanr</code> will allow choosing between script-only recipes, and the option with an the intermediate file for storing annotations. Both approaches with their current implementation are shown shown below.</strong></p>
 <p><strong>Example 1</strong></p>
 <p>Launching with an object from <code>R</code>:</p>
@@ -343,7 +343,7 @@
 <p><strong>Explore sampling locations</strong>:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Check location info</span>
-<span class="va">db_info</span> <span class="op">&lt;-</span> <span class="va">db_info</span> <span class="op">%&gt;%</span>
+<span class="va">db_info</span> <span class="op">&lt;-</span> <span class="va">db_info</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">CSR_LONGITUDE</span>,
            lat <span class="op">=</span> <span class="va">CSR_LATITUDE</span><span class="op">)</span>
 <span class="fu">datacleanr</span><span class="fu">::</span><span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">db_info</span><span class="op">)</span></code></pre></div>
@@ -354,7 +354,7 @@
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># grab all data from ZHANG</span>
 <span class="va">zhang</span> <span class="op">&lt;-</span> <span class="fu">cosore</span><span class="fu">::</span><span class="fu">csr_table</span><span class="op">(</span><span class="st">"data"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"d20190424_ZHANG_maple"</span>,
-                                        <span class="st">"d20190424_ZHANG_oak"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+                                        <span class="st">"d20190424_ZHANG_oak"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
   <span class="co"># adjust for grouping</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>CSR_PORT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">CSR_PORT</span><span class="op">)</span><span class="op">)</span>
 

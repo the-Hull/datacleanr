@@ -163,29 +163,29 @@ printed in the "Extract" tab). It is therefore not advisable to manually alter t
 this function interactively.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># set-up condition_df</span>
-<span class='va'>cdf</span> <span class='op'>&lt;-</span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>
-  statement <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
-    <span class='st'>"Sepal.Width &gt; quantile(Sepal.Width, 0.1)"</span>,
-    <span class='st'>"Petal.Width &gt; quantile(Petal.Width, 0.1)"</span>,
-    <span class='st'>"Petal.Length &gt; quantile(Petal.Length, 0.8)"</span>
-  <span class='op'>)</span>,
-  scope_at <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='cn'>NULL</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-
-<span class='va'>fdf</span> <span class='op'>&lt;-</span> <span class='fu'>filter_scoped_df</span><span class='op'>(</span>
-  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span>
-    <span class='va'>iris</span>,
-    <span class='va'>Species</span>
-  <span class='op'>)</span>,
-  condition_df <span class='op'>=</span> <span class='va'>cdf</span>
-<span class='op'>)</span>
-
-<span class='co'># Example of invalid expression:</span>
-<span class='co'># column 'Spec' does not exist in iris</span>
-<span class='co'># "Spec == 'setosa'"</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># set-up condition_df</span></span>
+<span class='r-in'><span class='va'>cdf</span> <span class='op'>&lt;-</span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span></span>
+<span class='r-in'>  statement <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span></span>
+<span class='r-in'>    <span class='st'>"Sepal.Width &gt; quantile(Sepal.Width, 0.1)"</span>,</span>
+<span class='r-in'>    <span class='st'>"Petal.Width &gt; quantile(Petal.Width, 0.1)"</span>,</span>
+<span class='r-in'>    <span class='st'>"Petal.Length &gt; quantile(Petal.Length, 0.8)"</span></span>
+<span class='r-in'>  <span class='op'>)</span>,</span>
+<span class='r-in'>  scope_at <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='cn'>NULL</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>fdf</span> <span class='op'>&lt;-</span> <span class='fu'>filter_scoped_df</span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span></span>
+<span class='r-in'>    <span class='va'>iris</span>,</span>
+<span class='r-in'>    <span class='va'>Species</span></span>
+<span class='r-in'>  <span class='op'>)</span>,</span>
+<span class='r-in'>  condition_df <span class='op'>=</span> <span class='va'>cdf</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Example of invalid expression:</span></span>
+<span class='r-in'><span class='co'># column 'Spec' does not exist in iris</span></span>
+<span class='r-in'><span class='co'># "Spec == 'setosa'"</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

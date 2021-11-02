@@ -8,5 +8,7 @@
 
 
 * This is a package update
+* Fixed permanent link redirects
+* Fixed NOTE (LazyData is now FALSE)
 
   

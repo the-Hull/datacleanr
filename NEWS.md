@@ -1,3 +1,10 @@
+# datacleanr 1.0.2
+
+* removed `navbarPageWithInputs`, replaced with `shiny::navbarpage()` and `bslib::nav_item()`, as recommended
+* adjusted button placement (close/exit) with css styles 
+* `plotly` no longer serves `Plotly.d3`, which was used to select individual traces on the plot in the viz tab; it now requires additional import. This is currently done via a D3 script dependency from a CDN, which requires an internet connection (checked by `can_internet()`
+
+
 # datacleanr 1.0.1
 
 * `dcr_checks:`  

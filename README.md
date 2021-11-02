@@ -4,14 +4,14 @@
 # datacleanr <img src="man/figures/dcr_logo.png" align="right" width = "150"/>
 
 <!-- badges: start -->
-
 <!-- [![CRAN status](https://www.r-pkg.org/badges/version/datacleanr)](https://CRAN.R-project.org/package=datacleanr) -->
-
 <!-- [![Travis build status](https://travis-ci.org/the-Hull/datacleanr.svg?branch=master)](https://travis-ci.org/the-Hull/datacleanr) -->
 
-[![CircleCI](https://circleci.com/gh/Appsilon/ci.example.svg?style=svg)](https://circleci.com/gh/the-Hull/datacleanr)
+[![CircleCI](https://circleci.com/gh/Appsilon/ci.example.svg?style=svg)](https://app.circleci.com/pipelines/github/the-Hull/datacleanr)
+[![Lifecycle:
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![](https://cranlogs.r-pkg.org/badges/datacleanr)](https://cran.r-project.org/package=datacleanr)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/datacleanr?color=brightgreen)](https://cran.r-project.org/package=datacleanr)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/datacleanr?color=brightgreen)](https://cran.r-project.org/package=datacleanr)
 <!-- badges: end -->
 
 `datacleanr` is a flexible and efficient tool for **interactive** data
@@ -34,8 +34,10 @@ You can install the development version of `datacleanr` with:
 ``` r
 remotes::install_github("the-hull/datacleanr")
 ```
-**If you are using macOS, please make sure you have `XQuartz` installed, especially if you've recently updated your system.**
-**See these instructions here: [https://cloud.r-project.org/bin/macosx/](https://cloud.r-project.org/bin/macosx/)**
+
+**If you are using macOS, please make sure you have `XQuartz` installed,
+especially if you’ve recently updated your system.** **See these
+instructions here: <https://CRAN.R-project.org/bin/macosx/>**
 
 ## Design
 
@@ -48,15 +50,15 @@ saved to disk.
 
 There are **four tabs** in the app for these tasks:
 
-  - **Set-up & Overview**: define nesting structure based on (multiple)
+-   **Set-up & Overview**: define nesting structure based on (multiple)
     groups.
-  - **Filtering**: use `R` expression to filter/subset data.
-  - **Visual Cleaning and Annotating**: generate bivarirate (time
+-   **Filtering**: use `R` expression to filter/subset data.
+-   **Visual Cleaning and Annotating**: generate bivarirate (time
     series) plots and maps, as well as highlight and annotate individual
     observations. Cycle through nested groups to expedite exploration
     and cleaning. Histograms of original vs. ‘cleaned’ data can be
     generated.
-  - **Extract**: generate reproducible recipe and define outputs.
+-   **Extract**: generate reproducible recipe and define outputs.
     **`dcr_app` also returns all intermediate and final outputs
     invisibly to the active `R` session for later use (e.g. when batch
     processing)**
@@ -66,21 +68,19 @@ in the data set to render.
 
 ## Additional features
 
-  - **Grouping**: the grouping defined in the “Set-up and Overview” tab
+-   **Grouping**: the grouping defined in the “Set-up and Overview” tab
     is carried forward through the app. These groups can be used to
     cycle through nested/granular data, and considerably speed up
     exploration and cleaning. These groups are also available for
     filtering (Filtering tab), where filter expressions can be scoped to
     group level (i.e. no groups, individual, all groups).
-  - **Interoperability**: when a logical (`TRUE`\\`FALSE`) column named
+-   **Interoperability**: when a logical (`TRUE`\\`FALSE`) column named
     `.dcrflag` is present, corresponding observations are rendered with
     different symbols in plots and maps. Use this feature to validate or
     cross-check external quality control or outlier flagging methods.
-  - **Batching**: If data sets are too large, or too deeply nested
+-   **Batching**: If data sets are too large, or too deeply nested
     (e.g. individual, plot, site, region, etc.), we recommend a
     split-combine approach to expedite the processing.
-
-<!-- end list -->
 
 ``` r
 iris_split <- split(iris, iris$Species) 
@@ -101,7 +101,7 @@ Launch `datacleanr`’s interactive app with `dcr_app()`. The following
 examples demonstrate basic use and highlight features across the four
 app tabs.
 
-### 1\. Set-up & Overview
+### 1. Set-up & Overview
 
 Define the grouping structure (used throughout app for scoping filters
 and plotting), and generate an informative overview.
@@ -115,7 +115,7 @@ dcr_app(iris)
 
 <img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_setup.gif" width = "1000" align = "center"/>
 
-### 2\. Filtering
+### 2. Filtering
 
 Add/Remove filter statement boxes, and apply (valid) expressions -
 either to the entire data set, or scoped to individual groups. Filtering
@@ -129,11 +129,11 @@ valid statements for `iris` are:
 ```
 
 Any function returning a logical vector (i.e. `TRUE`/`FALSE`), can be
-employed here\!
+employed here!
 
 <img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_filter.gif" width = "1000" align = "center"/>
 
-### 3\. Visualizing and annotating
+### 3. Visualizing and annotating
 
 Interactive visualization allow seamless scrolling, panning and zooming
 to select and annotate individual observations (or sections with
@@ -198,7 +198,6 @@ dcr_app(tree_data)
 > No GIF
 
 ``` r
-
 library(dplyr)
 library(lubridate)
 data("storms", package = "dplyr")
@@ -245,7 +244,6 @@ dcr_app(airport_data)
 > No GIF
 
 ``` r
-
 library(dplyr)
 library(lubridate)
 data("storms", package = "dplyr")
@@ -259,7 +257,7 @@ storms_mod <- storms %>%
 dcr_app(storms_mod)
 ```
 
-### 4\. Extract (Reproducible Recipe)
+### 4. Extract (Reproducible Recipe)
 
 All grouping, filtering and selections/annotations are translated to `R`
 code, which can be sent to an `RStudio` script, copied to the clipboard,
@@ -326,7 +324,6 @@ iris <- dplyr::left_join(iris, iris_outlier_selection, by = ".dcrkey")
 Launching with an `.RDS` from disk:
 
 ``` r
-
 saveRDS(iris, file = "./testiris.Rds")
 
 library(datacleanr)
@@ -335,17 +332,17 @@ dcr_app("./testiris.Rds")
 
 <img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_extract_file.gif" width = "1000" align = "center"/>
 
------
+------------------------------------------------------------------------
 
 ## Examples:
 
-### 1\. Exploring soil respiration with **COSORE**:
+### 1. Exploring soil respiration with **COSORE**:
 
 **COSORE** is a community-driven soil respiration database, recently
 introduced with a manuscript published
 [here](https://doi.org/10.1111/gcb.15353) by Bond-Lamberty *et al.*. The
 database provides soil respiration flux estimates, as well as meta data
-across multiple data sets. Let’s explore\!
+across multiple data sets. Let’s explore!
 
 ``` r
 remotes::install_github("bpbond/cosore")
@@ -393,7 +390,7 @@ datacleanr::dcr_app(zhang)
 
 <img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_cosore.gif" width = "1000" align = "center"/>
 
------
+------------------------------------------------------------------------
 
 Please note that the `datacleanr` project is released with a
 [Contributor Code of

@@ -19,10 +19,10 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- [![CRAN status](https://www.r-pkg.org/badges/version/datacleanr)](https://CRAN.R-project.org/package=datacleanr) -->
 <!-- [![Travis build status](https://travis-ci.org/the-Hull/datacleanr.svg?branch=master)](https://travis-ci.org/the-Hull/datacleanr) -->
-[![CircleCI](https://circleci.com/gh/Appsilon/ci.example.svg?style=svg)](https://circleci.com/gh/the-Hull/datacleanr)
+[![CircleCI](https://circleci.com/gh/Appsilon/ci.example.svg?style=svg)](https://app.circleci.com/pipelines/github/the-Hull/datacleanr)
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![](https://cranlogs.r-pkg.org/badges/datacleanr)](https://cran.r-project.org/package=datacleanr)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/datacleanr?color=brightgreen)](https://cran.r-project.org/package=datacleanr)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/datacleanr?color=brightgreen)](https://cran.r-project.org/package=datacleanr)
 <!-- badges: end -->
 
 
@@ -50,6 +50,10 @@ You can install the development version of `datacleanr`  with:
 ``` r
 remotes::install_github("the-hull/datacleanr")
 ```
+
+**If you are using macOS, please make sure you have `XQuartz` installed, especially if you've recently updated your system.**
+**See these instructions here: [https://CRAN.R-project.org/bin/macosx/](https://CRAN.R-project.org/bin/macosx/)**
+
 
 ## Design
 

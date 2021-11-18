@@ -1,3 +1,7 @@
+# datacleanr 1.0.3
+
+* fixed `filter_scoped()` test to conform with `dplyr 1.0.8` release (dropped dplyr error class)
+
 # datacleanr 1.0.2
 
 * removed `navbarPageWithInputs`, replaced with `shiny::navbarpage()` and `bslib::nav_item()`, as recommended

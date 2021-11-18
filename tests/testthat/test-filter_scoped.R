@@ -23,9 +23,7 @@ test_that("filter fails with incorrect statement", {
   expect_error(filter_scoped(iris,
     "Spec == 'setosa'",
     scope_at = NULL
-  ),
-  class = "dplyr_error"
-  )
+  ))
 })
 
 

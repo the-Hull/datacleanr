@@ -8,7 +8,6 @@
 
 
 * This is a package update
-* Fixed permanent link redirects
-* Fixed NOTE (LazyData is now FALSE)
+* Fixed function test to conform with new dplyr 1.0.8 release as per pull request
 
   

@@ -83,10 +83,14 @@ in the data set to render.
     split-combine approach to expedite the processing.
 
 ``` r
-iris_split <- split(iris, iris$Species) 
-
-output <- lapply(iris_split, 
-       dcr_app)
+# prepare data into species sub-sets
+iris_split <- split(x = iris,
+                    f = iris$Species)
+# run for each species
+dcr_iris <- lapply(iris_split, 
+                   function(split){
+                       datacleanr::dcr_app(split)
+                   })
 ```
 
 ## Getting started

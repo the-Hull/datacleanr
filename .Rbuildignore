@@ -21,3 +21,4 @@
 ^CRAN-RELEASE$
 ^man/figures/readme_cosore\.gif$
 ^man/figures/readme_cosore_single\.gif$
+^vig\.Rmd$

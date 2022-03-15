@@ -4,3 +4,5 @@
 _setup.R
 R/_dev.R
 irist.RDS
+vig.Rmd
+vig.html

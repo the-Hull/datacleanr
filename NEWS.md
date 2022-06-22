@@ -1,3 +1,11 @@
+# datacleanr 1.0.4
+
+* improved plotting performance of large, "narrowly distributed" distributed data, such as a 1:1 scatter or a high resolution time series (i.e., little variation in either x or y dimension). 
+The low performance seems to come from changes made in how hover events are handled in `plotly` in newer versions (2.x.x). See [this issue](https://github.com/plotly/plotly.js/issues/5790#issuecomment-1067844436), which is still unresolved at 06 June, 2022. 
+The fix uses the default `hovermode = "closest"`, but sets `hoverdistance = 200`, which should ensure a better responsiveness in most cases.
+The increased `hoverdistance` called for a disabling of hover labels to prevent confusion.
+Note, the increased `hoverdistance` may cause some unintended consequences when clickin into plotting 'white space', as the click snaps to the closest point within `200` pixels.
+
 # datacleanr 1.0.3
 
 * fixed `filter_scoped()` test to conform with `dplyr 1.0.8` release (dropped dplyr error class)

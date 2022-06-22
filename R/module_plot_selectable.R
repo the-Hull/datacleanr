@@ -226,6 +226,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
 
               # name = ~as.factor(.dcrindex),
 
+              hoverinfo = 'none',
+
 
               text = ~.dcrkey,
               customdata = ~.dcrkey,
@@ -241,6 +243,8 @@ module_server_plot_selectable <- function(input, output, session, selector_input
               unselected = list(marker = list(opacity = opac))
             ) %>%
             plotly::layout(
+              hovermode = 'closest',
+              hoverdistance = 200,
               showlegend = TRUE,
               dragmode = "lasso",
               mapbox = geo_def,

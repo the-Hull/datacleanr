@@ -21,6 +21,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -33,18 +35,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">datacleanr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.4</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -54,7 +50,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/the-Hull/datacleanr/">
+  <a href="https://github.com/the-Hull/datacleanr/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,31 +67,27 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="datacleanr-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#datacleanr-" class="anchor"></a>datacleanr <img src="reference/figures/dcr_logo.png" align="right" width="150">
+<div class="section level1">
+<div class="page-header"><h1 id="datacleanr-">datacleanr <img src="reference/figures/dcr_logo.png" align="right" width="150"><a class="anchor" aria-label="anchor" href="#datacleanr-"></a>
 </h1></div>
-<!-- badges: start -->
-<!-- [![CRAN status](https://www.r-pkg.org/badges/version/datacleanr)](https://CRAN.R-project.org/package=datacleanr) -->
-<!-- [![Travis build status](https://travis-ci.org/the-Hull/datacleanr.svg?branch=master)](https://travis-ci.org/the-Hull/datacleanr) -->
-
+<!-- badges: start --><!-- [![CRAN status](https://www.r-pkg.org/badges/version/datacleanr)](https://CRAN.R-project.org/package=datacleanr) --><!-- [![Travis build status](https://travis-ci.org/the-Hull/datacleanr.svg?branch=master)](https://travis-ci.org/the-Hull/datacleanr) -->
 <p><code>datacleanr</code> is a flexible and efficient tool for <strong>interactive</strong> data cleaning, and is inherently interoperable, as it seamlessly integrates into <strong>reproducible</strong> data analyses pipelines in <code>R</code>.</p>
 <p>It can deal with nested <strong>tabular</strong>, as well as <strong>spatial</strong> and <strong>time series</strong> data.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>The latest release on CRAN can be installed using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"datacleanr"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"datacleanr"</span><span class="op">)</span></code></pre></div>
 <p>You can install the development version of <code>datacleanr</code> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"the-hull/datacleanr"</span><span class="op">)</span></code></pre></div>
-<p><strong>If you are using macOS, please make sure you have <code>XQuartz</code> installed, especially if you’ve recently updated your system.</strong> <strong>See these instructions here: <a href="https://CRAN.R-project.org/bin/macosx/" class="uri">https://CRAN.R-project.org/bin/macosx/</a></strong></p>
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"the-hull/datacleanr"</span><span class="op">)</span></code></pre></div>
+<p><strong>If you are using macOS, please make sure you have <code>XQuartz</code> installed, especially if you’ve recently updated your system.</strong> <strong>See these instructions here: <a href="https://CRAN.R-project.org/bin/macosx/" class="external-link uri">https://CRAN.R-project.org/bin/macosx/</a></strong></p>
 </div>
-<div id="design" class="section level2">
-<h2 class="hasAnchor">
-<a href="#design" class="anchor"></a>Design</h2>
-<p><code>datacleanr</code> is developed using the <a href="https://shiny.rstudio.com/">shiny</a> package, and relies on informative summaries, visual cues and interactive data selection and annotation. All data-altering operations are documented, and converted to valid <code>R</code> code (<strong>reproducible recipe</strong>), that can be copied, sent to an active <code>RStudio</code> script, or saved to disk.</p>
+<div class="section level2">
+<h2 id="design">Design<a class="anchor" aria-label="anchor" href="#design"></a>
+</h2>
+<p><code>datacleanr</code> is developed using the <a href="https://shiny.rstudio.com/" class="external-link">shiny</a> package, and relies on informative summaries, visual cues and interactive data selection and annotation. All data-altering operations are documented, and converted to valid <code>R</code> code (<strong>reproducible recipe</strong>), that can be copied, sent to an active <code>RStudio</code> script, or saved to disk.</p>
 <p>There are <strong>four tabs</strong> in the app for these tasks:</p>
 <ul>
 <li>
@@ -110,9 +102,9 @@
 </ul>
 <p>Note, maps require columns <code>lon</code> and <code>lat</code> (X and Y) in decimal degrees in the data set to render.</p>
 </div>
-<div id="additional-features" class="section level2">
-<h2 class="hasAnchor">
-<a href="#additional-features" class="anchor"></a>Additional features</h2>
+<div class="section level2">
+<h2 id="additional-features">Additional features<a class="anchor" aria-label="anchor" href="#additional-features"></a>
+</h2>
 <ul>
 <li>
 <strong>Grouping</strong>: the grouping defined in the “Set-up and Overview” tab is carried forward through the app. These groups can be used to cycle through nested/granular data, and considerably speed up exploration and cleaning. These groups are also available for filtering (Filtering tab), where filter expressions can be scoped to group level (i.e. no groups, individual, all groups).</li>
@@ -122,155 +114,153 @@
 <strong>Batching</strong>: If data sets are too large, or too deeply nested (e.g. individual, plot, site, region, etc.), we recommend a split-combine approach to expedite the processing.</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">iris_split</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">iris</span>, <span class="va">iris</span><span class="op">$</span><span class="va">Species</span><span class="op">)</span> 
-
-<span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">iris_split</span>, 
-       <span class="va">dcr_app</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="co"># prepare data into species sub-sets</span>
+<span class="va">iris_split</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iris</span>,
+                    f <span class="op">=</span> <span class="va">iris</span><span class="op">$</span><span class="va">Species</span><span class="op">)</span>
+<span class="co"># run for each species</span>
+<span class="va">dcr_iris</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">iris_split</span>, 
+                   <span class="kw">function</span><span class="op">(</span><span class="va">split</span><span class="op">)</span><span class="op">{</span>
+                       <span class="fu">datacleanr</span><span class="fu">::</span><span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span>
+                   <span class="op">}</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="getting-started" class="section level2">
-<h2 class="hasAnchor">
-<a href="#getting-started" class="anchor"></a>Getting started</h2>
+<div class="section level2">
+<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+</h2>
 <p>The documentation for (<code>?dcr_app()</code>) explains the basic use and all features. Throughout the app, there are conveniently-placed help links that provide details on features.</p>
 </div>
-<div id="demonstration" class="section level2">
-<h2 class="hasAnchor">
-<a href="#demonstration" class="anchor"></a>Demonstration</h2>
+<div class="section level2">
+<h2 id="demonstration">Demonstration<a class="anchor" aria-label="anchor" href="#demonstration"></a>
+</h2>
 <p>Launch <code>datacleanr</code>’s interactive app with <code><a href="reference/dcr_app.html">dcr_app()</a></code>. The following examples demonstrate basic use and highlight features across the four app tabs.</p>
-<div id="1-set-up--overview" class="section level3">
-<h3 class="hasAnchor">
-<a href="#1-set-up--overview" class="anchor"></a>1. Set-up &amp; Overview</h3>
+<div class="section level3">
+<h3 id="1-set-up--overview">1. Set-up &amp; Overview<a class="anchor" aria-label="anchor" href="#1-set-up--overview"></a>
+</h3>
 <p>Define the grouping structure (used throughout app for scoping filters and plotting), and generate an informative overview.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr" class="external-link">datacleanr</a></span><span class="op">)</span>
 
 <span class="co"># group by species</span>
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_setup.gif" width="1000" align="center"></p>
 </div>
-<div id="2-filtering" class="section level3">
-<h3 class="hasAnchor">
-<a href="#2-filtering" class="anchor"></a>2. Filtering</h3>
-<p>Add/Remove filter statement boxes, and apply (valid) expressions - either to the entire data set, or scoped to individual groups. Filtering relies on <code>R</code> expressions passed to <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code>, so, for example, valid statements for <code>iris</code> are:</p>
+<div class="section level3">
+<h3 id="2-filtering">2. Filtering<a class="anchor" aria-label="anchor" href="#2-filtering"></a>
+</h3>
+<p>Add/Remove filter statement boxes, and apply (valid) expressions - either to the entire data set, or scoped to individual groups. Filtering relies on <code>R</code> expressions passed to <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code>, so, for example, valid statements for <code>iris</code> are:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R">    <span class="va">Species</span> <span class="op">==</span> <span class="st">'setosa'</span>
-    <span class="va">Species</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'setosa'</span>,<span class="st">'versicolor'</span><span class="op">)</span>
-    <span class="va">Sepal.Width</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="fl">0.05</span><span class="op">)</span></code></pre></div>
+    <span class="va">Species</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'setosa'</span>,<span class="st">'versicolor'</span><span class="op">)</span>
+    <span class="va">Sepal.Width</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="fl">0.05</span><span class="op">)</span></code></pre></div>
 <p>Any function returning a logical vector (i.e. <code>TRUE</code>/<code>FALSE</code>), can be employed here!</p>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_filter.gif" width="1000" align="center"></p>
 </div>
-<div id="3-visualizing-and-annotating" class="section level3">
-<h3 class="hasAnchor">
-<a href="#3-visualizing-and-annotating" class="anchor"></a>3. Visualizing and annotating</h3>
+<div class="section level3">
+<h3 id="3-visualizing-and-annotating">3. Visualizing and annotating<a class="anchor" aria-label="anchor" href="#3-visualizing-and-annotating"></a>
+</h3>
 <p>Interactive visualization allow seamless scrolling, panning and zooming to select and annotate individual observations (or sections with lasso/box select tool). Show and hide groups using the group selection table (left) or the legend (right).</p>
-<div id="31-general-highlighting-and-annotating" class="section level4">
-<h4 class="hasAnchor">
-<a href="#31-general-highlighting-and-annotating" class="anchor"></a>3.1 General highlighting and annotating</h4>
+<div class="section level4">
+<h4 id="31-general-highlighting-and-annotating">3.1 General highlighting and annotating<a class="anchor" aria-label="anchor" href="#31-general-highlighting-and-annotating"></a>
+</h4>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_select.gif" width="1000" align="center"></p>
 </div>
-<div id="32-using-dcrflag-to-interface-with-external-qaqc" class="section level4">
-<h4 class="hasAnchor">
-<a href="#32-using-dcrflag-to-interface-with-external-qaqc" class="anchor"></a>3.2 Using <code>.dcrflag</code> to interface with external QA/QC</h4>
+<div class="section level4">
+<h4 id="32-using-dcrflag-to-interface-with-external-qaqc">3.2 Using <code>.dcrflag</code> to interface with external QA/QC<a class="anchor" aria-label="anchor" href="#32-using-dcrflag-to-interface-with-external-qaqc"></a>
+</h4>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr" class="external-link">datacleanr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 
-<span class="va">iris_mod</span> <span class="op">&lt;-</span> <span class="va">iris</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Species</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
+<span class="va">iris_mod</span> <span class="op">&lt;-</span> <span class="va">iris</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">Species</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
   <span class="co"># .dcrflag provides additional visual cue in visualization tab</span>
   <span class="co"># based on TRUE/FALSE </span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.dcrflag <span class="op">=</span> <span class="va">Sepal.Width</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.dcrflag <span class="op">=</span> <span class="va">Sepal.Width</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span>
 
 
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">iris_mod</span><span class="op">)</span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_select_dcrflag.gif" width="1000" align="center"></p>
 </div>
-<div id="33-time-series" class="section level4">
-<h4 class="hasAnchor">
-<a href="#33-time-series" class="anchor"></a>3.3 Time Series</h4>
+<div class="section level4">
+<h4 id="33-time-series">3.3 Time Series<a class="anchor" aria-label="anchor" href="#33-time-series"></a>
+</h4>
 <p>Any <code>numeric</code> or <code>POSIXct</code> column (in X or Y dimension) can be used to visualize time series. Use the <code>Toggle Lines</code> button above the plot to facilitate exploration.</p>
 <p><strong>Example 1</strong>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">treering</span><span class="op">)</span>
-<span class="va">tree_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>year <span class="op">=</span> <span class="op">-</span><span class="fl">6000</span><span class="op">:</span><span class="fl">1979</span>,
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">treering</span><span class="op">)</span>
+<span class="va">tree_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>year <span class="op">=</span> <span class="op">-</span><span class="fl">6000</span><span class="op">:</span><span class="fl">1979</span>,
            val <span class="op">=</span> <span class="va">treering</span><span class="op">)</span>
 
 <span class="co"># make synthetic data</span>
-<span class="va">tree_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>tree_A <span class="op">=</span> <span class="va">tree_df</span>,
-                  tree_B <span class="op">=</span> <span class="va">tree_df</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
-                      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>val <span class="op">=</span> <span class="va">val</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span>,
-                  tree_C <span class="op">=</span> <span class="va">tree_df</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
-                      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>val <span class="op">=</span> <span class="va">val</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, mean <span class="op">=</span> <span class="op">-</span><span class="fl">0.03</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="st">"tree"</span><span class="op">)</span>
+<span class="va">tree_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tree_A <span class="op">=</span> <span class="va">tree_df</span>,
+                  tree_B <span class="op">=</span> <span class="va">tree_df</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> 
+                      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>val <span class="op">=</span> <span class="va">val</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span>,
+                  tree_C <span class="op">=</span> <span class="va">tree_df</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> 
+                      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>val <span class="op">=</span> <span class="va">val</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, mean <span class="op">=</span> <span class="op">-</span><span class="fl">0.03</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> 
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="st">"tree"</span><span class="op">)</span>
 
 <span class="co"># group by tree and inspect</span>
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">tree_data</span><span class="op">)</span></code></pre></div>
-<blockquote>
-<p>(Note, selections are arbitrary and for demonstration only)</p>
-</blockquote>
+<blockquote><p>(Note, selections are arbitrary and for demonstration only)</p></blockquote>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_select_timeseries.gif" width="1000" align="center"></p>
 <p><strong>Example 2</strong>:</p>
-<blockquote>
-<p>No GIF</p>
-</blockquote>
+<blockquote><p>No GIF</p></blockquote>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"storms"</span>, package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"storms"</span>, package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span>
 
-<span class="va">storms_mod</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>timestamp <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd_hms.html">ymd_h</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">month</span>, <span class="va">day</span>, <span class="va">hour</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">storms_mod</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> 
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>timestamp <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd_hms.html" class="external-link">ymd_h</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">month</span>, <span class="va">day</span>, <span class="va">hour</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># Group by name (198 groups)</span>
 <span class="co"># Check "Emily"</span>
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">storms_mod</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="34-spatial" class="section level4">
-<h4 class="hasAnchor">
-<a href="#34-spatial" class="anchor"></a>3.4 Spatial</h4>
-<p>Interactive maps rely on <a href="https://www.mapbox.com/">Mapbox</a> for plotting. Therefore, you will need to make an account, from which an access token needs to be copied into your <code>.Renviron</code> (e.g. <code>MAPBOX_TOKEN=your_copied_token</code>). A simple way to do this is using the convenient <code>usethis</code> package to access the file:</p>
+<div class="section level4">
+<h4 id="34-spatial">3.4 Spatial<a class="anchor" aria-label="anchor" href="#34-spatial"></a>
+</h4>
+<p>Interactive maps rely on <a href="https://www.mapbox.com/" class="external-link">Mapbox</a> for plotting. Therefore, you will need to make an account, from which an access token needs to be copied into your <code>.Renviron</code> (e.g. <code>MAPBOX_TOKEN=your_copied_token</code>). A simple way to do this is using the convenient <code>usethis</code> package to access the file:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">usethis</span><span class="fu">::</span><span class="fu">edit_r_environ</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Select columns <code>lon</code> and <code>lat</code> for plotting to get started.</p>
 <p><strong>Example 1</strong></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr" class="external-link">datacleanr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 
-<span class="va">airport_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">'https://plotly-r.com/data-raw/airport_locations.csv'</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">long</span><span class="op">)</span>
+<span class="va">airport_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">'https://plotly-r.com/data-raw/airport_locations.csv'</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">long</span><span class="op">)</span>
 
 <span class="co"># group by state</span>
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">airport_data</span><span class="op">)</span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_select_spatial.gif" width="1000" align="center"></p>
 <p><strong>Example 2</strong></p>
-<blockquote>
-<p>No GIF</p>
-</blockquote>
+<blockquote><p>No GIF</p></blockquote>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"storms"</span>, package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"storms"</span>, package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span>
 
 
-<span class="va">storms_mod</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">long</span><span class="op">)</span>
+<span class="va">storms_mod</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> 
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">long</span><span class="op">)</span>
 
 <span class="co"># Group by name (198 groups)</span>
 <span class="co"># Check "Bonnie"</span>
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">storms_mod</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="4-extract-reproducible-recipe" class="section level3">
-<h3 class="hasAnchor">
-<a href="#4-extract-reproducible-recipe" class="anchor"></a>4. Extract (Reproducible Recipe)</h3>
+<div class="section level3">
+<h3 id="4-extract-reproducible-recipe">4. Extract (Reproducible Recipe)<a class="anchor" aria-label="anchor" href="#4-extract-reproducible-recipe"></a>
+</h3>
 <p>All grouping, filtering and selections/annotations are translated to <code>R</code> code, which can be sent to an <code>RStudio</code> script, copied to the clipboard, or - when <code>dcr_app</code> is launched with a file path - save options are made available. For large selections/annotations we recommend saving the script separately, and sourcing it (i.e. <code>source("your_datacleanr_script.R")</code>) during later analyses.</p>
 <p><strong>Caution: When selections / annotations are greater than ~ 1000 points, it is recommended to use <code>datacleanr</code> with an <code>*.RDS</code> file (see below). This is because the resulting Reproducible Recipe (script) can slow down the RStudio IDE, if it has more than a few thousand lines.The next version of <code>datacleanr</code> will allow choosing between script-only recipes, and the option with an the intermediate file for storing annotations. Both approaches with their current implementation are shown shown below.</strong></p>
 <p><strong>Example 1</strong></p>
 <p>Launching with an object from <code>R</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr" class="external-link">datacleanr</a></span><span class="op">)</span>
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_extract.gif" width="1000" align="center"></p>
 <p>And output from extract tab:</p>
@@ -278,61 +268,61 @@
 <code class="sourceCode R"><span class="co"># datacleaning with datacleanr (0.0.1)</span>
 <span class="co"># ##------ Wed Oct 07 12:54:03 2020 ------##</span>
 
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr" class="external-link">datacleanr</a></span><span class="op">)</span>
 
 <span class="co">#  adding column for unique IDs;</span>
-<span class="va">iris</span><span class="op">$</span><span class="va">.dcrkey</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span><span class="op">)</span>
+<span class="va">iris</span><span class="op">$</span><span class="va">.dcrkey</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span><span class="op">)</span>
 
 
-<span class="va">iris</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">iris</span>, <span class="va">Species</span><span class="op">)</span>
+<span class="va">iris</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">iris</span>, <span class="va">Species</span><span class="op">)</span>
 
 <span class="co">#  stats and scoping level for filtering</span>
-<span class="va">filter_conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/structure.html">structure</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>filter <span class="op">=</span> <span class="st">"Sepal.Width &gt; 2.7"</span>, grouping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">NA</span>, 
-    <span class="op">-</span><span class="fl">1L</span><span class="op">)</span>, class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"tbl_df"</span>, <span class="st">"tbl"</span>, <span class="st">"data.frame"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">filter_conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>filter <span class="op">=</span> <span class="st">"Sepal.Width &gt; 2.7"</span>, grouping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, 
+    <span class="op">-</span><span class="fl">1L</span><span class="op">)</span>, class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tbl_df"</span>, <span class="st">"tbl"</span>, <span class="st">"data.frame"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co">#  applying (scoped) filtering by groups;</span>
 <span class="va">iris</span> <span class="op">&lt;-</span> <span class="fu">datacleanr</span><span class="fu">::</span><span class="fu"><a href="reference/filter_scoped_df.html">filter_scoped_df</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">iris</span>, condition_df <span class="op">=</span> <span class="va">filter_conditions</span><span class="op">)</span>
 
 <span class="co">#  observations from manual selection (Viz tab);</span>
-<span class="va">iris_outlier_selection</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/structure.html">structure</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>.dcrkey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">15L</span>, <span class="fl">16L</span>, <span class="fl">19L</span>, <span class="fl">34L</span><span class="op">)</span>, .annotation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">""</span>, <span class="st">""</span>, <span class="st">""</span>, 
-    <span class="st">""</span><span class="op">)</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"data.frame"</span>, row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="op">-</span><span class="fl">4L</span><span class="op">)</span><span class="op">)</span>
+<span class="va">iris_outlier_selection</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>.dcrkey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15L</span>, <span class="fl">16L</span>, <span class="fl">19L</span>, <span class="fl">34L</span><span class="op">)</span>, .annotation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">""</span>, <span class="st">""</span>, <span class="st">""</span>, 
+    <span class="st">""</span><span class="op">)</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"data.frame"</span>, row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="op">-</span><span class="fl">4L</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co">#  create data set with annotation column (non-outliers are NA);</span>
-<span class="va">iris</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">iris</span>, <span class="va">iris_outlier_selection</span>, by <span class="op">=</span> <span class="st">".dcrkey"</span><span class="op">)</span>
+<span class="va">iris</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">iris</span>, <span class="va">iris_outlier_selection</span>, by <span class="op">=</span> <span class="st">".dcrkey"</span><span class="op">)</span>
 
 <span class="co"># remove comment below to drop manually selected obs in data set;</span>
 <span class="co"># iris  &lt;- iris %&gt;% dplyr::filter(is.na(.annotation))</span></code></pre></div>
 <p><strong>Example 2</strong></p>
 <p>Launching with an <code>.RDS</code> from disk:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">iris</span>, file <span class="op">=</span> <span class="st">"./testiris.Rds"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">iris</span>, file <span class="op">=</span> <span class="st">"./testiris.Rds"</span><span class="op">)</span>
 
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr">datacleanr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/the-Hull/datacleanr" class="external-link">datacleanr</a></span><span class="op">)</span>
 <span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="st">"./testiris.Rds"</span><span class="op">)</span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_extract_file.gif" width="1000" align="center"></p>
 <hr>
 </div>
 </div>
-<div id="examples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples:</h2>
-<div id="1-exploring-soil-respiration-with-cosore" class="section level3">
-<h3 class="hasAnchor">
-<a href="#1-exploring-soil-respiration-with-cosore" class="anchor"></a>1. Exploring soil respiration with <strong>COSORE</strong>:</h3>
-<p><strong>COSORE</strong> is a community-driven soil respiration database, recently introduced with a manuscript published <a href="https://doi.org/10.1111/gcb.15353">here</a> by Bond-Lamberty <em>et al.</em>. The database provides soil respiration flux estimates, as well as meta data across multiple data sets. Let’s explore!</p>
+<div class="section level2">
+<h2 id="examples">Examples:<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h2>
+<div class="section level3">
+<h3 id="1-exploring-soil-respiration-with-cosore">1. Exploring soil respiration with <strong>COSORE</strong>:<a class="anchor" aria-label="anchor" href="#1-exploring-soil-respiration-with-cosore"></a>
+</h3>
+<p><strong>COSORE</strong> is a community-driven soil respiration database, recently introduced with a manuscript published <a href="https://doi.org/10.1111/gcb.15353" class="external-link">here</a> by Bond-Lamberty <em>et al.</em>. The database provides soil respiration flux estimates, as well as meta data across multiple data sets. Let’s explore!</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"bpbond/cosore"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"bpbond/cosore"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 
 <span class="co"># check data base info</span>
 <span class="va">db_info</span> <span class="op">&lt;-</span> <span class="fu">cosore</span><span class="fu">::</span><span class="fu">csr_database</span><span class="op">(</span><span class="op">)</span>
-<span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">db_info</span><span class="op">)</span>
+<span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">db_info</span><span class="op">)</span>
 
 <span class="co"># grab one data set and explore in detail</span>
 <span class="va">dset</span> <span class="op">&lt;-</span> <span class="st">"d20190409_ANJILELI"</span>
 <span class="va">anjilleli</span> <span class="op">&lt;-</span> <span class="fu">cosore</span><span class="fu">::</span><span class="fu">csr_dataset</span><span class="op">(</span><span class="va">dset</span><span class="op">)</span>
-<span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">anjilleli</span><span class="op">$</span><span class="va">description</span><span class="op">)</span>
+<span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">anjilleli</span><span class="op">$</span><span class="va">description</span><span class="op">)</span>
 
 
 <span class="fu">datacleanr</span><span class="fu">::</span><span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">anjilleli</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></code></pre></div>
@@ -340,26 +330,24 @@
 <p><strong>Explore sampling locations</strong>:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Check location info</span>
-<span class="va">db_info</span> <span class="op">&lt;-</span> <span class="va">db_info</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">CSR_LONGITUDE</span>,
+<span class="va">db_info</span> <span class="op">&lt;-</span> <span class="va">db_info</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="va">CSR_LONGITUDE</span>,
            lat <span class="op">=</span> <span class="va">CSR_LATITUDE</span><span class="op">)</span>
 <span class="fu">datacleanr</span><span class="fu">::</span><span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">db_info</span><span class="op">)</span></code></pre></div>
-<blockquote>
-<p>No GIF</p>
-</blockquote>
+<blockquote><p>No GIF</p></blockquote>
 <p><strong>Explore nested data sets</strong>:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># grab all data from ZHANG</span>
-<span class="va">zhang</span> <span class="op">&lt;-</span> <span class="fu">cosore</span><span class="fu">::</span><span class="fu">csr_table</span><span class="op">(</span><span class="st">"data"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"d20190424_ZHANG_maple"</span>,
-                                        <span class="st">"d20190424_ZHANG_oak"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
+<span class="va">zhang</span> <span class="op">&lt;-</span> <span class="fu">cosore</span><span class="fu">::</span><span class="fu">csr_table</span><span class="op">(</span><span class="st">"data"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"d20190424_ZHANG_maple"</span>,
+                                        <span class="st">"d20190424_ZHANG_oak"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
   <span class="co"># adjust for grouping</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>CSR_PORT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">CSR_PORT</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>CSR_PORT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">CSR_PORT</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># group by CSR_DATASET and CSR_PORT</span>
 <span class="fu">datacleanr</span><span class="fu">::</span><span class="fu"><a href="reference/dcr_app.html">dcr_app</a></span><span class="op">(</span><span class="va">zhang</span><span class="op">)</span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/the-Hull/datacleanr/master/man/figures/readme_cosore.gif" width="1000" align="center"></p>
 <hr>
-<p>Please note that the <code>datacleanr</code> project is released with a <a href="https://raw.githubusercontent.com/the-Hull/datacleanr/master/.github/CODE_OF_CONDUCT.md">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<p>Please note that the <code>datacleanr</code> project is released with a <a href="https://raw.githubusercontent.com/the-Hull/datacleanr/master/.github/CODE_OF_CONDUCT.md" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
 </div>
@@ -367,57 +355,67 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=datacleanr">https://​cloud.r-project.org/​package=datacleanr</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/the-Hull/datacleanr/">https://​github.com/​the-Hull/​datacleanr/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/the-Hull/datacleanr/issues">https://​github.com/​the-Hull/​datacleanr/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=datacleanr" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/the-Hull/datacleanr/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/the-Hull/datacleanr/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></small></li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></small></li>
 </ul>
 </div>
+
 <div class="community">
-<h2>Community</h2>
+<h2 data-toc-skip>Community</h2>
 <ul class="list-unstyled">
 <li><a href="CONTRIBUTING.html">Contributing guide</a></li>
 <li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>Alexander Hurley <br><small class="roles"> Maintainer, author, copyright holder </small> <a href="https://orcid.org/0000-0002-9641-2805" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html#citation">Citing datacleanr</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://app.circleci.com/pipelines/github/the-Hull/datacleanr"><img src="https://circleci.com/gh/Appsilon/ci.example.svg?style=svg" alt="CircleCI"></a></li>
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
-<li><a href="https://cran.r-project.org/package=datacleanr"><img src="https://cranlogs.r-pkg.org/badges/datacleanr"></a></li>
-<li><a href="https://cran.r-project.org/package=datacleanr"><img src="https://cranlogs.r-pkg.org/badges/grand-total/datacleanr?color=brightgreen"></a></li>
+<li>Alexander Hurley <br><small class="roles"> Maintainer, author, copyright holder </small> <a href="https://orcid.org/0000-0002-9641-2805" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://app.circleci.com/pipelines/github/the-Hull/datacleanr" class="external-link"><img src="https://circleci.com/gh/Appsilon/ci.example.svg?style=svg" alt="CircleCI"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
+<li><a href="https://cran.r-project.org/package=datacleanr" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/datacleanr"></a></li>
+<li><a href="https://cran.r-project.org/package=datacleanr" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/datacleanr?color=brightgreen"></a></li>
+</ul>
 </div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Alexander Hurley.</p>
+  <p></p>
+<p>Developed by Alexander Hurley.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer>
@@ -425,6 +423,8 @@
 
   
 
+
+  
 
   </body>
 </html>

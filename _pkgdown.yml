@@ -9,3 +9,55 @@ reference:
   - filter_scoped_df
   - starts_with("print")
 
+- title: internal
+  contents:
+  - apply_data_set_up
+  - calc_limits_per_groups
+  - can_internet
+  - check_individual_statement
+  - datacleanr_server
+  - dcr_checks
+  - extend_palette
+  - filter_scoped
+  - get_factor_cols_idx
+  - handle_add_outlier_trace
+  - handle_restyle_traces
+  - handle_sel_outliers
+  - hide_trace_idx
+  - make_group_table
+  - make_save_filepath
+  - module_server_apply_reset
+  - module_server_box_str_filter
+  - module_server_checkbox
+  - module_server_df_filter
+  - module_server_extract_code
+  - module_server_extract_code_fileconfig
+  - module_server_filter_str
+  - module_server_group_relayout_buttons
+  - module_server_group_select
+  - module_server_group_selector_table
+  - module_server_histograms
+  - module_server_lowercontrol_btn
+  - module_server_plot_annotation_table
+  - module_server_plot_selectable
+  - module_server_plot_selectorcontrols
+  - module_server_summary
+  - module_server_text_annotator
+  - module_ui_apply_reset
+  - module_ui_box_str_filter
+  - module_ui_checkbox
+  - module_ui_df_filter
+  - module_ui_extract_code
+  - module_ui_extract_code_fileconfig
+  - module_ui_filter_str
+  - module_ui_group_relayout_buttons
+  - module_ui_group_select
+  - module_ui_group_selector_table
+  - module_ui_histograms
+  - module_ui_lowercontrol_btn
+  - module_ui_plot_annotation_table
+  - module_ui_plot_selectable
+  - module_ui_plot_selectorcontrols
+  - module_ui_summary
+  - module_ui_text_annotator
+  - split_groups

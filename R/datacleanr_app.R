@@ -16,7 +16,7 @@
 #'    - **Extraction**: generates *Reproducible Recipe* and outputs
 #'
 #'  For data sets exceeding 1.5 million rows, we suggest splitting the data, if possible, by a grouping factor.
-#'  This is because at this volume interactive visualizations using \code{\link{plotly}} stretch the limits of what modern web browsers can handle.
+#'  This is because at this volume interactive visualizations using \code{\link[plotly]{plotly}} stretch the limits of what modern web browsers can handle.
 #'  A simple example using \code{\link{iris}} is:
 #'
 #'   ```

@@ -964,7 +964,7 @@ make_group_table <- function(dframe) {
     `Group` = dplyr::cur_group_id(),
     `n obs.` = dplyr::n()
   )
-  group_table <- dplyr::relocate(group_table, .data$Group)
+  group_table <- dplyr::relocate(group_table, "Group")
 }
 
 

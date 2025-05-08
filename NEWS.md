@@ -1,3 +1,11 @@
+# datacleanr 1.0.5
+
+* updated internal `make_group_table()` to account for deprecation of `.data` in `tidyselect`
+* fixed NAMESPACE issue (removed `htmltools`)
+* fixed Rd link for `plotly`
+* added documentation for installation issues related to `magick` on `Ubuntu`
+
+
 # datacleanr 1.0.4
 
 * improved plotting performance of large, "narrowly distributed" distributed data, such as a 1:1 scatter or a high resolution time series (i.e., little variation in either x or y dimension). 

@@ -39,13 +39,15 @@ reproducible filtering and (manual, interactive) visual outlier detection and an
 }
 
 For data sets exceeding 1.5 million rows, we suggest splitting the data, if possible, by a grouping factor.
-This is because at this volume interactive visualizations using \code{\link{plotly}} stretch the limits of what modern web browsers can handle.
-A simple example using \code{\link{iris}} is:\preformatted{iris_split <- split(iris, iris$Species)
+This is because at this volume interactive visualizations using \code{\link[plotly]{plotly}} stretch the limits of what modern web browsers can handle.
+A simple example using \code{\link{iris}} is:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{iris_split <- split(iris, iris$Species)
 dcr_app(iris_split[[1]])
 # or
 lapply(iris_split, dcr_app)
 
-}
+}\if{html}{\out{</div>}}
 
 Extensive documentation is provided on each of the tabs for individual procedures in help links.
 \code{datacleanr} relies on 1) generating a column of unique IDs (\code{.dcrkey}) and subsetting \code{dframe} into sub-groups (generated in-app,

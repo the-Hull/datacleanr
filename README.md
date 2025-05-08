@@ -39,6 +39,9 @@ remotes::install_github("the-hull/datacleanr")
 especially if you’ve recently updated your system.** **See these
 instructions here: <https://CRAN.R-project.org/bin/macosx/>**
 
+**In case the package installation fails due to a compilation error from `magick`, please try installing the dev headers for `magick` with
+`sudo apt-get install libmagick++-dev`. Also see this [gh issue](https://github.com/the-Hull/datacleanr/issues/13).
+
 ## Design
 
 `datacleanr` is developed using the [shiny](https://shiny.rstudio.com/)
